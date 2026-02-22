@@ -41,7 +41,7 @@ class OrderSyncController extends Controller
     public function index(): View|JsonResponse
     {
         if (! bouncer()->allows('orders.sync.view')) {
-            abort(401, trans('admin::app.errors.401'));
+            abort(403, trans('admin::app.errors.403'));
         }
 
         if (request()->ajax()) {
@@ -65,8 +65,8 @@ class OrderSyncController extends Controller
     {
         if (! bouncer()->allows('orders.sync.execute')) {
             return response()->json([
-                'message' => trans('admin::app.errors.401'),
-            ], 401);
+                'message' => trans('admin::app.errors.403'),
+            ], 403);
         }
 
         try {
@@ -116,8 +116,8 @@ class OrderSyncController extends Controller
     {
         if (! bouncer()->allows('orders.sync.execute')) {
             return response()->json([
-                'message' => trans('admin::app.errors.401'),
-            ], 401);
+                'message' => trans('admin::app.errors.403'),
+            ], 403);
         }
 
         try {
@@ -168,7 +168,7 @@ class OrderSyncController extends Controller
     public function show(int $id): View
     {
         if (! bouncer()->allows('orders.sync.view')) {
-            abort(401, trans('admin::app.errors.401'));
+            abort(403, trans('admin::app.errors.403'));
         }
 
         $syncLog = $this->syncLogRepository->findOrFail($id);
@@ -188,8 +188,8 @@ class OrderSyncController extends Controller
     {
         if (! bouncer()->allows('orders.sync.execute')) {
             return response()->json([
-                'message' => trans('admin::app.errors.401'),
-            ], 401);
+                'message' => trans('admin::app.errors.403'),
+            ], 403);
         }
 
         try {

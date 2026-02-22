@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Webkul\Pricing\Contracts\ProductCost as ProductCostContract;
-use Webkul\Product\Models\Product;
+use Webkul\Product\Models\ProductProxy;
 use Webkul\Tenant\Models\Concerns\BelongsToTenant;
-use Webkul\User\Models\Admin;
+use Webkul\User\Models\AdminProxy;
 
 class ProductCost extends Model implements ProductCostContract
 {
@@ -38,7 +38,7 @@ class ProductCost extends Model implements ProductCostContract
      */
     public function product(): BelongsTo
     {
-        return $this->belongsTo(Product::class, 'product_id');
+        return $this->belongsTo(ProductProxy::modelClass(), 'product_id');
     }
 
     /**
@@ -46,7 +46,7 @@ class ProductCost extends Model implements ProductCostContract
      */
     public function creator(): BelongsTo
     {
-        return $this->belongsTo(Admin::class, 'created_by');
+        return $this->belongsTo(AdminProxy::modelClass(), 'created_by');
     }
 
     /**

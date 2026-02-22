@@ -4,9 +4,11 @@ namespace Webkul\Order\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Webkul\Order\Contracts\OrderSyncLog as OrderSyncLogContract;
+use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 
 class OrderSyncLog extends Model implements OrderSyncLogContract
 {
+    use BelongsToTenant;
     /**
      * The table associated with the model.
      *

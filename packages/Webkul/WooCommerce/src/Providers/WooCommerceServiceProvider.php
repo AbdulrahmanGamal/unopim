@@ -13,7 +13,7 @@ class WooCommerceServiceProvider extends ServiceProvider
     public function boot(Router $router): void
     {
         $this->loadRoutesFrom(__DIR__.'/../Routes/woocommerce-routes.php');
-        $this->loadMigrationsFrom(__DIR__.'/../Database/Migration');
+        $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
         $this->loadViewsFrom(__DIR__.'/../Resources/views', 'woocommerce');
         $this->loadTranslationsFrom(__DIR__.'/../Resources/lang', 'woocommerce');
     }

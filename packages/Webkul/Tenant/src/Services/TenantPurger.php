@@ -22,20 +22,22 @@ class TenantPurger
             'elasticsearch' => ['indices_deleted' => 0],
         ];
 
-        // 1. Purge database tables
+        // 1. Purge database tables within a transaction for data integrity
         $tables = $this->findTenantScopedTables();
 
-        $this->disableForeignKeys();
+        DB::transaction(function () use ($tables, $tenantId, &$report) {
+            $this->disableForeignKeys();
 
-        foreach ($tables as $table) {
-            $count = DB::table($table)->where('tenant_id', $tenantId)->count();
-            if ($count > 0) {
-                DB::table($table)->where('tenant_id', $tenantId)->delete();
+            foreach ($tables as $table) {
+                $count = DB::table($table)->where('tenant_id', $tenantId)->count();
+                if ($count > 0) {
+                    DB::table($table)->where('tenant_id', $tenantId)->delete();
+                }
+                $report['tables'][$table] = $count;
             }
-            $report['tables'][$table] = $count;
-        }
 
-        $this->enableForeignKeys();
+            $this->enableForeignKeys();
+        });
 
         // 2. Clear tenant cache
         $report['cache']['keys_cleared'] = $this->clearTenantCache($tenantId);

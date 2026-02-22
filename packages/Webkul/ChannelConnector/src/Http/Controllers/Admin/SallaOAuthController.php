@@ -3,7 +3,7 @@
 namespace Webkul\ChannelConnector\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
+use Webkul\Admin\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
 use Webkul\ChannelConnector\Repositories\ChannelConnectorRepository;
 
@@ -16,7 +16,7 @@ class SallaOAuthController extends Controller
     public function redirect(string $code)
     {
         if (! bouncer()->hasPermission('channel_connector.connectors.edit')) {
-            abort(401, 'This action is unauthorized.');
+            abort(403, 'This action is unauthorized.');
         }
 
         $connector = $this->connectorRepository->findOneByField('code', $code);
@@ -47,7 +47,7 @@ class SallaOAuthController extends Controller
     public function callback(Request $request, string $code)
     {
         if (! bouncer()->hasPermission('channel_connector.connectors.edit')) {
-            abort(401, 'This action is unauthorized.');
+            abort(403, 'This action is unauthorized.');
         }
 
         $expectedState = session()->pull("channel_connector.salla_state.{$code}");

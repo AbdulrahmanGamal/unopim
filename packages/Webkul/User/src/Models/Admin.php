@@ -119,7 +119,7 @@ class Admin extends Authenticatable implements AdminContract, AuditableContract
         }
 
         // Tenant users cannot access platform-reserved permissions (Story 5.5)
-        $guard = app(\Webkul\Tenant\Auth\TenantPermissionGuard::class);
+        $guard = app(\Webkul\Tenant\Contracts\TenantPermissionGuard::class);
 
         if (! $guard->isAllowed($this, $permission)) {
             return false;

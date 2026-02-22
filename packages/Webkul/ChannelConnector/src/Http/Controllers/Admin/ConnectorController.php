@@ -3,7 +3,7 @@
 namespace Webkul\ChannelConnector\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
+use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\ChannelConnector\DataGrids\ConnectorDataGrid;
 use Webkul\ChannelConnector\Events\ConnectorCreated;
 use Webkul\ChannelConnector\Events\ConnectorCreating;
@@ -23,7 +23,7 @@ class ConnectorController extends Controller
     public function index()
     {
         if (! bouncer()->hasPermission('channel_connector.connectors.view')) {
-            abort(401, 'This action is unauthorized.');
+            abort(403, 'This action is unauthorized.');
         }
 
         if (request()->ajax()) {
@@ -36,7 +36,7 @@ class ConnectorController extends Controller
     public function create()
     {
         if (! bouncer()->hasPermission('channel_connector.connectors.create')) {
-            abort(401, 'This action is unauthorized.');
+            abort(403, 'This action is unauthorized.');
         }
 
         return view('channel_connector::admin.connectors.create');
@@ -45,7 +45,7 @@ class ConnectorController extends Controller
     public function store(ConnectorRequest $request)
     {
         if (! bouncer()->hasPermission('channel_connector.connectors.create')) {
-            abort(401, 'This action is unauthorized.');
+            abort(403, 'This action is unauthorized.');
         }
 
         $data = $request->validated();
@@ -68,7 +68,7 @@ class ConnectorController extends Controller
     public function edit(string $code)
     {
         if (! bouncer()->hasPermission('channel_connector.connectors.edit')) {
-            abort(401, 'This action is unauthorized.');
+            abort(403, 'This action is unauthorized.');
         }
 
         $connector = $this->connectorRepository->findOneByField('code', $code);
@@ -83,7 +83,7 @@ class ConnectorController extends Controller
     public function update(ConnectorRequest $request, string $code)
     {
         if (! bouncer()->hasPermission('channel_connector.connectors.edit')) {
-            abort(401, 'This action is unauthorized.');
+            abort(403, 'This action is unauthorized.');
         }
 
         $connector = $this->connectorRepository->findOneByField('code', $code);
@@ -112,7 +112,7 @@ class ConnectorController extends Controller
     public function destroy(string $code)
     {
         if (! bouncer()->hasPermission('channel_connector.connectors.delete')) {
-            abort(401, 'This action is unauthorized.');
+            abort(403, 'This action is unauthorized.');
         }
 
         $connector = $this->connectorRepository->findOneByField('code', $code);
@@ -135,7 +135,7 @@ class ConnectorController extends Controller
     public function webhooks(string $code)
     {
         if (! bouncer()->hasPermission('channel_connector.webhooks.view')) {
-            abort(401, 'This action is unauthorized.');
+            abort(403, 'This action is unauthorized.');
         }
 
         $connector = $this->connectorRepository->findOneByField('code', $code);
@@ -150,7 +150,7 @@ class ConnectorController extends Controller
     public function manageWebhooks(Request $request, string $code)
     {
         if (! bouncer()->hasPermission('channel_connector.webhooks.manage')) {
-            abort(401, 'This action is unauthorized.');
+            abort(403, 'This action is unauthorized.');
         }
 
         $connector = $this->connectorRepository->findOneByField('code', $code);

@@ -4,7 +4,6 @@ namespace Webkul\Tenant\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Webkul\Tenant\Models\Tenant;
 
@@ -33,11 +32,8 @@ class TenantTokenValidator
             return $next($request);
         }
 
-        // Validate tenant exists and is active
-        $tenant = DB::table('tenants')
-            ->where('id', $tenantId)
-            ->whereNull('deleted_at')
-            ->first();
+        // Validate tenant exists and is active using Eloquent (respects scopes and soft deletes)
+        $tenant = Tenant::withoutGlobalScopes()->find($tenantId);
 
         if (! $tenant) {
             return response()->json([
@@ -52,8 +48,10 @@ class TenantTokenValidator
         }
 
         // Verify the OAuth client that issued the token belongs to the same tenant
-        if ($user->token()) {
-            $client = $user->token()->client;
+        $token = $user->token();
+
+        if ($token) {
+            $client = $token->client;
 
             if ($client && $client->tenant_id && $user->tenant_id && $client->tenant_id !== $user->tenant_id) {
                 return response()->json([

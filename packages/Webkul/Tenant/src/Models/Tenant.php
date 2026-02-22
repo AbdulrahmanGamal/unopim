@@ -97,6 +97,9 @@ class Tenant extends Model implements TenantContract
         $this->settings = $settings;
 
         $this->save();
+
+        // Invalidate cached tenant list so platform operators see updated state immediately
+        cache()->forget('tenant_list_active');
     }
 
     /**

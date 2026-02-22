@@ -4,7 +4,7 @@ namespace Webkul\ChannelConnector\Http\Controllers\Admin;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
+use Webkul\Admin\Http\Controllers\Controller;
 use Illuminate\Validation\Rule;
 use Webkul\ChannelConnector\Repositories\ChannelConnectorRepository;
 use Webkul\ChannelConnector\Repositories\ChannelFieldMappingRepository;
@@ -26,7 +26,7 @@ class SyncController extends Controller
     public function index(string $code)
     {
         if (! bouncer()->hasPermission('channel_connector.sync.view')) {
-            abort(401, 'This action is unauthorized.');
+            abort(403, 'This action is unauthorized.');
         }
 
         $connector = $this->connectorRepository->findOneByField('code', $code);
@@ -45,7 +45,7 @@ class SyncController extends Controller
     public function trigger(Request $request, string $code)
     {
         if (! bouncer()->hasPermission('channel_connector.sync.create')) {
-            abort(401, 'This action is unauthorized.');
+            abort(403, 'This action is unauthorized.');
         }
 
         $connector = $this->connectorRepository->findOneByField('code', $code);
@@ -79,7 +79,7 @@ class SyncController extends Controller
     public function show(string $code, string $jobId)
     {
         if (! bouncer()->hasPermission('channel_connector.sync.view')) {
-            abort(401, 'This action is unauthorized.');
+            abort(403, 'This action is unauthorized.');
         }
 
         $connector = $this->connectorRepository->findOneByField('code', $code);
@@ -100,7 +100,7 @@ class SyncController extends Controller
     public function preview(Request $request, string $code): JsonResponse
     {
         if (! bouncer()->hasPermission('channel_connector.sync.view')) {
-            abort(401, 'This action is unauthorized.');
+            abort(403, 'This action is unauthorized.');
         }
 
         $connector = $this->connectorRepository->findOneByField('code', $code);

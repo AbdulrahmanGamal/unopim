@@ -2,6 +2,8 @@
 
 namespace Webkul\User;
 
+use Webkul\Tenant\Contracts\TenantPermissionGuard;
+
 class Bouncer
 {
     /**
@@ -20,7 +22,7 @@ class Bouncer
 
         if ($user->role->permission_type == 'all') {
             // Tenant users with "all" still cannot access platform-reserved permissions (Story 5.5)
-            $guard = app(\Webkul\Tenant\Auth\TenantPermissionGuard::class);
+            $guard = app(TenantPermissionGuard::class);
 
             return $guard->isAllowed($user, $permission);
         }
@@ -43,17 +45,17 @@ class Bouncer
         $user = auth()->guard('admin')->user();
 
         if ($user->role->permission_type == 'all') {
-            $guard = app(\Webkul\Tenant\Auth\TenantPermissionGuard::class);
+            $guard = app(TenantPermissionGuard::class);
 
             if (! $guard->isAllowed($user, $permission)) {
-                abort(401, 'This action is unauthorized');
+                abort(403, 'This action is unauthorized');
             }
 
             return;
         }
 
         if (! $user->hasPermission($permission)) {
-            abort(401, 'This action is unauthorized');
+            abort(403, 'This action is unauthorized');
         }
     }
 }

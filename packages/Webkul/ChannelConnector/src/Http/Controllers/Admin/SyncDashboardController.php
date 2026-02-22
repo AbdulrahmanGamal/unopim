@@ -2,7 +2,7 @@
 
 namespace Webkul\ChannelConnector\Http\Controllers\Admin;
 
-use Illuminate\Routing\Controller;
+use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\ChannelConnector\DataGrids\SyncJobDataGrid;
 use Webkul\ChannelConnector\Repositories\ChannelSyncJobRepository;
 use Webkul\ChannelConnector\Services\SyncJobManager;
@@ -20,7 +20,7 @@ class SyncDashboardController extends Controller
     public function index()
     {
         if (! bouncer()->hasPermission('channel_connector.sync.view')) {
-            abort(401, 'This action is unauthorized.');
+            abort(403, 'This action is unauthorized.');
         }
 
         if (request()->ajax()) {
@@ -36,7 +36,7 @@ class SyncDashboardController extends Controller
     public function show(int $id)
     {
         if (! bouncer()->hasPermission('channel_connector.sync.view')) {
-            abort(401, 'This action is unauthorized.');
+            abort(403, 'This action is unauthorized.');
         }
 
         $job = $this->syncJobRepository->find($id);
@@ -56,7 +56,7 @@ class SyncDashboardController extends Controller
     public function status(int $id)
     {
         if (! bouncer()->hasPermission('channel_connector.sync.view')) {
-            abort(401, 'This action is unauthorized.');
+            abort(403, 'This action is unauthorized.');
         }
 
         $job = $this->syncJobRepository->find($id);
@@ -80,7 +80,7 @@ class SyncDashboardController extends Controller
     public function retry(int $id)
     {
         if (! bouncer()->hasPermission('channel_connector.sync.create')) {
-            abort(401, 'This action is unauthorized.');
+            abort(403, 'This action is unauthorized.');
         }
 
         $job = $this->syncJobRepository->find($id);

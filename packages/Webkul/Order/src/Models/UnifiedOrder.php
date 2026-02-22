@@ -4,13 +4,13 @@ namespace Webkul\Order\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Webkul\Core\Eloquent\TranslatableModel;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 use Webkul\Order\Contracts\UnifiedOrder as UnifiedOrderContract;
+use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 
 class UnifiedOrder extends Model implements UnifiedOrderContract
 {
-    use HistoryTrait;
+    use BelongsToTenant, HistoryTrait;
 
     /**
      * The table associated with the model.

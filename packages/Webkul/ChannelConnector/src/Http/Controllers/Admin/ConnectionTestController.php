@@ -3,7 +3,7 @@
 namespace Webkul\ChannelConnector\Http\Controllers\Admin;
 
 use Illuminate\Http\JsonResponse;
-use Illuminate\Routing\Controller;
+use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\ChannelConnector\Repositories\ChannelConnectorRepository;
 use Webkul\ChannelConnector\Services\AdapterResolver;
 
@@ -20,7 +20,7 @@ class ConnectionTestController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'This action is unauthorized.',
-            ], 401);
+            ], 403);
         }
 
         $connector = $this->connectorRepository->findOneByField('code', $code);

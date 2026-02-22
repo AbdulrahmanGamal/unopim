@@ -106,7 +106,9 @@ class Token extends PassportToken
         }
 
         // Tenant validation (critical for multi-tenant isolation)
-        if (isset($user->tenant_id) && isset($this->tenant_id)) {
+        // Use !== null instead of isset() because isset() returns false for null properties,
+        // which would silently skip tenant validation when tenant_id is explicitly null
+        if ($user->tenant_id !== null && $this->tenant_id !== null) {
             if ($user->tenant_id != $this->tenant_id) {
                 return false;
             }
@@ -114,7 +116,7 @@ class Token extends PassportToken
 
         // Client must belong to same tenant
         if ($this->relationLoaded('client') && $this->client) {
-            if (isset($user->tenant_id) && isset($this->client->tenant_id)) {
+            if ($user->tenant_id !== null && $this->client->tenant_id !== null) {
                 if ($user->tenant_id != $this->client->tenant_id) {
                     return false;
                 }

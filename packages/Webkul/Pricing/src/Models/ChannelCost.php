@@ -5,7 +5,7 @@ namespace Webkul\Pricing\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Webkul\Core\Models\Channel;
+use Webkul\Core\Models\ChannelProxy;
 use Webkul\Pricing\Contracts\ChannelCost as ChannelCostContract;
 use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 
@@ -42,7 +42,7 @@ class ChannelCost extends Model implements ChannelCostContract
      */
     public function channel(): BelongsTo
     {
-        return $this->belongsTo(Channel::class, 'channel_id');
+        return $this->belongsTo(ChannelProxy::modelClass(), 'channel_id');
     }
 
     /**

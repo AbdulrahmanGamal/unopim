@@ -65,7 +65,7 @@ class OrderController extends Controller
     public function show(int $id): View
     {
         if (! bouncer()->allows('orders.view')) {
-            abort(401, trans('admin::app.errors.401'));
+            abort(403, trans('admin::app.errors.403'));
         }
 
         $order = $this->orderRepository->findOrFail($id);
@@ -89,7 +89,7 @@ class OrderController extends Controller
     public function edit(int $id): View
     {
         if (! bouncer()->allows('orders.edit')) {
-            abort(401, trans('admin::app.errors.401'));
+            abort(403, trans('admin::app.errors.403'));
         }
 
         $order = $this->orderRepository->findOrFail($id);
@@ -115,7 +115,7 @@ class OrderController extends Controller
     public function update(Request $request, int $id): RedirectResponse
     {
         if (! bouncer()->allows('orders.edit')) {
-            abort(401, trans('admin::app.errors.401'));
+            abort(403, trans('admin::app.errors.403'));
         }
 
         $request->validate([
@@ -149,8 +149,8 @@ class OrderController extends Controller
     {
         if (! bouncer()->allows('orders.delete')) {
             return response()->json([
-                'message' => trans('admin::app.errors.401'),
-            ], 401);
+                'message' => trans('admin::app.errors.403'),
+            ], 403);
         }
 
         try {
@@ -176,8 +176,8 @@ class OrderController extends Controller
     {
         if (! bouncer()->allows('orders.edit')) {
             return response()->json([
-                'message' => trans('admin::app.errors.401'),
-            ], 401);
+                'message' => trans('admin::app.errors.403'),
+            ], 403);
         }
 
         $request->validate([
@@ -221,7 +221,7 @@ class OrderController extends Controller
     public function export()
     {
         if (! bouncer()->allows('orders.view')) {
-            abort(401, trans('admin::app.errors.401'));
+            abort(403, trans('admin::app.errors.403'));
         }
 
         return datagrid(OrderDataGrid::class)->export();

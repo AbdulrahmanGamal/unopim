@@ -58,7 +58,8 @@ class TenantServiceProvider extends ServiceProvider
 
         $this->app->singleton(\Webkul\Tenant\Services\TenantSeeder::class);
         $this->app->singleton(\Webkul\Tenant\Services\TenantPurger::class);
-        $this->app->singleton(\Webkul\Tenant\Auth\TenantPermissionGuard::class);
+        $this->app->singleton(\Webkul\Tenant\Contracts\TenantPermissionGuard::class, \Webkul\Tenant\Auth\TenantPermissionGuard::class);
+        $this->app->alias(\Webkul\Tenant\Contracts\TenantPermissionGuard::class, \Webkul\Tenant\Auth\TenantPermissionGuard::class);
     }
 
     /**
@@ -113,11 +114,14 @@ class TenantServiceProvider extends ServiceProvider
                         ];
                     }
 
-                    $availableTenants = \Webkul\Tenant\Models\Tenant::where('status', 'active')
-                        ->select('id', 'name')
-                        ->orderBy('name')
-                        ->get()
-                        ->toArray();
+                    $availableTenants = cache()->remember('tenant_list_active', 300, function () {
+                        return \Webkul\Tenant\Models\Tenant::where('status', 'active')
+                            ->select('id', 'name')
+                            ->orderBy('name')
+                            ->limit(500)
+                            ->get()
+                            ->toArray();
+                    });
                 }
             }
 

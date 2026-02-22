@@ -519,7 +519,7 @@ class Core
             $amount = 0;
         }
 
-        return $this->formatPrice($amount);
+        return $this->formatPrice($amount, $this->getBaseCurrencyCode());
     }
 
     /**

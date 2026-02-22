@@ -3,7 +3,7 @@
 namespace Webkul\ChannelConnector\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
+use Webkul\Admin\Http\Controllers\Controller;
 use Illuminate\Validation\Rule;
 use Webkul\ChannelConnector\DataGrids\ConflictDataGrid;
 use Webkul\ChannelConnector\Repositories\ChannelSyncConflictRepository;
@@ -22,7 +22,7 @@ class ConflictController extends Controller
     public function index()
     {
         if (! bouncer()->hasPermission('channel_connector.conflicts.view')) {
-            abort(401, 'This action is unauthorized.');
+            abort(403, 'This action is unauthorized.');
         }
 
         if (request()->ajax()) {
@@ -38,7 +38,7 @@ class ConflictController extends Controller
     public function show(int $id)
     {
         if (! bouncer()->hasPermission('channel_connector.conflicts.view')) {
-            abort(401, 'This action is unauthorized.');
+            abort(403, 'This action is unauthorized.');
         }
 
         $conflict = $this->conflictRepository->find($id);
@@ -73,7 +73,7 @@ class ConflictController extends Controller
     public function resolve(Request $request, int $id)
     {
         if (! bouncer()->hasPermission('channel_connector.conflicts.edit')) {
-            abort(401, 'This action is unauthorized.');
+            abort(403, 'This action is unauthorized.');
         }
 
         $conflict = $this->conflictRepository->find($id);

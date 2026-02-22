@@ -14,7 +14,12 @@ use Webkul\Product\Models\Product;
 
 class EbayAdapter extends AbstractChannelAdapter
 {
-    protected const API_BASE = 'https://api.ebay.dev/admin/v2';
+    protected const API_BASE_DEFAULT = 'https://api.ebay.com/sell/inventory/v1';
+
+    protected function getApiBase(): string
+    {
+        return $this->credentials['api_base'] ?? config('services.ebay.api_base', self::API_BASE_DEFAULT);
+    }
 
     public function testConnection(array $credentials): ConnectionResult
     {
@@ -31,7 +36,7 @@ class EbayAdapter extends AbstractChannelAdapter
 
             $response = Http::withToken($accessToken)
                 ->timeout(30)
-                ->get(self::API_BASE.'/products', ['per_page' => 1]);
+                ->get($this->getApiBase().'/products', ['per_page' => 1]);
 
             if ($response->failed()) {
                 return new ConnectionResult(
@@ -78,11 +83,11 @@ class EbayAdapter extends AbstractChannelAdapter
             if ($existingExternalId) {
                 $response = Http::withToken($accessToken)
                     ->timeout(30)
-                    ->put(self::API_BASE.'/products/'.$existingExternalId, $body);
+                    ->put($this->getApiBase().'/products/'.$existingExternalId, $body);
             } else {
                 $response = Http::withToken($accessToken)
                     ->timeout(30)
-                    ->post(self::API_BASE.'/products', $body);
+                    ->post($this->getApiBase().'/products', $body);
             }
 
             if ($response->failed()) {
@@ -159,7 +164,7 @@ class EbayAdapter extends AbstractChannelAdapter
 
             $response = Http::withToken($this->credentials['access_token'] ?? '')
                 ->timeout(30)
-                ->get(self::API_BASE.'/products/'.$externalId);
+                ->get($this->getApiBase().'/products/'.$externalId);
 
             if ($response->failed()) {
                 return null;
@@ -192,7 +197,7 @@ class EbayAdapter extends AbstractChannelAdapter
 
             $response = Http::withToken($this->credentials['access_token'] ?? '')
                 ->timeout(30)
-                ->delete(self::API_BASE.'/products/'.$externalId);
+                ->delete($this->getApiBase().'/products/'.$externalId);
 
             if ($response->successful()) {
                 Log::info('[Ebay] Product deleted', ['external_id' => $externalId]);
@@ -245,7 +250,7 @@ class EbayAdapter extends AbstractChannelAdapter
             foreach ($events as $event) {
                 $response = Http::withToken($accessToken)
                     ->timeout(30)
-                    ->post(self::API_BASE.'/webhooks', [
+                    ->post($this->getApiBase().'/webhooks', [
                         'event' => $event,
                         'url'   => $callbackUrl,
                     ]);
@@ -291,7 +296,9 @@ class EbayAdapter extends AbstractChannelAdapter
         }
 
         try {
-            $response = Http::asForm()->post('https://accounts.ebay.sa/oauth2/token', [
+            $oauthUrl = $this->credentials['oauth_url'] ?? config('services.ebay.oauth_url', 'https://api.ebay.com/identity/v1/oauth2/token');
+
+            $response = Http::asForm()->post($oauthUrl, [
                 'grant_type'    => 'refresh_token',
                 'refresh_token' => $refreshToken,
                 'client_id'     => $this->credentials['client_id'] ?? '',

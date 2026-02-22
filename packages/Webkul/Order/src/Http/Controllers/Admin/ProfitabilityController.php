@@ -44,7 +44,7 @@ class ProfitabilityController extends Controller
     public function index(Request $request): View|JsonResponse
     {
         if (! bouncer()->allows('orders.profitability.view')) {
-            abort(401, trans('admin::app.errors.401'));
+            abort(403, trans('admin::app.errors.403'));
         }
 
         if ($request->ajax() && $request->has('grid')) {
@@ -83,8 +83,8 @@ class ProfitabilityController extends Controller
     {
         if (! bouncer()->allows('orders.profitability.view')) {
             return response()->json([
-                'message' => trans('admin::app.errors.401'),
-            ], 401);
+                'message' => trans('admin::app.errors.403'),
+            ], 403);
         }
 
         $startDate = $request->input('start_date', now()->subDays(30)->format('Y-m-d'));
@@ -107,8 +107,8 @@ class ProfitabilityController extends Controller
     {
         if (! bouncer()->allows('orders.profitability.view')) {
             return response()->json([
-                'message' => trans('admin::app.errors.401'),
-            ], 401);
+                'message' => trans('admin::app.errors.403'),
+            ], 403);
         }
 
         $startDate = $request->input('start_date', now()->subDays(30)->format('Y-m-d'));
@@ -131,8 +131,8 @@ class ProfitabilityController extends Controller
     {
         if (! bouncer()->allows('orders.profitability.view')) {
             return response()->json([
-                'message' => trans('admin::app.errors.401'),
-            ], 401);
+                'message' => trans('admin::app.errors.403'),
+            ], 403);
         }
 
         $startDate = $request->input('start_date', now()->subDays(30)->format('Y-m-d'));
@@ -153,7 +153,7 @@ class ProfitabilityController extends Controller
     public function export(Request $request)
     {
         if (! bouncer()->allows('orders.profitability.view')) {
-            abort(401, trans('admin::app.errors.401'));
+            abort(403, trans('admin::app.errors.403'));
         }
 
         return datagrid(ProfitabilityDataGrid::class)->export();

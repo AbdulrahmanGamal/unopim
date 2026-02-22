@@ -2,12 +2,14 @@
 
 namespace Webkul\Tenant\Auth;
 
+use Webkul\Tenant\Contracts\TenantPermissionGuard as TenantPermissionGuardContract;
+
 /**
  * TenantPermissionGuard ensures tenant-scoped roles cannot access
  * platform-reserved permissions, and filters the available permission
  * set based on the user's tenant context.
  */
-class TenantPermissionGuard
+class TenantPermissionGuard implements TenantPermissionGuardContract
 {
     /**
      * Check if a permission is platform-reserved.

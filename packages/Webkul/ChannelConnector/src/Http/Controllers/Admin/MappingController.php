@@ -2,7 +2,7 @@
 
 namespace Webkul\ChannelConnector\Http\Controllers\Admin;
 
-use Illuminate\Routing\Controller;
+use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\ChannelConnector\Http\Requests\MappingRequest;
 use Webkul\ChannelConnector\Repositories\ChannelConnectorRepository;
 use Webkul\ChannelConnector\Repositories\ChannelFieldMappingRepository;
@@ -19,7 +19,7 @@ class MappingController extends Controller
     public function index(string $code)
     {
         if (! bouncer()->hasPermission('channel_connector.mappings.view')) {
-            abort(401, 'This action is unauthorized.');
+            abort(403, 'This action is unauthorized.');
         }
 
         $connector = $this->connectorRepository->findOneByField('code', $code);
@@ -37,7 +37,7 @@ class MappingController extends Controller
     public function store(MappingRequest $request, string $code)
     {
         if (! bouncer()->hasPermission('channel_connector.mappings.edit')) {
-            abort(401, 'This action is unauthorized.');
+            abort(403, 'This action is unauthorized.');
         }
 
         $connector = $this->connectorRepository->findOneByField('code', $code);
@@ -63,7 +63,7 @@ class MappingController extends Controller
     public function preview(string $code)
     {
         if (! bouncer()->hasPermission('channel_connector.mappings.view')) {
-            abort(401, 'This action is unauthorized.');
+            abort(403, 'This action is unauthorized.');
         }
 
         $connector = $this->connectorRepository->findOneByField('code', $code);

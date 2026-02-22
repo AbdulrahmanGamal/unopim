@@ -41,7 +41,7 @@ class WebhookController extends Controller
     public function index(): View|JsonResponse
     {
         if (! bouncer()->allows('orders.webhooks.view')) {
-            abort(401, trans('admin::app.errors.401'));
+            abort(403, trans('admin::app.errors.403'));
         }
 
         if (request()->ajax()) {
@@ -59,7 +59,7 @@ class WebhookController extends Controller
     public function create(): View
     {
         if (! bouncer()->allows('orders.webhooks.create')) {
-            abort(401, trans('admin::app.errors.401'));
+            abort(403, trans('admin::app.errors.403'));
         }
 
         $channels = $this->channelRepository->all();
@@ -87,7 +87,7 @@ class WebhookController extends Controller
     public function store(WebhookStoreRequest $request): RedirectResponse
     {
         if (! bouncer()->allows('orders.webhooks.create')) {
-            abort(401, trans('admin::app.errors.401'));
+            abort(403, trans('admin::app.errors.403'));
         }
 
         $data = $request->validated();
@@ -109,7 +109,7 @@ class WebhookController extends Controller
     public function edit(int $id): View
     {
         if (! bouncer()->allows('orders.webhooks.edit')) {
-            abort(401, trans('admin::app.errors.401'));
+            abort(403, trans('admin::app.errors.403'));
         }
 
         $webhook = $this->webhookRepository->findOrFail($id);
@@ -140,7 +140,7 @@ class WebhookController extends Controller
     public function update(WebhookUpdateRequest $request, int $id): RedirectResponse
     {
         if (! bouncer()->allows('orders.webhooks.edit')) {
-            abort(401, trans('admin::app.errors.401'));
+            abort(403, trans('admin::app.errors.403'));
         }
 
         $data = $request->validated();
@@ -162,8 +162,8 @@ class WebhookController extends Controller
     {
         if (! bouncer()->allows('orders.webhooks.delete')) {
             return response()->json([
-                'message' => trans('admin::app.errors.401'),
-            ], 401);
+                'message' => trans('admin::app.errors.403'),
+            ], 403);
         }
 
         try {
@@ -189,8 +189,8 @@ class WebhookController extends Controller
     {
         if (! bouncer()->allows('orders.webhooks.edit')) {
             return response()->json([
-                'message' => trans('admin::app.errors.401'),
-            ], 401);
+                'message' => trans('admin::app.errors.403'),
+            ], 403);
         }
 
         try {
