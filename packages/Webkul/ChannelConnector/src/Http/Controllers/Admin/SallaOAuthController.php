@@ -9,6 +9,16 @@ use Webkul\ChannelConnector\Repositories\ChannelConnectorRepository;
 
 class SallaOAuthController extends Controller
 {
+    protected function getOAuthBaseUrl(): string
+    {
+        return config('services.salla.oauth_url', 'https://accounts.salla.sa');
+    }
+
+    protected function getApiBaseUrl(): string
+    {
+        return config('services.salla.api_url', 'https://api.salla.dev');
+    }
+
     public function __construct(
         protected ChannelConnectorRepository $connectorRepository,
     ) {}
@@ -41,7 +51,9 @@ class SallaOAuthController extends Controller
             'state'         => $state,
         ]);
 
-        return redirect("https://accounts.salla.sa/oauth2/auth?{$params}");
+        $oauthBaseUrl = $this->getOAuthBaseUrl();
+
+        return redirect("{$oauthBaseUrl}/oauth2/auth?{$params}");
     }
 
     public function callback(Request $request, string $code)
@@ -71,9 +83,10 @@ class SallaOAuthController extends Controller
 
         $credentials = $connector->credentials ?? [];
         $redirectUri = route('admin.channel_connector.salla.callback', $code);
+        $oauthBaseUrl = $this->getOAuthBaseUrl();
 
         try {
-            $response = Http::asForm()->post('https://accounts.salla.sa/oauth2/token', [
+            $response = Http::asForm()->post("{$oauthBaseUrl}/oauth2/token", [
                 'grant_type'    => 'authorization_code',
                 'code'          => $authCode,
                 'client_id'     => $credentials['client_id'] ?? '',

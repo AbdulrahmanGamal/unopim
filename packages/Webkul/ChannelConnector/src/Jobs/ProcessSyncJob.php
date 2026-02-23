@@ -8,6 +8,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Webkul\ChannelConnector\Events\SyncCompleted;
 use Webkul\ChannelConnector\Events\SyncFailed;
@@ -141,126 +142,131 @@ class ProcessSyncJob implements ShouldQueue
         $query->chunk(100, function ($products) use (
             $adapter, $syncEngine, $conflictResolver, $mappings, $syncJob, $connector, $conflictStrategy, $totalProducts, &$errors, &$synced, &$failed, &$conflicted, &$processed
         ) {
-            foreach ($products as $product) {
-                try {
-                    event(new SyncProductSyncing($product, $connector));
+            // Wrap each chunk in a database transaction for atomicity
+            DB::transaction(function () use (
+                $products, $adapter, $syncEngine, $conflictResolver, $mappings, $syncJob, $connector, $conflictStrategy, $totalProducts, &$errors, &$synced, &$failed, &$conflicted, &$processed
+            ) {
+                foreach ($products as $product) {
+                    try {
+                        event(new SyncProductSyncing($product, $connector));
 
-                    // Check for existing ProductChannelMapping with a stored hash
-                    $existingMapping = ProductChannelMapping::where('channel_connector_id', $connector->id)
-                        ->where('product_id', $product->id)
-                        ->where('entity_type', 'product')
-                        ->first();
+                        // Check for existing ProductChannelMapping with a stored hash
+                        $existingMapping = ProductChannelMapping::where('channel_connector_id', $connector->id)
+                            ->where('product_id', $product->id)
+                            ->where('entity_type', 'product')
+                            ->first();
 
-                    // Conflict detection: only when a mapping with a data_hash already exists
-                    if ($existingMapping && $existingMapping->data_hash) {
-                        $conflict = $conflictResolver->detectConflict(
-                            $product,
-                            $existingMapping,
-                            $adapter,
-                            $mappings,
-                            $syncJob->id,
-                        );
+                        // Conflict detection: only when a mapping with a data_hash already exists
+                        if ($existingMapping && $existingMapping->data_hash) {
+                            $conflict = $conflictResolver->detectConflict(
+                                $product,
+                                $existingMapping,
+                                $adapter,
+                                $mappings,
+                                $syncJob->id,
+                            );
 
-                        if ($conflict) {
-                            // Conflict detected - handle based on connector's conflict strategy
-                            if ($conflictStrategy === 'pim_always_wins') {
-                                $conflictResolver->resolveConflict($conflict, 'pim_wins');
-                                // Continue with normal sync after auto-resolve
-                            } elseif ($conflictStrategy === 'channel_always_wins') {
-                                $conflictResolver->resolveConflict($conflict, 'channel_wins');
-                                $conflicted++;
+                            if ($conflict) {
+                                // Conflict detected - handle based on connector's conflict strategy
+                                if ($conflictStrategy === 'pim_always_wins') {
+                                    $conflictResolver->resolveConflict($conflict, 'pim_wins');
+                                    // Continue with normal sync after auto-resolve
+                                } elseif ($conflictStrategy === 'channel_always_wins') {
+                                    $conflictResolver->resolveConflict($conflict, 'channel_wins');
+                                    $conflicted++;
 
-                                continue;
-                            } else {
-                                // 'always_ask' (default) - skip product, conflict record created
-                                $conflicted++;
+                                    continue;
+                                } else {
+                                    // 'always_ask' (default) - skip product, conflict record created
+                                    $conflicted++;
+
+                                    continue;
+                                }
+                            }
+                        }
+
+                        $payload = $syncEngine->prepareSyncPayload($product, $mappings, $connector);
+
+                        $validationRules = $connector->settings['validation_rules'] ?? [];
+                        if (! empty($validationRules)) {
+                            $validationResult = ValidationEngine::validate($payload, $validationRules);
+                            if (! $validationResult->valid) {
+                                $failed++;
+                                $errors[] = [
+                                    'product_sku' => $product->sku ?? $product->id,
+                                    'errors'      => array_map(fn ($e) => $e['message'], $validationResult->errors),
+                                ];
 
                                 continue;
                             }
                         }
-                    }
 
-                    $payload = $syncEngine->prepareSyncPayload($product, $mappings, $connector);
+                        $result = $adapter->syncProduct($product, $payload);
 
-                    $validationRules = $connector->settings['validation_rules'] ?? [];
-                    if (! empty($validationRules)) {
-                        $validationResult = ValidationEngine::validate($payload, $validationRules);
-                        if (! $validationResult->valid) {
+                        if ($result->success) {
+                            ProductChannelMapping::updateOrCreate(
+                                [
+                                    'channel_connector_id' => $connector->id,
+                                    'product_id'           => $product->id,
+                                    'entity_type'          => 'product',
+                                ],
+                                [
+                                    'external_id'    => $result->externalId,
+                                    'sync_status'    => 'synced',
+                                    'last_synced_at' => now(),
+                                    'data_hash'      => $result->dataHash ?? $syncEngine->computeDataHash($payload),
+                                ]
+                            );
+
+                            $synced++;
+
+                            Log::debug('[ChannelConnector] Product synced successfully', [
+                                'connector_id' => $connector->id,
+                                'product_id'   => $product->id,
+                                'external_id'  => $result->externalId,
+                            ]);
+                        } else {
                             $failed++;
                             $errors[] = [
                                 'product_sku' => $product->sku ?? $product->id,
-                                'errors'      => array_map(fn ($e) => $e['message'], $validationResult->errors),
+                                'errors'      => $result->errors,
                             ];
 
-                            continue;
+                            Log::warning('[ChannelConnector] Product sync failed', [
+                                'connector_id' => $connector->id,
+                                'product_id'   => $product->id,
+                                'product_sku'  => $product->sku ?? $product->id,
+                                'errors'       => $result->errors,
+                            ]);
                         }
-                    }
 
-                    $result = $adapter->syncProduct($product, $payload);
-
-                    if ($result->success) {
-                        ProductChannelMapping::updateOrCreate(
-                            [
-                                'channel_connector_id' => $connector->id,
-                                'product_id'           => $product->id,
-                                'entity_type'          => 'product',
-                            ],
-                            [
-                                'external_id'    => $result->externalId,
-                                'sync_status'    => 'synced',
-                                'last_synced_at' => now(),
-                                'data_hash'      => $result->dataHash ?? $syncEngine->computeDataHash($payload),
-                            ]
-                        );
-
-                        $synced++;
-
-                        Log::debug('[ChannelConnector] Product synced successfully', [
-                            'connector_id' => $connector->id,
-                            'product_id'   => $product->id,
-                            'external_id'  => $result->externalId,
-                        ]);
-                    } else {
+                        event(new SyncProductSynced($product, $result));
+                    } catch (\Exception $e) {
                         $failed++;
                         $errors[] = [
                             'product_sku' => $product->sku ?? $product->id,
-                            'errors'      => $result->errors,
+                            'errors'      => [$e->getMessage()],
                         ];
 
-                        Log::warning('[ChannelConnector] Product sync failed', [
+                        Log::error('[ChannelConnector] Product sync exception', [
                             'connector_id' => $connector->id,
                             'product_id'   => $product->id,
                             'product_sku'  => $product->sku ?? $product->id,
-                            'errors'       => $result->errors,
+                            'error'        => $e->getMessage(),
+                            'sync_job_id'  => $syncJob->id,
                         ]);
                     }
 
-                    event(new SyncProductSynced($product, $result));
-                } catch (\Exception $e) {
-                    $failed++;
-                    $errors[] = [
-                        'product_sku' => $product->sku ?? $product->id,
-                        'errors'      => [$e->getMessage()],
-                    ];
+                    $processed++;
 
-                    Log::error('[ChannelConnector] Product sync exception', [
-                        'connector_id' => $connector->id,
-                        'product_id'   => $product->id,
-                        'product_sku'  => $product->sku ?? $product->id,
-                        'error'        => $e->getMessage(),
-                        'sync_job_id'  => $syncJob->id,
-                    ]);
+                    Cache::put(TenantCache::key("channel_connector.sync_job.{$syncJob->id}.progress"), [
+                        'status'          => 'running',
+                        'total_products'  => $syncJob->total_products,
+                        'synced_products' => $synced,
+                        'failed_products' => $failed,
+                    ], 60);
                 }
-
-                $processed++;
-
-                Cache::put(TenantCache::key("channel_connector.sync_job.{$syncJob->id}.progress"), [
-                    'status'          => 'running',
-                    'total_products'  => $syncJob->total_products,
-                    'synced_products' => $synced,
-                    'failed_products' => $failed,
-                ], 60);
-            }
+            });
 
             $syncJob->update([
                 'synced_products' => $synced,

@@ -427,6 +427,15 @@ class ShopifyAdapter extends AbstractChannelAdapter
             $variantFields['barcode'] = $common['barcode'];
         }
 
+        if (isset($common['weight'])) {
+            $variantFields['weight'] = (float) $common['weight'];
+        }
+
+        // Attach variant fields to product input via variants array
+        if (! empty($variantFields)) {
+            $input['variants'] = [$variantFields];
+        }
+
         return $input;
     }
 

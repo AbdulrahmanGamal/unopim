@@ -27,6 +27,7 @@ class ChannelConnector extends Model implements ChannelConnectorContract, Histor
         'channel_type',
         'credentials',
         'settings',
+        'webhook_token',
         'sync_schedule',
         'status',
         'last_synced_at',

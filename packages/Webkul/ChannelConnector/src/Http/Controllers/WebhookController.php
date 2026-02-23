@@ -27,8 +27,8 @@ class WebhookController extends Controller
             'ip'         => $request->ip(),
         ]);
 
-        // 1. Find connector by webhook_token in settings JSON
-        $connector = ChannelConnector::whereJsonContains('settings->webhook_token', $token)->first();
+        // 1. Find connector by webhook_token column (indexed for performance)
+        $connector = ChannelConnector::where('webhook_token', $token)->first();
 
         if (! $connector) {
             Log::warning('[ChannelConnector] Webhook received with unknown token', [

@@ -166,21 +166,21 @@ class ConnectorController extends Controller
         ]);
 
         $settings = $connector->settings ?? [];
-
-        // Generate webhook token if not present
-        if (empty($settings['webhook_token'])) {
-            $settings['webhook_token'] = \Illuminate\Support\Str::uuid()->toString();
-        }
-
         $settings['webhook_events'] = $request->input('events', []);
 
         if ($request->has('inbound_strategy')) {
             $settings['inbound_strategy'] = $request->input('inbound_strategy');
         }
 
+        // Generate webhook token if not present (stored in dedicated column)
+        if (empty($connector->webhook_token)) {
+            $connector->webhook_token = \Illuminate\Support\Str::uuid()->toString();
+            $connector->save();
+        }
+
         // Register webhooks with channel via adapter
         $adapter = app(\Webkul\ChannelConnector\Services\AdapterResolver::class)->resolve($connector);
-        $callbackUrl = route('channel_connector.webhooks.receive', $settings['webhook_token']);
+        $callbackUrl = route('channel_connector.webhooks.receive', $connector->webhook_token);
 
         try {
             $adapter->registerWebhooks($settings['webhook_events'], $callbackUrl);

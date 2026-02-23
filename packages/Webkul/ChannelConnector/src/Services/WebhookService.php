@@ -28,7 +28,7 @@ class WebhookService
     {
         $settings = $connector->settings ?? [];
         $events = $settings['webhook_events'] ?? [];
-        $token = $settings['webhook_token'] ?? null;
+        $token = $connector->webhook_token;
 
         if (empty($events) || empty($token)) {
             Log::warning('[ChannelConnector] Webhook registration skipped: missing events or token', [
@@ -87,26 +87,26 @@ class WebhookService
 
     public function getCallbackUrl(ChannelConnector $connector): ?string
     {
-        $token = ($connector->settings ?? [])['webhook_token'] ?? null;
+        $token = $connector->webhook_token;
 
         return $token ? route('channel_connector.webhooks.receive', $token) : null;
     }
 
     public function ensureWebhookToken(ChannelConnector $connector): string
     {
-        $settings = $connector->settings ?? [];
-
-        if (empty($settings['webhook_token'])) {
-            $settings['webhook_token'] = $this->generateWebhookToken();
-            $this->connectorRepository->update(['settings' => $settings], $connector->id);
+        if (empty($connector->webhook_token)) {
+            $token = $this->generateWebhookToken();
+            $this->connectorRepository->update(['webhook_token' => $token], $connector->id);
             $connector->refresh();
 
             Log::info('[ChannelConnector] Webhook token created for connector', [
                 'connector_id' => $connector->id,
-                'token_prefix' => substr($settings['webhook_token'], 0, 8).'...',
+                'token_prefix' => substr($token, 0, 8).'...',
             ]);
+
+            return $token;
         }
 
-        return $settings['webhook_token'];
+        return $connector->webhook_token;
     }
 }

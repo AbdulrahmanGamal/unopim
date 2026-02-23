@@ -6,15 +6,23 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Webkul\ChannelConnector\Adapters\AbstractChannelAdapter;
+use Webkul\ChannelConnector\Models\ProductChannelMapping;
 use Webkul\ChannelConnector\ValueObjects\ConnectionResult;
 use Webkul\ChannelConnector\ValueObjects\RateLimitConfig;
 use Webkul\ChannelConnector\ValueObjects\SyncResult;
 use Webkul\Product\Models\Product;
-use Webkul\Salla\Models\SallaProductMapping;
 
 class SallaAdapter extends AbstractChannelAdapter
 {
-    protected const API_BASE = 'https://api.salla.dev/admin/v2';
+    protected function getApiBaseUrl(): string
+    {
+        return config('services.salla.api_url', 'https://api.salla.dev').'/admin/v2';
+    }
+
+    protected function getOAuthBaseUrl(): string
+    {
+        return config('services.salla.oauth_url', 'https://accounts.salla.sa');
+    }
 
     public function testConnection(array $credentials): ConnectionResult
     {
@@ -29,9 +37,11 @@ class SallaAdapter extends AbstractChannelAdapter
                 );
             }
 
+            $apiBase = $this->getApiBaseUrl();
+
             $response = Http::withToken($accessToken)
                 ->timeout(30)
-                ->get(self::API_BASE.'/products', ['per_page' => 1]);
+                ->get($apiBase.'/products', ['per_page' => 1]);
 
             if ($response->failed()) {
                 return new ConnectionResult(
@@ -66,10 +76,12 @@ class SallaAdapter extends AbstractChannelAdapter
             $this->ensureValidToken();
 
             $accessToken = $this->credentials['access_token'] ?? '';
+            $apiBase = $this->getApiBaseUrl();
 
-            // Use adapter-specific product mapping table
-            $existingMapping = SallaProductMapping::where('product_id', $product->id)
-                ->where('connector_id', $this->connectorId)
+            // Use unified ProductChannelMapping (consistent with other adapters)
+            $existingMapping = ProductChannelMapping::where('channel_connector_id', $this->connectorId)
+                ->where('product_id', $product->id)
+                ->where('entity_type', 'product')
                 ->first();
 
             $existingExternalId = $existingMapping?->external_id;
@@ -78,11 +90,11 @@ class SallaAdapter extends AbstractChannelAdapter
             if ($existingExternalId) {
                 $response = Http::withToken($accessToken)
                     ->timeout(30)
-                    ->put(self::API_BASE.'/products/'.$existingExternalId, $body);
+                    ->put($apiBase.'/products/'.$existingExternalId, $body);
             } else {
                 $response = Http::withToken($accessToken)
                     ->timeout(30)
-                    ->post(self::API_BASE.'/products', $body);
+                    ->post($apiBase.'/products', $body);
             }
 
             if ($response->failed()) {
@@ -99,19 +111,17 @@ class SallaAdapter extends AbstractChannelAdapter
             $data = $response->json();
             $sallaProductId = (string) ($data['data']['id'] ?? $existingExternalId ?? '');
 
-            // Update or create adapter-specific mapping
-            SallaProductMapping::updateOrCreate(
+            // Update unified ProductChannelMapping
+            ProductChannelMapping::updateOrCreate(
                 [
-                    'product_id'   => $product->id,
-                    'connector_id' => $this->connectorId,
+                    'channel_connector_id' => $this->connectorId,
+                    'product_id'           => $product->id,
+                    'entity_type'          => 'product',
                 ],
                 [
                     'external_id'    => $sallaProductId,
-                    'external_sku'   => $localeMappedData['sku'] ?? null,
-                    'variant_data'   => $localeMappedData['variants'] ?? [],
                     'sync_status'    => 'synced',
                     'last_synced_at' => now(),
-                    'error_message'  => null,
                 ]
             );
 
@@ -133,14 +143,14 @@ class SallaAdapter extends AbstractChannelAdapter
             ]);
 
             // Update mapping with error
-            SallaProductMapping::updateOrCreate(
+            ProductChannelMapping::updateOrCreate(
                 [
-                    'product_id'   => $product->id,
-                    'connector_id' => $this->connectorId,
+                    'channel_connector_id' => $this->connectorId,
+                    'product_id'           => $product->id,
+                    'entity_type'          => 'product',
                 ],
                 [
                     'sync_status'   => 'failed',
-                    'error_message' => $e->getMessage(),
                 ]
             );
 
@@ -156,10 +166,11 @@ class SallaAdapter extends AbstractChannelAdapter
     {
         try {
             $this->ensureValidToken();
+            $apiBase = $this->getApiBaseUrl();
 
             $response = Http::withToken($this->credentials['access_token'] ?? '')
                 ->timeout(30)
-                ->get(self::API_BASE.'/products/'.$externalId);
+                ->get($apiBase.'/products/'.$externalId);
 
             if ($response->failed()) {
                 return null;
@@ -189,10 +200,11 @@ class SallaAdapter extends AbstractChannelAdapter
     {
         try {
             $this->ensureValidToken();
+            $apiBase = $this->getApiBaseUrl();
 
             $response = Http::withToken($this->credentials['access_token'] ?? '')
                 ->timeout(30)
-                ->delete(self::API_BASE.'/products/'.$externalId);
+                ->delete($apiBase.'/products/'.$externalId);
 
             if ($response->successful()) {
                 Log::info('[Salla] Product deleted', ['external_id' => $externalId]);
@@ -238,6 +250,7 @@ class SallaAdapter extends AbstractChannelAdapter
     {
         try {
             $this->ensureValidToken();
+            $apiBase = $this->getApiBaseUrl();
 
             $accessToken = $this->credentials['access_token'] ?? '';
             $allSuccess = true;
@@ -245,7 +258,7 @@ class SallaAdapter extends AbstractChannelAdapter
             foreach ($events as $event) {
                 $response = Http::withToken($accessToken)
                     ->timeout(30)
-                    ->post(self::API_BASE.'/webhooks', [
+                    ->post($apiBase.'/webhooks', [
                         'event' => $event,
                         'url'   => $callbackUrl,
                     ]);
@@ -290,8 +303,10 @@ class SallaAdapter extends AbstractChannelAdapter
             return null;
         }
 
+        $oauthBaseUrl = $this->getOAuthBaseUrl();
+
         try {
-            $response = Http::asForm()->post('https://accounts.salla.sa/oauth2/token', [
+            $response = Http::asForm()->post($oauthBaseUrl.'/oauth2/token', [
                 'grant_type'    => 'refresh_token',
                 'refresh_token' => $refreshToken,
                 'client_id'     => $this->credentials['client_id'] ?? '',
