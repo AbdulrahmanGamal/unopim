@@ -59,7 +59,6 @@ class TenantServiceProvider extends ServiceProvider
         $this->app->singleton(\Webkul\Tenant\Services\TenantSeeder::class);
         $this->app->singleton(\Webkul\Tenant\Services\TenantPurger::class);
         $this->app->singleton(\Webkul\Tenant\Contracts\TenantPermissionGuard::class, \Webkul\Tenant\Auth\TenantPermissionGuard::class);
-        $this->app->alias(\Webkul\Tenant\Contracts\TenantPermissionGuard::class, \Webkul\Tenant\Auth\TenantPermissionGuard::class);
     }
 
     /**
