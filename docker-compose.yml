@@ -10,6 +10,9 @@ services:
     restart: "no"
     depends_on:
       - unopim-mysql
+    volumes:
+      - unopim-storage:/var/www/html/storage
+      - unopim-public-storage:/var/www/html/public/storage
 
   unopim-mysql:
     image: mysql:8
@@ -40,6 +43,10 @@ services:
     restart: "no"
     ports:
       - "8025:8025"
+  volumes:
+    unopim-mysql-disk: {}
+    unopim-storage: {}
+    unopim-public-storage: {}
 
 # On-disk storage of DB data, when containers are stopped
 volumes:
