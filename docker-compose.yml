@@ -5,8 +5,6 @@ services:
       context: .
       dockerfile: dockerfiles/web.Dockerfile
     container_name: unopim-web
-    volumes:
-      - .:/var/www/html
     ports:
       - "8000:80"
     restart: "no"
