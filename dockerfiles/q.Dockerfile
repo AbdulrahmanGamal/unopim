@@ -4,9 +4,14 @@ WORKDIR /var/www/html
 
 COPY --chown=www-data:www-data . /var/www/html/
 
-RUN composer install --no-dev --optimize-autoloader --no-interaction --no-progress
+RUN if [ -f composer.json ]; then \
+        composer install --no-dev --optimize-autoloader --no-interaction --no-progress; \
+    else \
+        echo "No composer.json found, skipping composer install"; \
+    fi
 
-RUN chown -R www-data:www-data storage bootstrap/cache \
+RUN mkdir -p storage bootstrap/cache \
+ && chown -R www-data:www-data storage bootstrap/cache \
  && chmod -R 775 storage bootstrap/cache
 
 COPY dockerfiles/q-entrypoint.sh /usr/local/bin/q-entrypoint.sh
