@@ -38,6 +38,8 @@ services:
       MAIL_PORT: 1025
       MAIL_FROM_ADDRESS: ${MAIL_FROM_ADDRESS}
       MAIL_FROM_NAME: Unopim
+
+      ASSET_URL: ${APP_URL}
     volumes:
       - unopim-storage:/var/www/html/storage
 
@@ -61,6 +63,7 @@ services:
       DB_DATABASE: ${DB_DATABASE}
       DB_USERNAME: ${DB_USERNAME}
       DB_PASSWORD: ${DB_PASSWORD}
+      ASSET_URL: ${APP_URL}
       CACHE_DRIVER: file
       QUEUE_CONNECTION: database
       MAIL_MAILER: smtp
