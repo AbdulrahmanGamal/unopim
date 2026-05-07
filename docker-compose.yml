@@ -9,9 +9,37 @@ services:
     restart: unless-stopped
     depends_on:
       - unopim-mysql
+    environment:
+      # App
+      APP_NAME: Unopim
+      APP_ENV: production
+      APP_DEBUG: "false"
+      APP_URL: ${APP_URL}
+      APP_KEY: ${APP_KEY}
+      LOG_CHANNEL: stack
+      LOG_LEVEL: error
+
+      # Database (host/port hardcoded — they're docker network values, not secrets)
+      DB_CONNECTION: mysql
+      DB_HOST: unopim-mysql
+      DB_PORT: 3306
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+
+      # Cache / sessions / queue
+      CACHE_DRIVER: file
+      SESSION_DRIVER: file
+      QUEUE_CONNECTION: database
+
+      # Mail (mailpit doesn't need auth)
+      MAIL_MAILER: smtp
+      MAIL_HOST: unopim-mailpit
+      MAIL_PORT: 1025
+      MAIL_FROM_ADDRESS: ${MAIL_FROM_ADDRESS}
+      MAIL_FROM_NAME: Unopim
     volumes:
       - unopim-storage:/var/www/html/storage
-      - unopim-public-storage:/var/www/html/public/storage
 
   unopim-q:
     build:
@@ -21,6 +49,23 @@ services:
     restart: unless-stopped
     depends_on:
       - unopim-mysql
+    environment:
+      APP_ENV: production
+      APP_DEBUG: "false"
+      APP_KEY: ${APP_KEY}
+      LOG_CHANNEL: stack
+      LOG_LEVEL: error
+      DB_CONNECTION: mysql
+      DB_HOST: unopim-mysql
+      DB_PORT: 3306
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      CACHE_DRIVER: file
+      QUEUE_CONNECTION: database
+      MAIL_MAILER: smtp
+      MAIL_HOST: unopim-mailpit
+      MAIL_PORT: 1025
     volumes:
       - unopim-storage:/var/www/html/storage
 
@@ -29,8 +74,8 @@ services:
     container_name: unopim-mysql
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: unopim
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
     ports:
       - "127.0.0.1:3306:3306"
     volumes:
@@ -46,4 +91,3 @@ services:
 volumes:
   unopim-mysql-disk: {}
   unopim-storage: {}
-  unopim-public-storage: {}
