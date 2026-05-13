@@ -2,6 +2,8 @@
 
 namespace Webkul\User;
 
+use Webkul\Tenant\Contracts\TenantPermissionGuard;
+
 class Bouncer
 {
     /**
@@ -12,21 +14,20 @@ class Bouncer
      */
     public function hasPermission($permission)
     {
-        if (
-            auth()->guard('admin')->check()
-            && auth()->guard('admin')->user()->role->permission_type == 'all'
-        ) {
-            return true;
-        } else {
-            if (
-                ! auth()->guard('admin')->check()
-                || ! auth()->guard('admin')->user()->hasPermission($permission)
-            ) {
-                return false;
-            }
+        if (! auth()->guard('admin')->check()) {
+            return false;
         }
 
-        return true;
+        $user = auth()->guard('admin')->user();
+
+        if ($user->role->permission_type == 'all') {
+            // Tenant users with "all" still cannot access platform-reserved permissions (Story 5.5)
+            $guard = app(TenantPermissionGuard::class);
+
+            return $guard->isAllowed($user, $permission);
+        }
+
+        return $user->hasPermission($permission);
     }
 
     /**
@@ -37,11 +38,24 @@ class Bouncer
      */
     public static function allow($permission)
     {
-        if (
-            ! auth()->guard('admin')->check()
-            || ! auth()->guard('admin')->user()->hasPermission($permission)
-        ) {
+        if (! auth()->guard('admin')->check()) {
             abort(401, 'This action is unauthorized');
+        }
+
+        $user = auth()->guard('admin')->user();
+
+        if ($user->role->permission_type == 'all') {
+            $guard = app(TenantPermissionGuard::class);
+
+            if (! $guard->isAllowed($user, $permission)) {
+                abort(403, 'This action is unauthorized');
+            }
+
+            return;
+        }
+
+        if (! $user->hasPermission($permission)) {
+            abort(403, 'This action is unauthorized');
         }
     }
 }

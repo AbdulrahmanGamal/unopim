@@ -184,6 +184,7 @@ return [
         Webkul\Category\Providers\CategoryServiceProvider::class,
         Webkul\Core\Providers\CoreServiceProvider::class,
         Webkul\Core\Providers\EnvValidatorServiceProvider::class,
+        Webkul\Tenant\Providers\TenantServiceProvider::class,
         Webkul\DataGrid\Providers\DataGridServiceProvider::class,
         Webkul\DataTransfer\Providers\DataTransferServiceProvider::class,
         Webkul\DebugBar\Providers\DebugBarServiceProvider::class,
@@ -198,6 +199,10 @@ return [
         Webkul\ElasticSearch\Providers\ElasticSearchServiceProvider::class,
         Webkul\Webhook\Providers\WebhookServiceProvider::class,
         Webkul\Completeness\Providers\CompletenessServiceProvider::class,
+        Webkul\Shopify\Providers\ShopifyServiceProvider::class,
+        // Webkul\ChannelConnector\Providers\ChannelConnectorServiceProvider::class,
+        // Webkul\Salla\Providers\SallaServiceProvider::class,
+        // Webkul\EasyOrders\Providers\EasyOrdersServiceProvider::class,
     ])->toArray(),
 
     /*

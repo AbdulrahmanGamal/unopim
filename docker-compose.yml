@@ -1,48 +1,96 @@
-version : "3"
 services:
   unopim-web:
     build:
       context: .
       dockerfile: dockerfiles/web.Dockerfile
     container_name: unopim-web
-    volumes:
-      - .:/var/www/html
     ports:
       - "8000:80"
-    restart: "no"
+    restart: unless-stopped
     depends_on:
       - unopim-mysql
-
-  unopim-mysql:
-    image: mysql:8
-    container_name: unopim-mysql
-    volumes:
-      - unopim-mysql-disk:/var/lib/mysql
-    ports:
-      - "3306:3306"
-    restart: "no"
     environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: unopim
+      # App
+      APP_NAME: Unopim
+      APP_ENV: production
+      APP_DEBUG: "false"
+      APP_URL: ${APP_URL}
+      APP_KEY: ${APP_KEY}
+      LOG_CHANNEL: stack
+      LOG_LEVEL: error
+
+      # Database (host/port hardcoded — they're docker network values, not secrets)
+      DB_CONNECTION: mysql
+      DB_HOST: unopim-mysql
+      DB_PORT: 3306
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+
+      # Cache / sessions / queue
+      CACHE_DRIVER: file
+      SESSION_DRIVER: file
+      QUEUE_CONNECTION: database
+
+      # Mail (mailpit doesn't need auth)
+      MAIL_MAILER: smtp
+      MAIL_HOST: unopim-mailpit
+      MAIL_PORT: 1025
+      MAIL_FROM_ADDRESS: ${MAIL_FROM_ADDRESS}
+      MAIL_FROM_NAME: Unopim
+
+      ASSET_URL: ${APP_URL}
+    volumes:
+      - unopim-storage:/var/www/html/storage
 
   unopim-q:
     build:
       context: .
       dockerfile: dockerfiles/q.Dockerfile
     container_name: unopim-q
-    volumes:
-      - .:/var/www/html
     restart: unless-stopped
     depends_on:
       - unopim-mysql
+    environment:
+      APP_ENV: production
+      APP_DEBUG: "false"
+      APP_KEY: ${APP_KEY}
+      LOG_CHANNEL: stack
+      LOG_LEVEL: error
+      DB_CONNECTION: mysql
+      DB_HOST: unopim-mysql
+      DB_PORT: 3306
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      ASSET_URL: ${APP_URL}
+      CACHE_DRIVER: file
+      QUEUE_CONNECTION: database
+      MAIL_MAILER: smtp
+      MAIL_HOST: unopim-mailpit
+      MAIL_PORT: 1025
+    volumes:
+      - unopim-storage:/var/www/html/storage
+
+  unopim-mysql:
+    image: mysql:8
+    container_name: unopim-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+    ports:
+      - "127.0.0.1:3306:3306"
+    volumes:
+      - unopim-mysql-disk:/var/lib/mysql
 
   unopim-mailpit:
-    image: 'axllent/mailpit:latest'
+    image: axllent/mailpit:latest
     container_name: unopim-mailpit
-    restart: "no"
+    restart: unless-stopped
     ports:
       - "8025:8025"
 
-# On-disk storage of DB data, when containers are stopped
 volumes:
   unopim-mysql-disk: {}
+  unopim-storage: {}
