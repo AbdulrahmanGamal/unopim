@@ -91,7 +91,6 @@ class Token extends PassportToken
      * A token is only valid if it belongs to the same tenant as the user.
      *
      * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
-     * @return bool
      */
     public function isValidFor($user): bool
     {
@@ -128,8 +127,6 @@ class Token extends PassportToken
 
     /**
      * Determine if the token has been revoked or expired.
-     *
-     * @return bool
      */
     public function isActive(): bool
     {
@@ -144,7 +141,6 @@ class Token extends PassportToken
      * operations that need to work within tenant boundaries.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  int  $tenantId
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeForTenant($query, int $tenantId)
@@ -171,8 +167,6 @@ class Token extends PassportToken
      * Revoke the token and all associated refresh tokens.
      *
      * Enhanced revocation that includes tenant context in audit logging.
-     *
-     * @return bool
      */
     public function revoke(): bool
     {

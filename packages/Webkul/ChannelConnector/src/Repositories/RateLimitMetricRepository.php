@@ -28,7 +28,7 @@ class RateLimitMetricRepository extends Repository
         );
 
         return $this->create(array_merge($data, [
-            'status' => $status,
+            'status'      => $status,
             'recorded_at' => now(),
         ]));
     }
@@ -63,10 +63,10 @@ class RateLimitMetricRepository extends Repository
     public function getAggregatedStats(int $connectorId, string $period = '24h'): array
     {
         $start = match ($period) {
-            '1h' => now()->subHour(),
-            '24h' => now()->subDay(),
-            '7d' => now()->subDays(7),
-            '30d' => now()->subDays(30),
+            '1h'    => now()->subHour(),
+            '24h'   => now()->subDay(),
+            '7d'    => now()->subDays(7),
+            '30d'   => now()->subDays(30),
             default => now()->subDay(),
         };
 
@@ -74,22 +74,22 @@ class RateLimitMetricRepository extends Repository
 
         if ($metrics->isEmpty()) {
             return [
-                'average_consumed' => 0,
-                'peak_consumed' => 0,
-                'total_requests' => 0,
+                'average_consumed'      => 0,
+                'peak_consumed'         => 0,
+                'total_requests'        => 0,
                 'average_response_time' => 0,
-                'warning_count' => 0,
-                'critical_count' => 0,
+                'warning_count'         => 0,
+                'critical_count'        => 0,
             ];
         }
 
         return [
-            'average_consumed' => round($metrics->avg('consumed_percentage'), 2),
-            'peak_consumed' => round($metrics->max('consumed_percentage'), 2),
-            'total_requests' => $metrics->sum('requests_made'),
+            'average_consumed'      => round($metrics->avg('consumed_percentage'), 2),
+            'peak_consumed'         => round($metrics->max('consumed_percentage'), 2),
+            'total_requests'        => $metrics->sum('requests_made'),
             'average_response_time' => round($metrics->avg('response_time_ms'), 0),
-            'warning_count' => $metrics->where('status', 'warning')->count(),
-            'critical_count' => $metrics->where('status', 'critical')->count(),
+            'warning_count'         => $metrics->where('status', 'warning')->count(),
+            'critical_count'        => $metrics->where('status', 'critical')->count(),
         ];
     }
 
@@ -120,7 +120,7 @@ class RateLimitMetricRepository extends Repository
         return match (true) {
             $consumed >= 90 => 'critical',
             $consumed >= 80 => 'warning',
-            default => 'ok',
+            default         => 'ok',
         };
     }
 }

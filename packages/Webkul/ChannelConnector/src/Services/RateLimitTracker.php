@@ -18,8 +18,8 @@ class RateLimitTracker
         int $connectorId,
         string $adapterType,
         array $headers,
-        string $endpoint = null,
-        int $responseTimeMs = null
+        ?string $endpoint = null,
+        ?int $responseTimeMs = null
     ): void {
         try {
             // Common rate limit header patterns
@@ -40,21 +40,21 @@ class RateLimitTracker
             // Only record if we have meaningful data
             if ($limitTotal || $limitRemaining) {
                 $this->rateLimitRepository->record([
-                    'connector_id' => $connectorId,
-                    'adapter_type' => $adapterType,
-                    'endpoint' => $endpoint,
+                    'connector_id'  => $connectorId,
+                    'adapter_type'  => $adapterType,
+                    'endpoint'      => $endpoint,
                     'requests_made' => $limitTotal && $limitRemaining
                         ? ($limitTotal - $limitRemaining)
                         : 0,
-                    'limit_total' => $limitTotal ?? 0,
-                    'limit_remaining' => $limitRemaining ?? 0,
-                    'reset_at' => $resetAt,
+                    'limit_total'      => $limitTotal ?? 0,
+                    'limit_remaining'  => $limitRemaining ?? 0,
+                    'reset_at'         => $resetAt,
                     'response_time_ms' => $responseTimeMs,
                 ]);
             }
         } catch (\Exception $e) {
             Log::warning('[RateLimitTracker] Failed to record metrics', [
-                'error' => $e->getMessage(),
+                'error'        => $e->getMessage(),
                 'connector_id' => $connectorId,
             ]);
         }

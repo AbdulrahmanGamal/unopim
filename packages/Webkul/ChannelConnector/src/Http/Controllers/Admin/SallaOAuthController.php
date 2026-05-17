@@ -3,8 +3,8 @@
 namespace Webkul\ChannelConnector\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
-use Webkul\Admin\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
+use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\ChannelConnector\Repositories\ChannelConnectorRepository;
 
 class SallaOAuthController extends Controller

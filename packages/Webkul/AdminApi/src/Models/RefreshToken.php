@@ -80,10 +80,10 @@ class RefreshToken extends PassportRefreshToken
                     // Log security event - tenant mismatch
                     if (function_exists('logger')) {
                         logger()->critical('RefreshToken tenant mismatch detected', [
-                            'refresh_token_id' => $refreshToken->id,
+                            'refresh_token_id'        => $refreshToken->id,
                             'refresh_token_tenant_id' => $refreshToken->tenant_id,
-                            'access_token_id' => $refreshToken->access_token_id,
-                            'access_token_tenant_id' => $refreshToken->accessToken->tenant_id,
+                            'access_token_id'         => $refreshToken->access_token_id,
+                            'access_token_tenant_id'  => $refreshToken->accessToken->tenant_id,
                         ]);
                     }
                 }
@@ -95,8 +95,6 @@ class RefreshToken extends PassportRefreshToken
      * Determine if the refresh token is valid and active.
      *
      * Enhanced validation that includes tenant verification.
-     *
-     * @return bool
      */
     public function isValid(): bool
     {
@@ -125,7 +123,6 @@ class RefreshToken extends PassportRefreshToken
      * Scope a query to only include refresh tokens for a specific tenant.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  int  $tenantId
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeForTenant($query, int $tenantId)
@@ -150,8 +147,6 @@ class RefreshToken extends PassportRefreshToken
 
     /**
      * Revoke the refresh token.
-     *
-     * @return bool
      */
     public function revoke(): bool
     {

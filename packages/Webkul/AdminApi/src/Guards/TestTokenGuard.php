@@ -3,7 +3,6 @@
 namespace Webkul\AdminApi\Guards;
 
 use Illuminate\Http\Request;
-use Laravel\Passport\TokenRepository;
 use Laravel\Passport\Token;
 
 /**

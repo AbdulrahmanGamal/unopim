@@ -3,8 +3,8 @@
 namespace Webkul\ChannelConnector\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
-use Webkul\Admin\Http\Controllers\Controller;
 use Illuminate\Validation\Rule;
+use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\ChannelConnector\DataGrids\ConflictDataGrid;
 use Webkul\ChannelConnector\Repositories\ChannelSyncConflictRepository;
 use Webkul\ChannelConnector\Services\ConflictResolver;

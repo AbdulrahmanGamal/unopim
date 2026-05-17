@@ -26,12 +26,12 @@ class RateLimitMetric extends Model
     ];
 
     protected $casts = [
-        'requests_made' => 'integer',
-        'limit_total' => 'integer',
-        'limit_remaining' => 'integer',
+        'requests_made'    => 'integer',
+        'limit_total'      => 'integer',
+        'limit_remaining'  => 'integer',
         'response_time_ms' => 'integer',
-        'reset_at' => 'datetime',
-        'recorded_at' => 'datetime',
+        'reset_at'         => 'datetime',
+        'recorded_at'      => 'datetime',
     ];
 
     public function connector(): BelongsTo
