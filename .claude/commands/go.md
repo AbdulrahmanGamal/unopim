@@ -179,6 +179,50 @@ domain_detection:
     triggers: [security, xss, csrf, injection, header, cors, sanitize, purify]
     skills: [unopim-middleware]
     docs: [patterns-middleware.md → SecureHeaders]
+
+  channel_syndication:
+    triggers: [channel adapter, syndication, sync, sync engine, salla, shopify, amazon, ebay, magento, noon, woocommerce, easyorders, marketplace, connector, conflict, bidirectional, field mapping, channel mapping, webhook signature, hmac, oauth callback, channel oauth]
+    skills: [unopim-domain, unopim-data, unopim-app, unopim-middleware]
+    docs: [docs/EPIC-001-COMPLETION-SUMMARY.md, docs/adapter-implementation-template.md, docs/api-contracts.md → Channel APIs]
+    key_files:
+      - packages/Webkul/ChannelConnector/src/Adapters/AbstractChannelAdapter.php
+      - packages/Webkul/ChannelConnector/src/Contracts/ChannelAdapterContract.php
+      - packages/Webkul/ChannelConnector/src/ValueObjects/SyncResult.php
+      - packages/Webkul/ChannelConnector/src/ValueObjects/BatchSyncResult.php
+      - packages/Webkul/ChannelConnector/src/ValueObjects/ConnectionResult.php
+      - packages/Webkul/ChannelConnector/src/ValueObjects/RateLimitConfig.php
+      - packages/Webkul/ChannelConnector/src/Services/
+      - packages/Webkul/ChannelConnector/src/Jobs/
+      - packages/Webkul/Salla/src/
+      - packages/Webkul/Shopify/src/
+      - packages/Webkul/Amazon/src/
+      - packages/Webkul/Ebay/src/
+      - packages/Webkul/Magento2/src/
+      - packages/Webkul/Noon/src/
+      - packages/Webkul/WooCommerce/src/
+      - packages/Webkul/EasyOrders/src/
+
+  tenant_isolation:
+    triggers: [tenant, multi-tenant, tenancy, tenant_id, tenant scope, tenant guard, isolation, cross-tenant]
+    skills: [unopim-data, unopim-middleware, unopim-app]
+    docs: [docs/SECURITY_AUDIT_API_TENANT_ISOLATION.md, docs/TENANT_ISOLATION_SECURITY_AUDIT.md, docs/ROUTE_MIDDLEWARE_TENANT_AUDIT.md, docs/SECURITY_AUDIT_FILE_STORAGE.md, tests/docs/tenant-testing.md]
+    key_files:
+      - packages/Webkul/Tenant/src/Eloquent/TenantAwareBuilder.php
+      - packages/Webkul/Tenant/src/Auth/TenantPermissionGuard.php
+      - packages/Webkul/Tenant/src/Traits/TenantTesting.php
+      - packages/Webkul/Tenant/src/Filesystem/
+      - packages/Webkul/Tenant/src/Cache/
+      - packages/Webkul/Tenant/src/Http/
+
+  pricing:
+    triggers: [pricing, price rule, price list, currency conversion, channel price, markup, markdown, pricing observer]
+    skills: [unopim-domain, unopim-infra]
+    docs: [patterns-domain.md → Product]
+    key_files:
+      - packages/Webkul/Pricing/src/Models/
+      - packages/Webkul/Pricing/src/Services/
+      - packages/Webkul/Pricing/src/Observers/
+      - packages/Webkul/Pricing/src/ValueObjects/
 ```
 
 ---
@@ -381,6 +425,31 @@ If error encountered:
 **Correction:** [fix applied]
 ```
 
+### 4.4 Mandatory Gate Invocation (HARD STOP)
+Before transitioning to Phase 5, evaluate:
+
+```yaml
+must_invoke_g_strict_if_any_true:
+  - complexity in [COMPLEX, EPIC]
+  - touched_packages intersects [ChannelConnector, Tenant, Pricing, AdminApi, Salla, Shopify, Amazon, Ebay, Magento2, Noon, WooCommerce, EasyOrders]
+  - new migration created
+  - new API route created
+  - new Bouncer/ACL permission added
+  - new Vue component or Blade view created
+  - command was invoked as /go strict $TASK
+```
+
+If any condition is true: **execute `STRICT REVIEW GATE` (defined below) and BLOCK Phase 5 until APPROVED.**
+
+If all conditions are false (TRIVIAL/SIMPLE in-package tweak): run abbreviated check (Pint + targeted Pest) and proceed.
+
+```markdown
+## Gate Decision
+- Conditions matched: [list]
+- Gate required: YES/NO
+- [If YES] Invoking G-STRICT now...
+```
+
 ---
 
 ## PHASE 5: COMPLETION (C in SPARC)
@@ -554,6 +623,26 @@ agents:
     type: "Explore"
     role: Codebase reconnaissance
     strengths: Finding patterns, locating files, understanding existing code
+
+  channel-adapter-specialist:
+    type: "coder"
+    role: Channel adapter & syndication specialist
+    strengths: AbstractChannelAdapter contract, OAuth flows (Salla/Shopify), webhook HMAC verification, rate limiting, idempotent sync, conflict resolution, ValueObjects, field mapping
+    activated_for: [ChannelConnector, Salla, Shopify, Amazon, Ebay, Magento2, Noon, WooCommerce, EasyOrders, channel sync work]
+
+  tenant-security-auditor:
+    type: "reviewer"
+    role: Multi-tenant isolation auditor
+    strengths: TenantAwareBuilder global scope, BelongsToTenant trait, TenantPermissionGuard, cross-tenant leak detection, file storage tenancy, cache key tenancy
+    activated_for: [Tenant package work, ANY new model with tenant_id, ANY new API route]
+    blocks_completion: true (if tenant isolation violation detected)
+
+  security-auditor:
+    type: "reviewer"
+    role: Application security gate
+    strengths: OWASP top 10, OAuth credential storage (encrypted casts), webhook signature verification, ACL completeness, ScopeMiddleware coverage, secret leak detection in logs
+    activated_for: [AdminApi, ChannelConnector, OAuth flows, webhook receivers]
+    blocks_completion: true (if HIGH/CRITICAL finding)
 ```
 
 ### Agent Coordination Pattern
@@ -625,6 +714,156 @@ $product = $this->productRepository->create($data);
 Event::dispatch('catalog.product.create.after', $product);
 ```
 
+### Tenant Isolation - EVERY Query MUST Be Tenant-Scoped
+```php
+// WRONG: unscoped query leaks across tenants
+$products = Product::where('status', true)->get();
+
+// CORRECT: model uses TenantAwareBuilder global scope automatically
+// New models that hold tenant data MUST:
+//   1. Add `tenant_id` column (FK, NOT NULL, indexed)
+//   2. Use the Tenant package's BelongsToTenant trait OR register TenantScope global scope
+//   3. Be explicitly listed in tenant fixtures + tenant-testing.md
+// Cross-tenant access requires the explicit TenantPermissionGuard check.
+
+// FORBIDDEN: bypassing the global scope without an audit trail
+Product::withoutGlobalScope(TenantScope::class)->get(); // Only allowed in Console commands tagged @cross-tenant
+```
+
+### Channel Adapters - MUST Extend AbstractChannelAdapter
+```php
+// EVERY new channel adapter:
+//   1. Extends Webkul\ChannelConnector\Adapters\AbstractChannelAdapter
+//   2. Implements ChannelAdapterContract
+//   3. Returns ValueObjects (SyncResult, BatchSyncResult, ConnectionResult) - never raw arrays
+//   4. Honors RateLimitConfig via ::throttle() (do NOT bypass)
+//   5. Logs failures via Log facade with channel context
+//   6. Encrypts credentials at rest (use Laravel encrypter, never plain text in DB)
+//   7. Idempotent syncProduct() - safe to retry
+class MyAdapter extends AbstractChannelAdapter { /* ... */ }
+```
+
+### Webhooks - Inbound Channel Webhooks MUST Verify Signature
+```php
+// WRONG: trusting payload without HMAC verification
+public function handle(Request $request) { $this->process($request->all()); }
+
+// CORRECT: verify signature BEFORE any processing
+public function handle(Request $request) {
+    if (! $this->verifyHmac($request->header('X-Salla-Signature'), $request->getContent())) {
+        abort(401);
+    }
+    $this->process($request->all());
+}
+```
+
+### OAuth Credentials - NEVER Store Plaintext
+```php
+// WRONG
+$connector->update(['access_token' => $token]);
+
+// CORRECT - cast to encrypted in the model
+protected $casts = ['access_token' => 'encrypted', 'refresh_token' => 'encrypted'];
+```
+
+---
+
+## STRICT REVIEW GATE (MANDATORY BEFORE PHASE 5 COMPLETION)
+
+### Gate G-STRICT - Hard Block, No Exceptions
+
+Every COMPLEX/EPIC task AND any task touching `ChannelConnector`, `Tenant`, `Pricing`, or any adapter package MUST pass this gate. The gate is invoked from Phase 4.4 (immediately after implementation, before Phase 5).
+
+```yaml
+gate_g_strict:
+  blocking: true
+  override: forbidden_unless_user_explicitly_says "override gate"
+
+  step_1_style:
+    command: ./vendor/bin/pint --test
+    must_be: zero violations on changed files
+    on_fail: run ./vendor/bin/pint then re-test
+
+  step_2_static_analysis:
+    if_present: ./vendor/bin/phpstan analyse (or psalm)
+    on_fail: fix all reported issues
+
+  step_3_tests:
+    command: ./vendor/bin/pest --parallel --filter="<touched packages>"
+    must_be: 100% pass on touched packages
+    must_include: at least one new test per new public method
+    coverage_floor:
+      ChannelConnector adapters: 85%
+      Tenant package: 90%
+      anything else new: 75%
+
+  step_4_pattern_compliance:
+    invoke: /unopim-review staged
+    must_pass: ALL checklist items in Steps 1-9
+    on_fail: cannot complete
+
+  step_5_security_audit:
+    if_touched: [ChannelConnector, Tenant, AdminApi, any adapter]
+    checks:
+      - tenant_id present on every new query/model
+      - HMAC verification on every inbound webhook route
+      - OAuth tokens cast to 'encrypted'
+      - No raw credentials in logs (grep changed files for $token, $secret, $key in Log:: calls)
+      - ACL permission added for every new route
+      - ScopeMiddleware on every new API route
+
+  step_6_design_system:
+    if_touched: [Admin views, Vue components]
+    checks:
+      - <x-admin::*> Blade components used (no raw <button>/<input>/<select>)
+      - dark: variant on EVERY color/bg/border utility
+      - Icon from unopim-admin font (no inline SVG for standard icons)
+      - VeeValidate on every form
+      - i18n: every visible string via @lang() or trans()
+
+  step_7_architecture_no_break:
+    checks:
+      - No cross-package concrete class import (must go via Contract)
+      - No new MySQL-specific SQL (grep for IFNULL, GROUP_CONCAT, JSON_EXTRACT, ->>'$.')
+      - Every new Model has Contract interface
+      - Every new Repository extends Webkul\Core\Eloquent\Repository
+      - Every new Controller delegates to Repository/Service
+      - No business logic in Controllers
+      - Routes named: admin.{module}.{resource}.{action}
+
+  step_8_regression_guard:
+    command: git diff master --stat | grep -E "(Product|Attribute|Category|User)" 
+    if_changes_detected: |
+      - Run full test suite, not just touched packages
+      - Verify Product values JSON structure preserved
+      - Verify ACL config not broken: php artisan acl:rebuild
+
+  on_any_failure:
+    halt: true
+    report:
+      - which step failed
+      - exact failures
+      - proposed fix
+    do_not_proceed_to_phase_5
+```
+
+### Quick Reference - Gate Output Template
+```markdown
+## Strict Gate Result
+| Check | Verdict | Notes |
+|-------|---------|-------|
+| Pint style | PASS/FAIL | |
+| PHPStan | PASS/FAIL | |
+| Pest tests | PASS/FAIL (X/Y) | |
+| /unopim-review | PASS/FAIL | |
+| Security (tenant/webhook/oauth) | PASS/FAIL | |
+| Design system | PASS/FAIL | |
+| Architecture invariants | PASS/FAIL | |
+| Regression guard | PASS/FAIL | |
+
+**Gate verdict:** APPROVED | BLOCKED
+```
+
 ---
 
 ## COMMAND VARIANTS
@@ -636,6 +875,8 @@ Event::dispatch('catalog.product.create.after', $product);
 | `/go analyze $TASK` | Deep analysis with risk assessment |
 | `/go quick $TASK` | Force TRIVIAL mode (immediate execution) |
 | `/go epic $TASK` | Force full SPARC with swarm coordination |
+| `/go strict $TASK` | Force full SPARC + MANDATORY G-STRICT gate, no overrides — use for channel/tenant/pricing work |
+| `/go review $TASK` | Skip implementation, only run G-STRICT against current diff |
 
 ---
 
@@ -656,6 +897,14 @@ Event::dispatch('catalog.product.create.after', $product);
 13. **NEVER** save files to the project root (use package directories)
 14. **SCALE** planning depth to task complexity
 15. **CHECKPOINT** after each significant change against skill patterns
+16. **ALWAYS** scope every new query/model to `tenant_id` — no unscoped reads of tenant-owned data
+17. **ALWAYS** verify HMAC signature on inbound channel webhooks BEFORE processing payload
+18. **ALWAYS** cast OAuth/API credentials with `'encrypted'` Eloquent cast — no plaintext secrets in DB or logs
+19. **ALWAYS** extend `AbstractChannelAdapter` for any new channel; return ValueObjects, never raw arrays
+20. **ALWAYS** make `syncProduct()` idempotent (safe to retry without duplicate side effects)
+21. **ALWAYS** invoke G-STRICT gate before completion when touching ChannelConnector / Tenant / Pricing / any adapter / AdminApi
+22. **NEVER** bypass `RateLimiter` / `AbstractChannelAdapter::throttle()` — channel rate limits are non-negotiable
+23. **NEVER** skip `/unopim-review` invocation on COMPLEX/EPIC tasks — it is the final compliance gate
 
 ---
 

@@ -7,11 +7,21 @@ You are an exhaustive, domain-expert code reviewer for the UnoPim PIM system. Yo
 ## Step 0 - Gather Context
 
 1. If input is "staged" or empty, run `git diff --cached` and `git diff` to get all changes
-2. If input is a branch, run `git diff main...HEAD`
+2. If input is a branch, run `git diff main...HEAD` (or `git diff master...HEAD` if main doesn't exist)
 3. If input is file paths, read each file
 4. For EVERY changed file, also read the FULL current file (not just the diff) to understand surrounding context
 5. Identify which packages are touched (map to `packages/Webkul/{Package}/`)
 6. Identify the architectural layers involved (Data, Infrastructure, Domain, Application, Middleware, Client)
+7. **Detect HARD-FAIL trigger packages.** If the diff touches any of these, automatically activate the corresponding extra step and treat any FAIL in that step as **BLOCK**, never WARN:
+
+| Touched | Activates | Hard-fail step |
+|---|---|---|
+| `Webkul/Tenant/` or any model with `tenant_id` | Step 18 | Tenant Isolation |
+| `Webkul/ChannelConnector/` | Step 19 + 20 | Adapter contract + Sync engine |
+| `Webkul/Salla/`, `/Shopify/`, `/Amazon/`, `/Ebay/`, `/Magento2/`, `/Noon/`, `/WooCommerce/`, `/EasyOrders/` | Steps 19, 20, 21, 22 | Adapter + Sync + OAuth + Webhook |
+| `Webkul/Pricing/` | Step 23 | Pricing rules |
+| Any new `routes/` file or `Routes/V1/` controller | Re-run Step 4 + 5 | Auth + API hardening |
+| Any new migration | Re-run Step 3 | Schema review |
 
 ## Step 1 - PHP / Laravel Foundations
 
@@ -429,6 +439,163 @@ You are an exhaustive, domain-expert code reviewer for the UnoPim PIM system. Yo
 - [ ] Error handling for LLM API failures (timeouts, rate limits)
 - [ ] User prompts sanitized before sending to LLM
 
+## Step 18 - Multi-Tenant Isolation (HARD-FAIL on violation)
+
+> Reference: `docs/SECURITY_AUDIT_API_TENANT_ISOLATION.md`, `docs/TENANT_ISOLATION_SECURITY_AUDIT.md`, `docs/ROUTE_MIDDLEWARE_TENANT_AUDIT.md`, `docs/SECURITY_AUDIT_FILE_STORAGE.md`
+
+### 18.1 Schema & Model
+- [ ] Every new tenant-owned table has a `tenant_id` column (NOT NULL, FK with `onDelete('cascade')`, indexed)
+- [ ] Migration includes a composite index involving `tenant_id` for hot lookup paths
+- [ ] Model uses the `BelongsToTenant` trait (or registers `TenantScope` global scope in `boot()`)
+- [ ] `$fillable` does NOT include `tenant_id` (set by trait, never by user input)
+- [ ] Factory sets `tenant_id` from current tenant context, not hardcoded
+
+### 18.2 Query Scoping
+- [ ] **No bare `Model::query()->...` calls** on tenant-owned models — global scope must be active
+- [ ] Any `withoutGlobalScope(TenantScope::class)` MUST be inside a class tagged `@cross-tenant` (Console command or admin super-user action) AND audit-logged
+- [ ] Repository methods do not bypass scope (no raw `DB::table()` queries on tenant-owned tables)
+- [ ] Eager loads (`->with()`) carry the scope through (verify with `TenantTesting` trait)
+
+### 18.3 Auth & Routing
+- [ ] Every new admin route runs through middleware that resolves the tenant (e.g. `tenant.resolve` or session-based)
+- [ ] Every new API route additionally runs `TenantPermissionGuard` or equivalent
+- [ ] Cross-tenant lookup endpoints explicitly listed in tenant audit doc; otherwise FAIL
+- [ ] Bouncer permission check runs AFTER tenant scope is set, never before
+
+### 18.4 Filesystem & Cache
+- [ ] File uploads use `tenant`-prefixed disk path: `tenants/{tenant_id}/...` (per `Webkul/Tenant/src/Filesystem/`)
+- [ ] No direct `Storage::disk('public')->put('media/...')` for tenant-owned media
+- [ ] Cache keys include tenant id: `cache_key . ':' . tenant_id` (per `Webkul/Tenant/src/Cache/`)
+- [ ] Queue jobs serialize tenant context and re-bind it on `handle()`
+
+### 18.5 Tests
+- [ ] At least one test in the file uses `TenantTesting` trait
+- [ ] Test exists proving cross-tenant read returns empty (not 200 with other tenant's data)
+- [ ] Test exists proving cross-tenant write is rejected with 403/404
+- [ ] Reference `tests/docs/tenant-testing.md` patterns
+
+## Step 19 - Channel Adapter Contract (HARD-FAIL on violation)
+
+> Reference: `packages/Webkul/ChannelConnector/src/Adapters/AbstractChannelAdapter.php`, `docs/adapter-implementation-template.md`
+
+### 19.1 Inheritance & Contract
+- [ ] Adapter class extends `Webkul\ChannelConnector\Adapters\AbstractChannelAdapter`
+- [ ] Implements `Webkul\ChannelConnector\Contracts\ChannelAdapterContract`
+- [ ] Lives in its own package: `packages/Webkul/{Channel}/src/Adapters/{Channel}Adapter.php`
+- [ ] Registered in the channel package's ServiceProvider (Concord-style)
+
+### 19.2 Method Implementation
+- [ ] `testConnection(): ConnectionResult` returns `ConnectionResult` ValueObject — never raw bool/array
+- [ ] `syncProduct(Product $product, array $data): SyncResult` returns `SyncResult` ValueObject
+- [ ] `syncProducts(Collection, array): BatchSyncResult` either uses parent implementation OR maintains the same contract (success/failed/skipped counts + errors array)
+- [ ] `getRateLimitConfig(): RateLimitConfig` returns concrete config — no defaults that exceed channel's published limits
+- [ ] All overridden public methods declare return types matching the contract
+
+### 19.3 Throttling & Retries
+- [ ] `throttle()` (from parent) called before EVERY outbound HTTP request — no direct API hits
+- [ ] Failed requests use exponential backoff (Laravel's `retry()` helper or job `$backoff` array)
+- [ ] Rate-limit hits (HTTP 429) are caught, throttle window respected, then retried — not crashed
+- [ ] HTTP timeouts set explicitly (no infinite hangs)
+
+### 19.4 Logging & Errors
+- [ ] All failures logged via `Log::channel('channel-sync')` (or `Log::error` with `connector_id` context)
+- [ ] **No credentials in log messages** — grep diff for `$this->credentials`, `$token`, `$secret`, `$key` inside `Log::` calls → FAIL if found
+- [ ] Errors returned via `SyncResult::failed()` not thrown (caller decides retry policy)
+
+### 19.5 Locale Handling
+- [ ] Uses `isRtlLocale()` from parent for direction-aware payloads
+- [ ] Validates locale is mapped before pushing to channel (no untranslated content sent)
+
+## Step 20 - Channel Sync Engine (HARD-FAIL on violation)
+
+### 20.1 Idempotency
+- [ ] `syncProduct()` is idempotent — safe to call N times with same input, produces same channel state
+- [ ] Sync jobs include an idempotency key (e.g., `connector_id + product_id + version`) and the receiver de-duplicates
+- [ ] No "already synced? skip" logic that uses local timestamps only — must verify with channel
+
+### 20.2 Conflict Resolution
+- [ ] When local edit conflicts with remote edit: code follows the strategy from `ConflictResolverEdgeCaseTest`
+- [ ] Conflicts emit `channel.sync.conflict.detected` event with both versions in payload
+- [ ] No silent overwrites — every conflict resolution leaves an audit trail in `WebhookLog` or sync log table
+
+### 20.3 Bidirectional Sync
+- [ ] Inbound webhook handlers do not re-emit outbound sync for the same change (loop prevention via `change_origin` flag or version vector)
+- [ ] Outbound sync skips fields that are channel-managed (e.g., channel-assigned IDs, computed fields)
+
+### 20.4 Field Mapping
+- [ ] `MappingService` (or equivalent) used for ALL field translation between UnoPim attributes and channel schema
+- [ ] No hardcoded attribute codes in adapters — all mappings come from `field_mappings` table
+- [ ] Auto-suggested mappings (per `AutoSuggestMappingTest`) preserved unless user explicitly overrides
+
+### 20.5 Job Reliability
+- [ ] `ProcessSyncJob` and `ProcessWebhookJob` declare `$tries`, `$backoff`, `$timeout`
+- [ ] `failed()` method updates connector status and notifies admin
+- [ ] `RetryJob` (per `RetryJobTest`) preserves original payload and idempotency key
+
+## Step 21 - OAuth & Credential Storage (HARD-FAIL on violation)
+
+### 21.1 Credential Storage
+- [ ] `access_token`, `refresh_token`, `client_secret`, `webhook_secret` columns are cast to `'encrypted'` in the model: `protected $casts = ['access_token' => 'encrypted', ...];`
+- [ ] No plaintext credentials in any seeder, factory, or test fixture committed to git
+- [ ] Credentials never appear in `dump()`, `Log::`, or response payloads
+- [ ] `getCredentials()` accessor never includes secrets in API resources / DataGrid columns
+
+### 21.2 OAuth Flow
+- [ ] Authorization URL built server-side with `state` parameter (CSRF token)
+- [ ] `state` validated on callback — mismatched state returns 403, not 500
+- [ ] Token exchange uses HTTPS only (no `http://` callback URLs accepted)
+- [ ] Refresh token flow handles expiry transparently — no user-facing 401s during normal sync
+- [ ] Revoked tokens trigger connector disconnection, not silent retry loop
+
+### 21.3 Scope & Audit
+- [ ] OAuth scopes requested are the minimum needed (documented in connector config)
+- [ ] Token issuance logged (without the token itself) for audit
+- [ ] Re-authorization required after scope upgrades — no automatic scope expansion
+
+## Step 22 - Webhook Verification (Channel inbound) (HARD-FAIL on violation)
+
+> Reference: `tests/Feature/ChannelConnector/WebhookVerificationTest.php`
+
+### 22.1 Signature Verification
+- [ ] Every inbound channel webhook route runs HMAC verification BEFORE controller body
+- [ ] Verification uses `hash_equals()` (timing-safe) — never `===` or `==`
+- [ ] HMAC algorithm matches channel spec (SHA-256 typical)
+- [ ] Failed verification returns 401 (not 200, not 500) and logs the failure
+- [ ] Webhook body parsed AFTER verification — never trust headers/body before signature check
+
+### 22.2 Replay Protection
+- [ ] Webhook payload includes/uses a timestamp; requests older than N minutes (default 5) rejected
+- [ ] Webhook IDs (e.g., `X-Salla-Event-Id`) tracked to dedupe replays
+- [ ] Idempotent processing — same event ID processed twice produces same result
+
+### 22.3 Payload Handling
+- [ ] No SSRF: webhook payload URLs (image, callback) validated against allowlist before fetch
+- [ ] Webhook handler dispatches to a queued job; HTTP response is 200/202 within 5 seconds
+- [ ] Webhook errors do NOT return raw exception messages to channel (information leak)
+
+### 22.4 Tenant Routing
+- [ ] Inbound webhook resolves tenant from connector_id (not from headers/payload, which are attacker-controlled)
+- [ ] Tenant context set BEFORE any DB query in the handler
+
+## Step 23 - Pricing Module
+
+> Reference: `packages/Webkul/Pricing/`
+
+### 23.1 Price Calculation
+- [ ] Price calculations use `Pricing` service, not inline math in controllers/adapters
+- [ ] Currency conversions go through a single converter — no scattered exchange-rate lookups
+- [ ] All monetary values stored as integer minor units (cents) OR `decimal(20,4)` consistently — never `float`
+- [ ] Rounding rule documented and applied consistently (banker's rounding or per-channel spec)
+
+### 23.2 Rules & Observers
+- [ ] Pricing rules evaluated in deterministic order (priority field, then ID)
+- [ ] Observers do not cause N+1 on bulk product save — use `unsetEventDispatcher()` in batch jobs
+- [ ] Rule changes invalidate FPC and sync queue for affected products
+
+### 23.3 Channel Price Push
+- [ ] Channel-specific price uses `values.channel_specific.{channel}.price` not a separate column
+- [ ] Adapter reads through `Pricing` service, not raw values JSON
+
 ---
 
 ## Output Format
@@ -480,8 +647,18 @@ For each reviewed file, produce:
 | Testing | x | x | x | x |
 | Elasticsearch | x | x | x | x |
 | MagicAI | x | x | x | x |
+| **Tenant Isolation** (HARD-FAIL) | x | x | x | x |
+| **Channel Adapter Contract** (HARD-FAIL) | x | x | x | x |
+| **Sync Engine** (HARD-FAIL) | x | x | x | x |
+| **OAuth & Credentials** (HARD-FAIL) | x | x | x | x |
+| **Webhook Verification** (HARD-FAIL) | x | x | x | x |
+| Pricing | x | x | x | x |
+
+**Hard-Fail Categories Touched:** [list categories where Step 0.7 activated hard-fail mode]
 
 **Overall Verdict:** APPROVE / REQUEST CHANGES / BLOCK
+
+> **BLOCK is mandatory if** any HARD-FAIL category has at least one FAIL. There is no WARN-and-merge for tenant isolation, adapter contract, sync engine, OAuth, or webhook verification.
 
 **Top Priority Fixes:**
 1. {most critical issue}
@@ -501,5 +678,14 @@ For each reviewed file, produce:
 6. **Be performance-aware** - flag N+1 queries, missing indexes, unbounded queries
 7. **Be consistency-obsessed** - enforce the same patterns across all packages
 8. **Cross-reference** - check that route names match ACL keys match menu entries
-9. **Verify completeness** - new features need: controller + route + ACL + menu + view + tests + translations + events
-10. **Check the edges** - null handling, empty arrays, missing keys in JSON, concurrent access
+9. **Verify completeness** - new features need: controller + route + ACL + menu + view + tests + translations + events. New channel adapters additionally need: AbstractChannelAdapter extension + Contract impl + ValueObject returns + ServiceProvider registration + connection test + sync test + webhook verification test + tenant-scoped tests + encrypted credential casts.
+10. **Check the edges** - null handling, empty arrays, missing keys in JSON, concurrent access, tenant boundary, expired OAuth tokens, replayed webhooks, simultaneous bidirectional edits
+11. **HARD-FAIL is hard** - for Steps 18-22, FAIL means BLOCK, never WARN. Do not soften the verdict because the rest of the change looks good. A tenant leak or unverified webhook is a release-blocker even if the surrounding code is excellent.
+12. **Grep for landmines** - on every review, run these greps over the diff and FAIL if any hit:
+    - `withoutGlobalScope.*Tenant` outside `@cross-tenant` tagged classes
+    - `Log::.*\$(token|secret|password|key|credential)` (credential leak in logs)
+    - `JSON_EXTRACT|IFNULL|GROUP_CONCAT|->>'\$\.` (MySQL-specific SQL)
+    - `dd\(|dump\(|var_dump\(|ray\(` (debug statements)
+    - `=== *\$signature|== *\$signature` (timing-unsafe HMAC compare)
+    - `http://` in OAuth callback config
+    - `'access_token' *=>` in `$fillable` (mass-assignment of secrets)
