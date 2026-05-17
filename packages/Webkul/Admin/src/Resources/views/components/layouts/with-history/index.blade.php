@@ -48,7 +48,7 @@
         @else
             <link
                 type="image/x-icon"
-                href="{{ unopim_asset('images/favicon.svg') }}"
+                href="{{ unopim_asset('images/favicon.png') }}"
                 rel="shortcut icon"
                 sizes="16x16"
             />

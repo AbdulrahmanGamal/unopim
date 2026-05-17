@@ -9,7 +9,7 @@
         <div class="flex gap-5 items-center max-w-[900px]">
             <div class="w-full">
                 <img
-                    src="{{ unopim_asset('images/logo.svg') }}"
+                    src="{{ unopim_asset('images/logo.png') }}"
                     class="mb-6"
                 >
 

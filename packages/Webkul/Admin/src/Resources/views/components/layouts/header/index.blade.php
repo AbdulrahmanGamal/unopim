@@ -21,27 +21,29 @@
                 />
             @else
                 <img
-                    src="{{ request()->cookie('dark_mode') ? unopim_asset('images/dark_logo.svg') : unopim_asset('images/logo.svg') }}"
+                    class="w-10 h-10 object-contain"
+                    src="{{ request()->cookie('dark_mode') ? unopim_asset('images/dark_logo.png') : unopim_asset('images/logo.png') }}"
                     id="logo-image"
                     alt="{{ config('app.name') }}"
                 />
             @endif
         </a>
 
-    </div>
-
-    <!-- Tenant Context Switcher / Badge -->
-    @if (isset($tenantContext))
-        @if ($isPlatformOperator ?? false)
-            <v-tenant-switcher></v-tenant-switcher>
-        @else
-            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-violet-50 dark:bg-cherry-800">
-                <span class="text-xs font-semibold text-violet-700 dark:text-violet-400">
-                    {{ $tenantContext['name'] }}
-                </span>
+        <!-- Tenant Context Switcher / Badge -->
+        @if (isset($tenantContext))
+            <div class="ml-4">
+                @if ($isPlatformOperator ?? false)
+                    <v-tenant-switcher></v-tenant-switcher>
+                @else
+                    <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-violet-50 dark:bg-cherry-800">
+                        <span class="text-xs font-semibold text-violet-700 dark:text-violet-400">
+                            Current Tenant: {{ $tenantContext['name'] }}
+                        </span>
+                    </div>
+                @endif
             </div>
         @endif
-    @endif
+    </div>
 
     <div class="flex gap-2.5 items-center">
         <!-- Dark mode Switcher -->
@@ -86,11 +88,7 @@
             <!-- Admin Dropdown -->
             <x-slot:content class="!p-0">
                 <div class="flex gap-1.5 items-center px-5 py-2.5 border border-b-gray-300 dark:border-gray-800">
-                    <img
-                        src="{{ url('cache/logo/unopim.png') }}"
-                        width="24"
-                        height="24"
-                    />
+
 
                     <!-- Version -->
                     <p class="text-gray-400">
@@ -144,7 +142,8 @@
                 />
             @else
                 <img
-                    src="{{ request()->cookie('dark_mode') ? unopim_asset('images/dark_logo.svg') : unopim_asset('images/logo.svg') }}"
+                    class="w-10 h-10 object-contain"
+                    src="{{ request()->cookie('dark_mode') ? unopim_asset('images/dark_logo.png') : unopim_asset('images/logo.png') }}"
                     id="logo-image"
                     alt="{{ config('app.name') }}"
                 />
@@ -203,9 +202,8 @@
                         <span
                             class="text-xs font-semibold"
                             :class="currentTenant ? 'text-violet-700 dark:text-violet-400' : 'text-amber-700 dark:text-amber-400'"
-                            v-text="currentLabel"
-                        ></span>
-                        <span class="icon-sort-down text-xs" :class="currentTenant ? 'text-violet-700 dark:text-violet-400' : 'text-amber-700 dark:text-amber-400'"></span>
+                        >Current Tenant: <span v-text="currentLabel"></span></span>
+                        <span class="icon-chevron-down text-lg ml-1" :class="currentTenant ? 'text-violet-700 dark:text-violet-400' : 'text-amber-700 dark:text-amber-400'"></span>
                     </button>
                 </x-slot>
 
@@ -445,9 +443,9 @@
                 return {
                     isDarkMode: {{ request()->cookie('dark_mode') ?? 0 }},
 
-                    logo: "{{ unopim_asset('images/logo.svg') }}",
+                    logo: "{{ unopim_asset('images/logo.png') }}",
 
-                    dark_logo: "{{ unopim_asset('images/dark_logo.svg') }}",
+                    dark_logo: "{{ unopim_asset('images/dark_logo.png') }}",
                 };
             },
 
@@ -466,11 +464,11 @@
                     if (this.isDarkMode) {
                         this.$emitter.emit('change-theme', 'dark');
 
-                        document.getElementById('logo-image').src = this.dark_logo;
+                        document.querySelectorAll('#logo-image').forEach(el => el.src = this.dark_logo);
                     } else {
                         this.$emitter.emit('change-theme', 'light');
 
-                        document.getElementById('logo-image').src = this.logo;
+                        document.querySelectorAll('#logo-image').forEach(el => el.src = this.logo);
                     }
                 },
 

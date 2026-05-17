@@ -1,12 +1,16 @@
 {
   "src/Resources/assets/css/app.css": {
-    "file": "assets/app-38383eee.css",
+    "file": "assets/app-6f60fde4.css",
     "isEntry": true,
     "src": "src/Resources/assets/css/app.css"
   },
   "src/Resources/assets/fonts/unopim-admin.woff": {
     "file": "assets/unopim-admin-5931adbe.woff",
     "src": "src/Resources/assets/fonts/unopim-admin.woff"
+  },
+  "src/Resources/assets/images/dark_logo.png": {
+    "file": "assets/logo-aee4104d.png",
+    "src": "src/Resources/assets/images/logo.png"
   },
   "src/Resources/assets/images/dark_logo.svg": {
     "file": "assets/dark_logo-95b7ed7c.svg",
@@ -15,6 +19,10 @@
   "src/Resources/assets/images/error.svg": {
     "file": "assets/error-f6a0b3bc.svg",
     "src": "src/Resources/assets/images/error.svg"
+  },
+  "src/Resources/assets/images/favicon.png": {
+    "file": "assets/favicon-fa4615d2.png",
+    "src": "src/Resources/assets/images/favicon.png"
   },
   "src/Resources/assets/images/favicon.svg": {
     "file": "assets/favicon-19fbef86.svg",
@@ -55,6 +63,10 @@
   "src/Resources/assets/images/icon-products.svg": {
     "file": "assets/icon-products-5b431497.svg",
     "src": "src/Resources/assets/images/icon-products.svg"
+  },
+  "src/Resources/assets/images/logo.png": {
+    "file": "assets/logo-aee4104d.png",
+    "src": "src/Resources/assets/images/logo.png"
   },
   "src/Resources/assets/images/logo.svg": {
     "file": "assets/logo-aaa4be89.svg",
@@ -104,7 +116,7 @@
     "css": [
       "assets/app-9e2a2734.css"
     ],
-    "file": "assets/app-340b6928.js",
+    "file": "assets/app-b392f23f.js",
     "isEntry": true,
     "src": "src/Resources/assets/js/app.js"
   }

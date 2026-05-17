@@ -9,14 +9,14 @@
             <!-- Logo -->
             @if ($logo = core()->getConfigData('general.design.admin_logo.logo_image'))
                 <img
-                    class="w-[110px] h-10"
+                    class="w-[80px] h-[80px] object-contain"
                     src="{{ Storage::url($logo) }}"
                     alt="{{ config('app.name') }}"
                 />
             @else
                 <img
-                    class="w-max"
-                    src="{{ unopim_asset('images/logo.svg') }}"
+                    class="w-[80px] h-[80px] object-contain"
+                    src="{{ unopim_asset('images/logo.png') }}"
                     alt="{{ config('app.name') }}"
                 />
             @endif
@@ -100,17 +100,9 @@
             <!-- Powered By -->
             <div class="absolute bottom-6 inset-x-0 text-xs text-gray-800 dark:text-white font-medium flex flex-col items-center">
                 <div>
-                    @lang('admin::app.users.sessions.powered-by', [
-                        'unopim' => '<a class="text-violet-700 hover:underline" href="https://unopim.com/" target="_blank">Unopim</a>'
-                    ])
+                    Powered by <a class="text-violet-700 hover:underline" href="https://hamzahllc.com/" target="_blank">Hamzah LLC</a> @ 2026
                 </div>
                 <div>
-                    <div class="text-xs text-gray-800 dark:text-white font-medium">
-                        @lang('admin::app.users.sessions.open-source-project-by', [
-                            'webkul' => '<a class="text-violet-700 hover:underline" href="https://webkul.com/" target="_blank">Webkul</a>',
-                        ])
-                    </div>
-                </div>
             </div>
         </div>
     </div>

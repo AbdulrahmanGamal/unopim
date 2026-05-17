@@ -89,7 +89,7 @@ services:
     container_name: unopim-mailpit
     restart: unless-stopped
     ports:
-      - "8025:8025"
+      - "8026:8025"
 
 volumes:
   unopim-mysql-disk: {}

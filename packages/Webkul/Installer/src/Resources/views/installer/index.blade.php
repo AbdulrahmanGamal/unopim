@@ -34,7 +34,7 @@
 
         <link
             type="image/x-icon"
-            href="{{ unopim_asset('images/favicon.svg') }}"
+            href="{{ unopim_asset('images/favicon.png') }}"
             rel="shortcut icon"
             sizes="16x16"
         />
@@ -112,7 +112,8 @@
                     <div class="grid items-end max-w-[362px] m-auto h-[100vh]">
                         <div class="grid gap-4">
                             <img
-                                src="{{ unopim_asset('images/logo.svg') }}"
+                                class="w-[100px] h-[100px] object-contain"
+                                src="{{ unopim_asset('images/logo.png') }}"
                                 alt="@lang('installer::app.installer.index.unopim-logo')"
                             >
 
