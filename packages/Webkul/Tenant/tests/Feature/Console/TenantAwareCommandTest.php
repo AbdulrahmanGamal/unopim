@@ -1,6 +1,10 @@
 <?php
 
 use Illuminate\Console\Command;
+use Illuminate\Console\OutputStyle;
+use Illuminate\Support\Facades\Artisan;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\BufferedOutput;
 use Webkul\Tenant\Console\Commands\TenantAwareCommand;
 use Webkul\Tenant\Models\Tenant;
 
@@ -51,7 +55,7 @@ beforeEach(function () {
 
     // Resolve the command and register it
     $command = $this->app->make('test.tenant-command');
-    \Illuminate\Support\Facades\Artisan::registerCommand($command);
+    Artisan::registerCommand($command);
 });
 
 it('sets tenant context when --tenant flag is provided with valid active tenant', function () {
@@ -108,9 +112,9 @@ it('iterates all active tenants with forAllTenants()', function () {
     $command->setLaravel($this->app);
 
     // Use OutputStyle (required by Laravel's Command class)
-    $buffered = new \Symfony\Component\Console\Output\BufferedOutput;
-    $input = new \Symfony\Component\Console\Input\ArrayInput([]);
-    $command->setOutput(new \Illuminate\Console\OutputStyle($input, $buffered));
+    $buffered = new BufferedOutput;
+    $input = new ArrayInput([]);
+    $command->setOutput(new OutputStyle($input, $buffered));
     $command->runForAll();
 
     expect($command->iteratedTenantIds)->toContain($this->tenantA->id);

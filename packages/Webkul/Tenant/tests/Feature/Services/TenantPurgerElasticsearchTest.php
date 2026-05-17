@@ -27,7 +27,7 @@ it('builds correct ES index names for tenant deletion', function () {
     $purger = app(TenantPurger::class);
 
     // Use reflection to test the private method directly
-    $ref = new \ReflectionMethod($purger, 'deleteElasticsearchIndices');
+    $ref = new ReflectionMethod($purger, 'deleteElasticsearchIndices');
     $ref->setAccessible(true);
 
     // ES is disabled by default in test, so it should return 0
@@ -59,7 +59,7 @@ it('returns 0 when tenant has empty es_index_uuid', function () {
 
     // Empty string is falsy, so deleteElasticsearchIndices should short-circuit
     $purger = app(TenantPurger::class);
-    $ref = new \ReflectionMethod($purger, 'deleteElasticsearchIndices');
+    $ref = new ReflectionMethod($purger, 'deleteElasticsearchIndices');
     $ref->setAccessible(true);
     $deleted = $ref->invoke($purger, $tenant);
 

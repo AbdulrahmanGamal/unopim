@@ -1,13 +1,22 @@
 <?php
 
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Webkul\Admin\DataGrids\Catalog\ProductDataGrid;
+use Webkul\Attribute\Models\Attribute;
+use Webkul\Attribute\Models\AttributeFamily;
+use Webkul\Category\Models\Category;
+use Webkul\Core\Models\Channel;
+use Webkul\Core\Models\Currency;
+use Webkul\Product\Models\Product;
 use Webkul\Tenant\Cache\TenantCache;
 use Webkul\Tenant\Exceptions\TenantStateTransitionException;
 use Webkul\Tenant\Models\Tenant;
 use Webkul\Tenant\Services\TenantPurger;
 use Webkul\Tenant\Services\TenantSeeder;
 use Webkul\User\Models\Admin;
+use Webkul\User\Models\Role;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,28 +36,28 @@ beforeEach(function () {
 
 it('audits all BelongsToTenant models for cross-tenant leakage', function () {
     $modelsToAudit = [
-        \Webkul\Product\Models\Product::class => [
+        Product::class => [
             'sku'                 => 'AUDIT-'.uniqid(), 'type' => 'simple',
             'attribute_family_id' => $this->fixture($this->tenantA, 'family_id'),
             'created_at'          => now(), 'updated_at' => now(),
         ],
-        \Webkul\Category\Models\Category::class => [
+        Category::class => [
             'code'       => 'audit-cat-'.uniqid(), '_lft' => 100, '_rgt' => 101,
             'created_at' => now(), 'updated_at' => now(),
         ],
-        \Webkul\Attribute\Models\Attribute::class => [
+        Attribute::class => [
             'code'       => 'audit-attr-'.uniqid(), 'type' => 'text',
             'created_at' => now(), 'updated_at' => now(),
         ],
         // attribute_families has NO timestamps columns
-        \Webkul\Attribute\Models\AttributeFamily::class => [
+        AttributeFamily::class => [
             'code' => 'audit-fam-'.uniqid(),
         ],
-        \Webkul\Core\Models\Currency::class => [
+        Currency::class => [
             'code'       => strtoupper(substr(uniqid(), 0, 3)), 'symbol' => '?',
             'created_at' => now(), 'updated_at' => now(),
         ],
-        \Webkul\User\Models\Role::class => [
+        Role::class => [
             'name'       => 'Audit Role', 'description' => 'test', 'permission_type' => 'all',
             'created_at' => now(), 'updated_at' => now(),
         ],
@@ -105,10 +114,10 @@ it('allows duplicate SKUs across different tenants', function () {
     ]);
 
     core()->setCurrentTenantId($this->tenantA->id);
-    expect(\Webkul\Product\Models\Product::where('sku', $sku)->count())->toBe(1);
+    expect(Product::where('sku', $sku)->count())->toBe(1);
 
     core()->setCurrentTenantId($this->tenantB->id);
-    expect(\Webkul\Product\Models\Product::where('sku', $sku)->count())->toBe(1);
+    expect(Product::where('sku', $sku)->count())->toBe(1);
 
     expect(DB::table('products')->where('sku', $sku)->count())->toBe(2);
 
@@ -123,7 +132,7 @@ it('enforces domain uniqueness across tenants', function () {
     Tenant::factory()->create(['domain' => $domain]);
 
     expect(fn () => Tenant::factory()->create(['domain' => $domain]))
-        ->toThrow(\Illuminate\Database\QueryException::class);
+        ->toThrow(QueryException::class);
 });
 
 // -- Scale test ---------------------------------------------------------------
@@ -157,7 +166,7 @@ it('handles 10+ tenants without performance degradation', function () {
             'updated_at'          => now(),
         ]);
 
-        expect(\Webkul\Product\Models\Product::count())->toBe(1);
+        expect(Product::count())->toBe(1);
     }
 
     core()->setCurrentTenantId(null);
@@ -198,12 +207,12 @@ it('maintains isolation during rapid context switching', function () {
     }
 
     core()->setCurrentTenantId($this->tenantA->id);
-    expect(\Webkul\Product\Models\Product::where('sku', 'like', 'RAPID-A-%')->count())->toBe(10);
-    expect(\Webkul\Product\Models\Product::where('sku', 'like', 'RAPID-B-%')->count())->toBe(0);
+    expect(Product::where('sku', 'like', 'RAPID-A-%')->count())->toBe(10);
+    expect(Product::where('sku', 'like', 'RAPID-B-%')->count())->toBe(0);
 
     core()->setCurrentTenantId($this->tenantB->id);
-    expect(\Webkul\Product\Models\Product::where('sku', 'like', 'RAPID-B-%')->count())->toBe(10);
-    expect(\Webkul\Product\Models\Product::where('sku', 'like', 'RAPID-A-%')->count())->toBe(0);
+    expect(Product::where('sku', 'like', 'RAPID-B-%')->count())->toBe(10);
+    expect(Product::where('sku', 'like', 'RAPID-A-%')->count())->toBe(0);
 
     core()->setCurrentTenantId($this->tenantA->id);
 });
@@ -237,10 +246,10 @@ it('isolates interleaved product creation across tenants', function () {
     }
 
     core()->setCurrentTenantId($this->tenantA->id);
-    expect(\Webkul\Product\Models\Product::where('sku', 'like', 'INTER-A-%')->count())->toBe(5);
+    expect(Product::where('sku', 'like', 'INTER-A-%')->count())->toBe(5);
 
     core()->setCurrentTenantId($this->tenantB->id);
-    expect(\Webkul\Product\Models\Product::where('sku', 'like', 'INTER-B-%')->count())->toBe(5);
+    expect(Product::where('sku', 'like', 'INTER-B-%')->count())->toBe(5);
 
     core()->setCurrentTenantId($this->tenantA->id);
 });
@@ -263,12 +272,12 @@ it('allows platform operator (null context) to see all tenant data', function ()
     ]);
 
     core()->setCurrentTenantId(null);
-    $allProducts = \Webkul\Product\Models\Product::withoutGlobalScopes()
+    $allProducts = Product::withoutGlobalScopes()
         ->whereIn('sku', ['PLAT-A-1', 'PLAT-B-1'])
         ->count();
     expect($allProducts)->toBe(2);
 
-    $scopedCount = \Webkul\Product\Models\Product::whereIn('sku', ['PLAT-A-1', 'PLAT-B-1'])->count();
+    $scopedCount = Product::whereIn('sku', ['PLAT-A-1', 'PLAT-B-1'])->count();
     expect($scopedCount)->toBe(2);
 
     core()->setCurrentTenantId($this->tenantA->id);
@@ -298,12 +307,12 @@ it('isolates category nested set trees per tenant', function () {
     ]);
 
     core()->setCurrentTenantId($this->tenantA->id);
-    expect(\Webkul\Category\Models\Category::whereIn('code', ['tree-root-a', 'tree-child-a'])->count())->toBe(2);
-    expect(\Webkul\Category\Models\Category::whereIn('code', ['tree-root-b', 'tree-child-b'])->count())->toBe(0);
+    expect(Category::whereIn('code', ['tree-root-a', 'tree-child-a'])->count())->toBe(2);
+    expect(Category::whereIn('code', ['tree-root-b', 'tree-child-b'])->count())->toBe(0);
 
     core()->setCurrentTenantId($this->tenantB->id);
-    expect(\Webkul\Category\Models\Category::whereIn('code', ['tree-root-a', 'tree-child-a'])->count())->toBe(0);
-    expect(\Webkul\Category\Models\Category::whereIn('code', ['tree-root-b', 'tree-child-b'])->count())->toBe(2);
+    expect(Category::whereIn('code', ['tree-root-a', 'tree-child-a'])->count())->toBe(0);
+    expect(Category::whereIn('code', ['tree-root-b', 'tree-child-b'])->count())->toBe(2);
 
     core()->setCurrentTenantId($this->tenantA->id);
 });
@@ -345,7 +354,7 @@ it('blocks tenant admin from accessing other tenants products via scope', functi
     ]);
 
     core()->setCurrentTenantId($this->tenantB->id);
-    $found = \Webkul\Product\Models\Product::find($productId);
+    $found = Product::find($productId);
     expect($found)->toBeNull();
 
     core()->setCurrentTenantId($this->tenantA->id);
@@ -361,7 +370,7 @@ it('blocks platform operator routes for tenant users', function () {
     ]);
     DB::table('channel_locales')->insert(['channel_id' => $channelId, 'locale_id' => $localeId]);
     DB::table('channel_currencies')->insert(['channel_id' => $channelId, 'currency_id' => $currencyId]);
-    $channel = \Webkul\Core\Models\Channel::withoutGlobalScopes()->find($channelId);
+    $channel = Channel::withoutGlobalScopes()->find($channelId);
     core()->setDefaultChannel($channel);
 
     $tenantAdmin = Admin::factory()->create([
@@ -430,7 +439,7 @@ it('prevents invalid state transitions', function () {
 it('ensures TenantScope is applied to DataGrid queries', function () {
     core()->setCurrentTenantId($this->tenantA->id);
 
-    $dataGrid = app(\Webkul\Admin\DataGrids\Catalog\ProductDataGrid::class);
+    $dataGrid = app(ProductDataGrid::class);
     $dataGrid->setQueryBuilder();
 
     // Access protected $queryBuilder via closure binding

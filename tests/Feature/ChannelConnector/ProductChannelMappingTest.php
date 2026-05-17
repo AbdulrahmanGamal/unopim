@@ -1,5 +1,7 @@
 <?php
 
+use Carbon\Carbon;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Webkul\ChannelConnector\Models\ChannelConnector;
 use Webkul\ChannelConnector\Models\ProductChannelMapping;
@@ -216,7 +218,7 @@ it('prevents duplicate mappings for same product and connector', function () {
             'external_id'          => 'different-ext',
             'entity_type'          => 'product',
         ]);
-    })->toThrow(\Illuminate\Database\QueryException::class);
+    })->toThrow(QueryException::class);
 });
 
 it('stores last_synced_at timestamp', function () {
@@ -231,5 +233,5 @@ it('stores last_synced_at timestamp', function () {
     ]);
 
     expect($mapping->last_synced_at)->not->toBeNull();
-    expect($mapping->last_synced_at)->toBeInstanceOf(\Carbon\Carbon::class);
+    expect($mapping->last_synced_at)->toBeInstanceOf(Carbon::class);
 });

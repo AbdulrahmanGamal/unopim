@@ -3,6 +3,7 @@
 namespace Webkul\Tenant\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Webkul\Tenant\Console\Commands\TestTenantCleanupCommand;
 use Webkul\Tenant\Traits\TenantTesting;
 
 /**
@@ -55,7 +56,7 @@ class TenantTestingServiceProvider extends ServiceProvider
             // Register commands for testing
             if ($this->app->runningInConsole()) {
                 $this->commands([
-                    \Webkul\Tenant\Console\Commands\TestTenantCleanupCommand::class,
+                    TestTenantCleanupCommand::class,
                 ]);
             }
         }

@@ -1,7 +1,10 @@
 <?php
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Webkul\Tenant\Http\Middleware\TenantSafeErrorHandler;
 
 it('converts ModelNotFoundException to normalized 404 JSON', function () {
@@ -26,7 +29,7 @@ it('converts AuthorizationException to normalized 404 JSON', function () {
     $request = Request::create('/api/products/1');
 
     $response = $middleware->handle($request, function () {
-        throw new \Illuminate\Auth\Access\AuthorizationException('This action is unauthorized.');
+        throw new AuthorizationException('This action is unauthorized.');
     });
 
     expect($response->getStatusCode())->toBe(404);
@@ -42,7 +45,7 @@ it('passes through normal responses unchanged', function () {
     $request = Request::create('/api/products');
 
     $response = $middleware->handle($request, function () {
-        return new \Illuminate\Http\Response('OK', 200);
+        return new Response('OK', 200);
     });
 
     expect($response->getStatusCode())->toBe(200);
@@ -54,7 +57,7 @@ it('converts NotFoundHttpException to normalized 404', function () {
     $request = Request::create('/nonexistent');
 
     $response = $middleware->handle($request, function () {
-        throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException('Not Found');
+        throw new NotFoundHttpException('Not Found');
     });
 
     expect($response->getStatusCode())->toBe(404);

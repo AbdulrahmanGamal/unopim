@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Webkul\Tenant\Models\Tenant;
+use Webkul\Tenant\Services\TenantSeeder;
 
 beforeEach(function () {
     Mail::fake();
@@ -55,12 +56,12 @@ it('fails without required options', function () {
 
 it('cleans up on provisioning failure', function () {
     // Bind a failing seeder to trigger cleanup
-    $this->app->singleton(\Webkul\Tenant\Services\TenantSeeder::class, function () {
-        return new class extends \Webkul\Tenant\Services\TenantSeeder
+    $this->app->singleton(TenantSeeder::class, function () {
+        return new class extends TenantSeeder
         {
-            public function seed(\Webkul\Tenant\Models\Tenant $tenant, array $options = []): array
+            public function seed(Tenant $tenant, array $options = []): array
             {
-                throw new \RuntimeException('Simulated failure');
+                throw new RuntimeException('Simulated failure');
             }
         };
     });

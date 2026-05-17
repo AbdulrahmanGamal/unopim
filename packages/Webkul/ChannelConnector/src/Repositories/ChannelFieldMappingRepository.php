@@ -2,12 +2,13 @@
 
 namespace Webkul\ChannelConnector\Repositories;
 
+use Webkul\ChannelConnector\Contracts\ChannelFieldMapping;
 use Webkul\Core\Eloquent\Repository;
 
 class ChannelFieldMappingRepository extends Repository
 {
     public function model(): string
     {
-        return \Webkul\ChannelConnector\Contracts\ChannelFieldMapping::class;
+        return ChannelFieldMapping::class;
     }
 }

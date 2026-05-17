@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\DB;
+use Webkul\Core\Models\Channel;
 use Webkul\Tenant\Models\Tenant;
 use Webkul\User\Models\Admin;
 
@@ -40,7 +41,7 @@ beforeEach(function () {
 
     // Reset Core's cached channel so it picks up the freshly-seeded one.
     // Use withoutGlobalScopes because Channel has BelongsToTenant trait.
-    $channel = \Webkul\Core\Models\Channel::withoutGlobalScopes()->find($channelId);
+    $channel = Channel::withoutGlobalScopes()->find($channelId);
     core()->setDefaultChannel($channel);
 
     // Create a platform operator admin with a role that has 'all' permissions

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Webkul\Completeness\Jobs\BulkProductCompletenessJob;
 use Webkul\Completeness\Jobs\ProductCompletenessJob;
 use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Tenant\Providers\TenantServiceProvider;
 
 class RecalculateCompletenessCommand extends Command
 {
@@ -28,7 +29,7 @@ class RecalculateCompletenessCommand extends Command
 
     public function handle(): int
     {
-        if (! $this->option('tenant') && class_exists(\Webkul\Tenant\Providers\TenantServiceProvider::class)) {
+        if (! $this->option('tenant') && class_exists(TenantServiceProvider::class)) {
             $this->error('Multi-tenant mode detected. You must specify --tenant or run for each tenant individually.');
 
             return Command::FAILURE;

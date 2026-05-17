@@ -3,16 +3,20 @@
 namespace Webkul\Amazon\Providers;
 
 use Webkul\Amazon\Adapters\AmazonAdapter;
+use Webkul\Amazon\Models\AmazonCredentialsConfig;
+use Webkul\Amazon\Models\AmazonExportMappingConfig;
+use Webkul\Amazon\Models\AmazonMappingConfig;
+use Webkul\Amazon\Models\AmazonProductMapping;
 use Webkul\ChannelConnector\Services\AdapterResolver;
 use Webkul\Core\Providers\CoreModuleServiceProvider;
 
 class ModuleServiceProvider extends CoreModuleServiceProvider
 {
     protected $models = [
-        \Webkul\Amazon\Models\AmazonCredentialsConfig::class,
-        \Webkul\Amazon\Models\AmazonExportMappingConfig::class,
-        \Webkul\Amazon\Models\AmazonMappingConfig::class,
-        \Webkul\Amazon\Models\AmazonProductMapping::class,
+        AmazonCredentialsConfig::class,
+        AmazonExportMappingConfig::class,
+        AmazonMappingConfig::class,
+        AmazonProductMapping::class,
     ];
 
     public function boot(): void

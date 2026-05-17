@@ -57,7 +57,7 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
     /**
      * The type of product.
      *
-     * @var \Webkul\Product\Type\AbstractType
+     * @var AbstractType
      */
     protected $typeInstance;
 
@@ -106,7 +106,7 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
      * Get type instance.
      *
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getTypeInstance(): AbstractType
     {
@@ -172,7 +172,7 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
      * @param  Group  $group
      * @param  bool  $skipSuperAttribute
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getEditableAttributes($group = null, $skipSuperAttribute = true): Collection
     {
@@ -291,7 +291,7 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
      * Overrides the default Eloquent query builder.
      *
      * @param  \Illuminate\Database\Query\Builder  $query
-     * @return \Webkul\Product\Database\Eloquent\Builder
+     * @return Builder
      */
     public function newEloquentBuilder($query)
     {

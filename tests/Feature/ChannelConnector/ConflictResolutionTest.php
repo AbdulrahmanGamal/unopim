@@ -7,6 +7,7 @@ use Webkul\ChannelConnector\Models\ChannelConnector;
 use Webkul\ChannelConnector\Models\ChannelSyncConflict;
 use Webkul\ChannelConnector\Models\ChannelSyncJob;
 use Webkul\ChannelConnector\Models\ProductChannelMapping;
+use Webkul\ChannelConnector\Repositories\ChannelSyncConflictRepository;
 use Webkul\ChannelConnector\Services\AdapterResolver;
 use Webkul\ChannelConnector\Services\ConflictResolver;
 use Webkul\ChannelConnector\Services\SyncEngine;
@@ -93,7 +94,7 @@ it('resolves with pim_wins by re-syncing PIM values to channel', function () {
 
     $this->app->instance(AdapterResolver::class, $mockAdapterResolver);
 
-    $conflictRepo = app(\Webkul\ChannelConnector\Repositories\ChannelSyncConflictRepository::class);
+    $conflictRepo = app(ChannelSyncConflictRepository::class);
     $syncEngine = app(SyncEngine::class);
     $resolver = new ConflictResolver($conflictRepo, $syncEngine);
 
@@ -127,7 +128,7 @@ it('resolves with channel_wins by pulling channel values into PIM', function () 
 
     $this->app->instance(AdapterResolver::class, $mockAdapterResolver);
 
-    $conflictRepo = app(\Webkul\ChannelConnector\Repositories\ChannelSyncConflictRepository::class);
+    $conflictRepo = app(ChannelSyncConflictRepository::class);
     $syncEngine = app(SyncEngine::class);
     $resolver = new ConflictResolver($conflictRepo, $syncEngine);
 
@@ -170,7 +171,7 @@ it('resolves with merged by applying per-field overrides', function () {
 
     $this->app->instance(AdapterResolver::class, $mockAdapterResolver);
 
-    $conflictRepo = app(\Webkul\ChannelConnector\Repositories\ChannelSyncConflictRepository::class);
+    $conflictRepo = app(ChannelSyncConflictRepository::class);
     $syncEngine = app(SyncEngine::class);
     $resolver = new ConflictResolver($conflictRepo, $syncEngine);
 
@@ -195,7 +196,7 @@ it('resolves with merged by applying per-field overrides', function () {
 it('resolves with dismissed without making any changes', function () {
     Event::fake([ConflictResolved::class]);
 
-    $conflictRepo = app(\Webkul\ChannelConnector\Repositories\ChannelSyncConflictRepository::class);
+    $conflictRepo = app(ChannelSyncConflictRepository::class);
     $syncEngine = app(SyncEngine::class);
     $resolver = new ConflictResolver($conflictRepo, $syncEngine);
 
@@ -219,7 +220,7 @@ it('resolves with dismissed without making any changes', function () {
 it('sets resolved_by and resolved_at correctly', function () {
     Event::fake([ConflictResolved::class]);
 
-    $conflictRepo = app(\Webkul\ChannelConnector\Repositories\ChannelSyncConflictRepository::class);
+    $conflictRepo = app(ChannelSyncConflictRepository::class);
     $syncEngine = app(SyncEngine::class);
     $resolver = new ConflictResolver($conflictRepo, $syncEngine);
 

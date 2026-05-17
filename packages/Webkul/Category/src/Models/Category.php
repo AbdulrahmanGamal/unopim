@@ -99,7 +99,7 @@ class Category extends Model implements CategoryContract, HistoryContract, Prese
      * Overrides the default Eloquent query builder.
      *
      * @param  \Illuminate\Database\Query\Builder  $query
-     * @return \Webkul\Category\Database\Eloquent\Builder
+     * @return Builder
      */
     public function newEloquentBuilder($query)
     {

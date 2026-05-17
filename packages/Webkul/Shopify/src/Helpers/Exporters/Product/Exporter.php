@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use Webkul\Attribute\Repositories\AttributeFamilyGroupMappingRepository;
 use Webkul\Attribute\Repositories\AttributeGroupRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
+use Webkul\Core\Helpers\Database\GrammarQueryManager;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\DAM\Repositories\AssetRepository;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
@@ -313,7 +314,7 @@ class Exporter extends AbstractExporter
 
                 // Fetch super attributes, ensuring they are retrieved from the parent
                 DB::raw(
-                    \Webkul\Core\Helpers\Database\GrammarQueryManager::getDriver() === 'pgsql'
+                    GrammarQueryManager::getDriver() === 'pgsql'
                         ? "COALESCE(STRING_AGG(DISTINCT attr.code, ',' ORDER BY attr.code ASC), '') as super_attributes"
                         : "COALESCE(GROUP_CONCAT(DISTINCT attr.code ORDER BY attr.code ASC SEPARATOR ','), '') as super_attributes"
                 )

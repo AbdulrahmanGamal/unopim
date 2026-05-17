@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Webkul\Core\Models\ChannelProxy;
 use Webkul\Pricing\Contracts\ChannelCost as ChannelCostContract;
+use Webkul\Pricing\Database\Factories\ChannelCostFactory;
 use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 
 class ChannelCost extends Model implements ChannelCostContract
@@ -72,6 +73,6 @@ class ChannelCost extends Model implements ChannelCostContract
      */
     protected static function newFactory()
     {
-        return \Webkul\Pricing\Database\Factories\ChannelCostFactory::new();
+        return ChannelCostFactory::new();
     }
 }

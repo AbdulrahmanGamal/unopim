@@ -70,7 +70,7 @@ it('throws exception for unregistered channel type', function () {
     ]);
 
     $resolver->resolve($connector);
-})->throws(\InvalidArgumentException::class);
+})->throws(InvalidArgumentException::class);
 
 it('resolves adapter by type without a connector model', function () {
     $resolver = app(AdapterResolver::class);

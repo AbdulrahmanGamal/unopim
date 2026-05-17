@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Webkul\Core\Contracts\Channel;
 use Webkul\Pricing\Contracts\PricingStrategy as PricingStrategyContract;
+use Webkul\Pricing\Database\Factories\PricingStrategyFactory;
 use Webkul\Product\Contracts\Product;
 use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 
@@ -138,6 +139,6 @@ class PricingStrategy extends Model implements PricingStrategyContract
      */
     protected static function newFactory()
     {
-        return \Webkul\Pricing\Database\Factories\PricingStrategyFactory::new();
+        return PricingStrategyFactory::new();
     }
 }

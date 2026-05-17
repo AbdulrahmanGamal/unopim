@@ -9,8 +9,14 @@ use Webkul\Tenant\Console\Commands\TenantCreateCommand;
 use Webkul\Tenant\Console\Commands\TenantDeleteCommand;
 use Webkul\Tenant\Console\Commands\TenantStatusCommand;
 use Webkul\Tenant\Console\Commands\TenantSuspendCommand;
+use Webkul\Tenant\Contracts\TenantPermissionGuard;
 use Webkul\Tenant\Http\Middleware\PlatformOperatorMiddleware;
 use Webkul\Tenant\Http\Middleware\TenantMiddleware;
+use Webkul\Tenant\Http\Middleware\TenantSafeErrorHandler;
+use Webkul\Tenant\Http\Middleware\TenantTokenValidator;
+use Webkul\Tenant\Models\Tenant;
+use Webkul\Tenant\Services\TenantPurger;
+use Webkul\Tenant\Services\TenantSeeder;
 
 class TenantServiceProvider extends ServiceProvider
 {
@@ -34,8 +40,8 @@ class TenantServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../Config/tenant-roles.php', 'tenant-roles');
 
         $router->aliasMiddleware('tenant', TenantMiddleware::class);
-        $router->aliasMiddleware('tenant.safe-errors', \Webkul\Tenant\Http\Middleware\TenantSafeErrorHandler::class);
-        $router->aliasMiddleware('tenant.token', \Webkul\Tenant\Http\Middleware\TenantTokenValidator::class);
+        $router->aliasMiddleware('tenant.safe-errors', TenantSafeErrorHandler::class);
+        $router->aliasMiddleware('tenant.token', TenantTokenValidator::class);
         $router->aliasMiddleware('platform.operator', PlatformOperatorMiddleware::class);
 
         if ($this->app->runningInConsole()) {
@@ -56,9 +62,9 @@ class TenantServiceProvider extends ServiceProvider
     {
         $this->registerConfig();
 
-        $this->app->singleton(\Webkul\Tenant\Services\TenantSeeder::class);
-        $this->app->singleton(\Webkul\Tenant\Services\TenantPurger::class);
-        $this->app->singleton(\Webkul\Tenant\Contracts\TenantPermissionGuard::class, \Webkul\Tenant\Auth\TenantPermissionGuard::class);
+        $this->app->singleton(TenantSeeder::class);
+        $this->app->singleton(TenantPurger::class);
+        $this->app->singleton(TenantPermissionGuard::class, \Webkul\Tenant\Auth\TenantPermissionGuard::class);
     }
 
     /**
@@ -79,7 +85,7 @@ class TenantServiceProvider extends ServiceProvider
 
                 if ($tenantId) {
                     // Tenant admin — fixed context, only expose name (no domain/status)
-                    $tenant = \Webkul\Tenant\Models\Tenant::find($tenantId);
+                    $tenant = Tenant::find($tenantId);
 
                     $tenantContext = $tenant ? [
                         'id'   => $tenant->id,
@@ -91,7 +97,7 @@ class TenantServiceProvider extends ServiceProvider
                     $sessionTenantId = session('tenant_context_id');
 
                     if ($sessionTenantId) {
-                        $tenant = \Webkul\Tenant\Models\Tenant::find($sessionTenantId);
+                        $tenant = Tenant::find($sessionTenantId);
 
                         $tenantContext = $tenant ? [
                             'id'     => $tenant->id,
@@ -114,7 +120,7 @@ class TenantServiceProvider extends ServiceProvider
                     }
 
                     $availableTenants = cache()->remember('tenant_list_active', 300, function () {
-                        return \Webkul\Tenant\Models\Tenant::where('status', 'active')
+                        return Tenant::where('status', 'active')
                             ->select('id', 'name')
                             ->orderBy('name')
                             ->limit(500)

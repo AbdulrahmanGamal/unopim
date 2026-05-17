@@ -10,6 +10,7 @@ use Webkul\ChannelConnector\Models\ChannelFieldMapping;
 use Webkul\ChannelConnector\Models\ChannelSyncConflict;
 use Webkul\ChannelConnector\Models\ChannelSyncJob;
 use Webkul\ChannelConnector\Models\ProductChannelMapping;
+use Webkul\ChannelConnector\Repositories\ChannelSyncConflictRepository;
 use Webkul\ChannelConnector\Services\AdapterResolver;
 use Webkul\ChannelConnector\Services\ConflictResolver;
 use Webkul\ChannelConnector\Services\SyncEngine;
@@ -102,7 +103,7 @@ it('pim_wins updates ProductChannelMapping data_hash after sync', function () {
     $mockAdapterResolver->shouldReceive('resolve')->andReturn($mockAdapter);
     $this->app->instance(AdapterResolver::class, $mockAdapterResolver);
 
-    $conflictRepo = app(\Webkul\ChannelConnector\Repositories\ChannelSyncConflictRepository::class);
+    $conflictRepo = app(ChannelSyncConflictRepository::class);
     $syncEngine = app(SyncEngine::class);
     $resolver = new ConflictResolver($conflictRepo, $syncEngine);
 
@@ -132,7 +133,7 @@ it('channel_wins updates product values in database', function () {
     $mockAdapterResolver->shouldReceive('resolve')->andReturn($mockAdapter);
     $this->app->instance(AdapterResolver::class, $mockAdapterResolver);
 
-    $conflictRepo = app(\Webkul\ChannelConnector\Repositories\ChannelSyncConflictRepository::class);
+    $conflictRepo = app(ChannelSyncConflictRepository::class);
     $syncEngine = app(SyncEngine::class);
     $resolver = new ConflictResolver($conflictRepo, $syncEngine);
 
@@ -174,7 +175,7 @@ it('merged applies correct per-field selections to product values', function () 
     $mockAdapterResolver->shouldReceive('resolve')->andReturn($mockAdapter);
     $this->app->instance(AdapterResolver::class, $mockAdapterResolver);
 
-    $conflictRepo = app(\Webkul\ChannelConnector\Repositories\ChannelSyncConflictRepository::class);
+    $conflictRepo = app(ChannelSyncConflictRepository::class);
     $syncEngine = app(SyncEngine::class);
     $resolver = new ConflictResolver($conflictRepo, $syncEngine);
 
@@ -208,7 +209,7 @@ it('handles adapter sync failure during pim_wins gracefully', function () {
     $mockAdapterResolver->shouldReceive('resolve')->andReturn($mockAdapter);
     $this->app->instance(AdapterResolver::class, $mockAdapterResolver);
 
-    $conflictRepo = app(\Webkul\ChannelConnector\Repositories\ChannelSyncConflictRepository::class);
+    $conflictRepo = app(ChannelSyncConflictRepository::class);
     $syncEngine = app(SyncEngine::class);
     $resolver = new ConflictResolver($conflictRepo, $syncEngine);
 
@@ -236,7 +237,7 @@ it('handles adapter fetch failure during channel_wins gracefully', function () {
     $mockAdapterResolver->shouldReceive('resolve')->andReturn($mockAdapter);
     $this->app->instance(AdapterResolver::class, $mockAdapterResolver);
 
-    $conflictRepo = app(\Webkul\ChannelConnector\Repositories\ChannelSyncConflictRepository::class);
+    $conflictRepo = app(ChannelSyncConflictRepository::class);
     $syncEngine = app(SyncEngine::class);
     $resolver = new ConflictResolver($conflictRepo, $syncEngine);
 
@@ -264,7 +265,7 @@ it('handles adapter fetch failure during merged gracefully', function () {
     $mockAdapterResolver->shouldReceive('resolve')->andReturn($mockAdapter);
     $this->app->instance(AdapterResolver::class, $mockAdapterResolver);
 
-    $conflictRepo = app(\Webkul\ChannelConnector\Repositories\ChannelSyncConflictRepository::class);
+    $conflictRepo = app(ChannelSyncConflictRepository::class);
     $syncEngine = app(SyncEngine::class);
     $resolver = new ConflictResolver($conflictRepo, $syncEngine);
 
@@ -299,7 +300,7 @@ it('detects no conflict when channel product was deleted', function () {
     $syncEngine->shouldReceive('computeDataHash')
         ->andReturn('different-hash');
 
-    $conflictRepo = app(\Webkul\ChannelConnector\Repositories\ChannelSyncConflictRepository::class);
+    $conflictRepo = app(ChannelSyncConflictRepository::class);
     $resolver = new ConflictResolver($conflictRepo, $syncEngine);
 
     $mappings = new Collection;
@@ -310,7 +311,7 @@ it('detects no conflict when channel product was deleted', function () {
 });
 
 it('builds conflicting fields with empty locale data', function () {
-    $conflictRepo = app(\Webkul\ChannelConnector\Repositories\ChannelSyncConflictRepository::class);
+    $conflictRepo = app(ChannelSyncConflictRepository::class);
     $syncEngine = app(SyncEngine::class);
     $resolver = new ConflictResolver($conflictRepo, $syncEngine);
 

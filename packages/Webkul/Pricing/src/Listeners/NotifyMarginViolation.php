@@ -3,6 +3,7 @@
 namespace Webkul\Pricing\Listeners;
 
 use Illuminate\Support\Facades\Log;
+use Webkul\Notification\Repositories\NotificationRepository;
 use Webkul\Pricing\Events\MarginBlocked;
 
 class NotifyMarginViolation
@@ -26,9 +27,9 @@ class NotifyMarginViolation
         );
 
         // Attempt to use Webkul\Notification if available, otherwise fall back to logging
-        if (class_exists(\Webkul\Notification\Repositories\NotificationRepository::class)) {
+        if (class_exists(NotificationRepository::class)) {
             try {
-                $notificationRepository = app(\Webkul\Notification\Repositories\NotificationRepository::class);
+                $notificationRepository = app(NotificationRepository::class);
 
                 $notificationRepository->create([
                     'type'    => 'margin_violation',

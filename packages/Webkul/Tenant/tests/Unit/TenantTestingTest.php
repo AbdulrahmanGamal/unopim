@@ -2,6 +2,8 @@
 
 namespace Webkul\Tenant\Tests\Unit;
 
+use App\Models\User;
+use Tests\Jobs\TestTenantJob;
 use Tests\TestCase;
 use Webkul\Tenant\Models\Tenant;
 use Webkul\Tenant\Traits\TenantTesting;
@@ -82,7 +84,7 @@ class TenantTestingTest extends TestCase
 
         // Then
         $this->assertTenantExists($tenant);
-        $this->assertInstanceOf(\App\Models\User::class, $tenant->users->first());
+        $this->assertInstanceOf(User::class, $tenant->users->first());
         $this->assertEquals('user@company.com', $tenant->users->first()->email);
     }
 
@@ -138,7 +140,7 @@ class TenantTestingTest extends TestCase
 
         // When
         $job = $this->createTenantAwareJob(
-            \Tests\Jobs\TestTenantJob::class,
+            TestTenantJob::class,
             ['data' => 'test'],
             $tenant
         );
@@ -155,7 +157,7 @@ class TenantTestingTest extends TestCase
 
         // When
         $result = $this->testTenantAwareJob(
-            \Tests\Jobs\TestTenantJob::class,
+            TestTenantJob::class,
             ['data' => 'test'],
             $tenant
         );

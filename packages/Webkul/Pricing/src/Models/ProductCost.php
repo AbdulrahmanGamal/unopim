@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Webkul\Pricing\Contracts\ProductCost as ProductCostContract;
+use Webkul\Pricing\Database\Factories\ProductCostFactory;
 use Webkul\Product\Models\ProductProxy;
 use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 use Webkul\User\Models\AdminProxy;
@@ -84,6 +85,6 @@ class ProductCost extends Model implements ProductCostContract
      */
     protected static function newFactory()
     {
-        return \Webkul\Pricing\Database\Factories\ProductCostFactory::new();
+        return ProductCostFactory::new();
     }
 }

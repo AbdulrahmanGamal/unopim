@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Database\QueryException;
 use Webkul\Pricing\Models\ProductCost;
 use Webkul\Product\Models\ProductProxy as Product;
 
@@ -176,7 +177,7 @@ it('should enforce unique constraint on product_id + cost_type + effective_from'
         'effective_from' => $effectiveFrom,
     ]);
 
-    $this->expectException(\Illuminate\Database\QueryException::class);
+    $this->expectException(QueryException::class);
 
     ProductCost::factory()->create([
         'product_id'     => $product->id,

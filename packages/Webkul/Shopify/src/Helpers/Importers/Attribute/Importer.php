@@ -7,7 +7,9 @@ use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
 use Webkul\DataTransfer\Helpers\Import;
 use Webkul\DataTransfer\Helpers\Importers\AbstractImporter;
+use Webkul\DataTransfer\Helpers\Source;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
+use Webkul\Shopify\Helpers\Iterator\AttributeIterator;
 use Webkul\Shopify\Repositories\ShopifyCredentialRepository;
 use Webkul\Shopify\Traits\ShopifyGraphqlRequest;
 use Webkul\Shopify\Traits\ValidatedBatched;
@@ -86,7 +88,7 @@ class Importer extends AbstractImporter
     /**
      * Import instance.
      *
-     * @return \Webkul\DataTransfer\Helpers\Source
+     * @return Source
      */
     public function getSource()
     {
@@ -101,7 +103,7 @@ class Importer extends AbstractImporter
             'apiVersion'  => $this->credential?->apiVersion,
         ];
 
-        return new \Webkul\Shopify\Helpers\Iterator\AttributeIterator($this->credentialArray);
+        return new AttributeIterator($this->credentialArray);
     }
 
     /**

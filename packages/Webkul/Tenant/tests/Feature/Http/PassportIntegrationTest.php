@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\DB;
 use Laravel\Passport\Passport;
 use Webkul\AdminApi\Models\Client;
 use Webkul\Tenant\Models\Concerns\BelongsToTenant;
+use Webkul\Tenant\Models\Tenant;
 use Webkul\Tenant\Models\TenantOAuthClient;
 use Webkul\User\Models\Admin;
 
@@ -99,7 +100,7 @@ it('resolves tenant from admin via the token chain', function () {
     expect($admin->tenant_id)->toBe($tA);
 
     // The chain: token → admin.tenant_id → Tenant model
-    $tenant = \Webkul\Tenant\Models\Tenant::find($admin->tenant_id);
+    $tenant = Tenant::find($admin->tenant_id);
     expect($tenant)->not->toBeNull();
     expect($tenant->id)->toBe($tA);
 });

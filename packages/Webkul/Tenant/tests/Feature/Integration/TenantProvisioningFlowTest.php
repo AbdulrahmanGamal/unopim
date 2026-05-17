@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Webkul\Core\Models\Channel;
+use Webkul\Product\Models\Product;
 use Webkul\Tenant\Models\Tenant;
 use Webkul\Tenant\Services\TenantPurger;
 use Webkul\Tenant\Services\TenantSeeder;
@@ -45,7 +47,7 @@ beforeEach(function () {
         'currency_id' => $currencyId,
     ]);
 
-    $channel = \Webkul\Core\Models\Channel::withoutGlobalScopes()->find($channelId);
+    $channel = Channel::withoutGlobalScopes()->find($channelId);
     core()->setDefaultChannel($channel);
 
     // Platform operator admin (tenant_id = null)
@@ -159,11 +161,11 @@ it('authenticates as seeded tenant admin and verifies scoped access', function (
         'updated_at'          => now(),
     ]);
 
-    $count = \Webkul\Product\Models\Product::count();
+    $count = Product::count();
     expect($count)->toBeGreaterThanOrEqual(1);
 
     core()->setCurrentTenantId($this->tenantB->id);
-    $countOther = \Webkul\Product\Models\Product::where('id', $productId)->count();
+    $countOther = Product::where('id', $productId)->count();
     expect($countOther)->toBe(0);
 
     core()->setCurrentTenantId($this->tenantA->id);
@@ -199,10 +201,10 @@ it('prevents cross-tenant visibility after provisioning', function () {
     ]);
 
     core()->setCurrentTenantId($tenantY->id);
-    expect(\Webkul\Product\Models\Product::where('sku', 'VIS-X-001')->count())->toBe(0);
+    expect(Product::where('sku', 'VIS-X-001')->count())->toBe(0);
 
     core()->setCurrentTenantId($tenantX->id);
-    expect(\Webkul\Product\Models\Product::where('sku', 'VIS-X-001')->count())->toBe(1);
+    expect(Product::where('sku', 'VIS-X-001')->count())->toBe(1);
 
     core()->setCurrentTenantId($this->tenantA->id);
 });
@@ -309,7 +311,7 @@ it('rolls back all seeded data on partial failure', function () {
         ]);
 
         DB::rollBack();
-    } catch (\Throwable $e) {
+    } catch (Throwable $e) {
         DB::rollBack();
     }
 

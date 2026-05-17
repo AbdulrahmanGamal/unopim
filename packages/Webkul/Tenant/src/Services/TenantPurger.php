@@ -3,7 +3,10 @@
 namespace Webkul\Tenant\Services;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Webkul\Core\Facades\ElasticSearch;
+use Webkul\Tenant\Cache\TenantCache;
 use Webkul\Tenant\Models\Tenant;
 
 class TenantPurger
@@ -141,7 +144,7 @@ class TenantPurger
 
     private function clearTenantCache(int $tenantId): int
     {
-        \Webkul\Tenant\Cache\TenantCache::flush($tenantId);
+        TenantCache::flush($tenantId);
 
         return 1;
     }
@@ -188,11 +191,11 @@ class TenantPurger
 
         foreach ($indices as $index) {
             try {
-                \Webkul\Core\Facades\ElasticSearch::indices()->delete(['index' => $index]);
+                ElasticSearch::indices()->delete(['index' => $index]);
                 $deleted++;
             } catch (\Throwable $e) {
                 if (! str_contains($e->getMessage(), 'index_not_found_exception')) {
-                    \Illuminate\Support\Facades\Log::channel('elasticsearch')->error(
+                    Log::channel('elasticsearch')->error(
                         "Failed to delete ES index {$index} for tenant {$tenant->id}: ".$e->getMessage()
                     );
                 }

@@ -3,6 +3,7 @@
 namespace Webkul\ChannelConnector\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\ChannelConnector\DataGrids\ConnectorDataGrid;
 use Webkul\ChannelConnector\Events\ConnectorCreated;
@@ -13,6 +14,7 @@ use Webkul\ChannelConnector\Events\ConnectorUpdated;
 use Webkul\ChannelConnector\Events\ConnectorUpdating;
 use Webkul\ChannelConnector\Http\Requests\ConnectorRequest;
 use Webkul\ChannelConnector\Repositories\ChannelConnectorRepository;
+use Webkul\ChannelConnector\Services\AdapterResolver;
 
 class ConnectorController extends Controller
 {
@@ -174,12 +176,12 @@ class ConnectorController extends Controller
 
         // Generate webhook token if not present (stored in dedicated column)
         if (empty($connector->webhook_token)) {
-            $connector->webhook_token = \Illuminate\Support\Str::uuid()->toString();
+            $connector->webhook_token = Str::uuid()->toString();
             $connector->save();
         }
 
         // Register webhooks with channel via adapter
-        $adapter = app(\Webkul\ChannelConnector\Services\AdapterResolver::class)->resolve($connector);
+        $adapter = app(AdapterResolver::class)->resolve($connector);
         $callbackUrl = route('channel_connector.webhooks.receive', $connector->webhook_token);
 
         try {

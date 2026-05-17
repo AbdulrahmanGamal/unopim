@@ -4,6 +4,7 @@ use Webkul\ChannelConnector\Jobs\ProcessWebhookJob;
 use Webkul\ChannelConnector\Models\ChannelConnector;
 use Webkul\ChannelConnector\Models\ChannelSyncConflict;
 use Webkul\ChannelConnector\Models\ProductChannelMapping;
+use Webkul\ChannelConnector\Repositories\ChannelFieldMappingRepository;
 use Webkul\Product\Models\Product;
 
 beforeEach(function () {
@@ -36,7 +37,7 @@ it('handles product.deleted event by marking mapping as deleted', function () {
         'id'    => $externalId,
     ]);
 
-    $job->handle(app(\Webkul\ChannelConnector\Repositories\ChannelFieldMappingRepository::class));
+    $job->handle(app(ChannelFieldMappingRepository::class));
 
     $mapping = ProductChannelMapping::where('external_id', $externalId)->first();
     expect($mapping->sync_status)->toBe('deleted');
@@ -52,7 +53,7 @@ it('handles product.created event with flag_for_review strategy', function () {
         ],
     ]);
 
-    $job->handle(app(\Webkul\ChannelConnector\Repositories\ChannelFieldMappingRepository::class));
+    $job->handle(app(ChannelFieldMappingRepository::class));
 
     $conflict = ChannelSyncConflict::where('channel_connector_id', $this->connector->id)
         ->where('conflict_type', 'new_in_channel')
@@ -83,7 +84,7 @@ it('handles product.updated event with flag_for_review strategy', function () {
         ],
     ]);
 
-    $job->handle(app(\Webkul\ChannelConnector\Repositories\ChannelFieldMappingRepository::class));
+    $job->handle(app(ChannelFieldMappingRepository::class));
 
     $conflict = ChannelSyncConflict::where('channel_connector_id', $this->connector->id)
         ->where('product_id', $product->id)
@@ -116,7 +117,7 @@ it('ignores webhook when inbound strategy is ignore', function () {
         'data'  => ['title' => 'Should Be Ignored'],
     ]);
 
-    $job->handle(app(\Webkul\ChannelConnector\Repositories\ChannelFieldMappingRepository::class));
+    $job->handle(app(ChannelFieldMappingRepository::class));
 
     $conflict = ChannelSyncConflict::where('channel_connector_id', $this->connector->id)
         ->where('product_id', $product->id)
@@ -132,7 +133,7 @@ it('skips processing when connector is not found', function () {
     ]);
 
     // Should not throw
-    $job->handle(app(\Webkul\ChannelConnector\Repositories\ChannelFieldMappingRepository::class));
+    $job->handle(app(ChannelFieldMappingRepository::class));
 
     // No conflicts or errors created
     $conflicts = ChannelSyncConflict::count();
@@ -157,7 +158,7 @@ it('handles Shopify-format event types (products/update)', function () {
         'data' => ['title' => 'Shopify Format Update'],
     ]);
 
-    $job->handle(app(\Webkul\ChannelConnector\Repositories\ChannelFieldMappingRepository::class));
+    $job->handle(app(ChannelFieldMappingRepository::class));
 
     $conflict = ChannelSyncConflict::where('channel_connector_id', $this->connector->id)
         ->where('product_id', $product->id)
@@ -184,7 +185,7 @@ it('handles products/delete Shopify format event', function () {
         'id'   => $externalId,
     ]);
 
-    $job->handle(app(\Webkul\ChannelConnector\Repositories\ChannelFieldMappingRepository::class));
+    $job->handle(app(ChannelFieldMappingRepository::class));
 
     $mapping = ProductChannelMapping::where('external_id', $externalId)->first();
     expect($mapping->sync_status)->toBe('deleted');
@@ -207,7 +208,7 @@ it('extracts external ID from various payload shapes', function () {
         'id'    => 'ext-shape-1',
     ]);
 
-    $job->handle(app(\Webkul\ChannelConnector\Repositories\ChannelFieldMappingRepository::class));
+    $job->handle(app(ChannelFieldMappingRepository::class));
 
     $mapping = ProductChannelMapping::where('external_id', 'ext-shape-1')->first();
     expect($mapping->sync_status)->toBe('deleted');
@@ -229,7 +230,7 @@ it('extracts external ID from data.id payload shape', function () {
         'data'  => ['id' => 'ext-shape-2'],
     ]);
 
-    $job->handle(app(\Webkul\ChannelConnector\Repositories\ChannelFieldMappingRepository::class));
+    $job->handle(app(ChannelFieldMappingRepository::class));
 
     $mapping = ProductChannelMapping::where('external_id', 'ext-shape-2')->first();
     expect($mapping->sync_status)->toBe('deleted');
@@ -259,7 +260,7 @@ it('excludes metadata fields from extracted changed fields', function () {
         ],
     ]);
 
-    $job->handle(app(\Webkul\ChannelConnector\Repositories\ChannelFieldMappingRepository::class));
+    $job->handle(app(ChannelFieldMappingRepository::class));
 
     $conflict = ChannelSyncConflict::where('product_id', $product->id)->first();
     expect($conflict->conflicting_fields)->toHaveKey('title');

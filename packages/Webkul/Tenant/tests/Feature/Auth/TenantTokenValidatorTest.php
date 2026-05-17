@@ -1,8 +1,10 @@
 <?php
 
+use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Webkul\AdminApi\Http\Middleware\ScopeMiddleware;
 use Webkul\Tenant\Http\Middleware\TenantTokenValidator;
 use Webkul\Tenant\Models\Tenant;
 
@@ -15,7 +17,7 @@ beforeEach(function () {
  */
 function mockApiGuardUser($user = null): void
 {
-    $guard = Mockery::mock(\Illuminate\Contracts\Auth\Guard::class);
+    $guard = Mockery::mock(Guard::class);
     $guard->shouldReceive('check')->andReturn(! is_null($user));
     $guard->shouldReceive('user')->andReturn($user);
 
@@ -38,7 +40,7 @@ it('allows requests when no API user is authenticated', function () {
 });
 
 it('rejects orphaned tokens when tenant is deleted (FR-5.6)', function () {
-    $user = new \stdClass;
+    $user = new stdClass;
     $user->tenant_id = 99999;
     $user->id = 1;
     $user->email = 'test@example.com';
@@ -60,7 +62,7 @@ it('rejects orphaned tokens when tenant is deleted (FR-5.6)', function () {
 it('rejects tokens for suspended tenants (FR-5.6)', function () {
     $tenant = Tenant::factory()->create(['status' => Tenant::STATUS_SUSPENDED]);
 
-    $user = new \stdClass;
+    $user = new stdClass;
     $user->tenant_id = $tenant->id;
     $user->id = 1;
     $user->email = 'test@example.com';
@@ -82,7 +84,7 @@ it('rejects tokens for suspended tenants (FR-5.6)', function () {
 it('allows tokens for active tenants and sets context (FR-5.6)', function () {
     $tenant = Tenant::factory()->create(['status' => Tenant::STATUS_ACTIVE]);
 
-    $user = new \stdClass;
+    $user = new stdClass;
     $user->tenant_id = $tenant->id;
     $user->id = 1;
     $user->email = 'test@example.com';
@@ -106,7 +108,7 @@ it('allows tokens for active tenants and sets context (FR-5.6)', function () {
 });
 
 it('allows platform users (tenant_id=null) to bypass tenant validation (FR-5.4)', function () {
-    $user = new \stdClass;
+    $user = new stdClass;
     $user->tenant_id = null;
     $user->id = 1;
     $user->email = 'operator@example.com';
@@ -126,7 +128,7 @@ it('allows platform users (tenant_id=null) to bypass tenant validation (FR-5.4)'
 // --- Story 5.7: REST API endpoint auto-scoping ---
 
 it('ScopeMiddleware enforces tenant permission guard for API (FR-5.7)', function () {
-    $middleware = new \Webkul\AdminApi\Http\Middleware\ScopeMiddleware;
+    $middleware = new ScopeMiddleware;
 
     expect(method_exists($middleware, 'hasPermission'))->toBeTrue();
 });

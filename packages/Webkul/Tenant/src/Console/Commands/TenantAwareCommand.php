@@ -4,6 +4,7 @@ namespace Webkul\Tenant\Console\Commands;
 
 use Closure;
 use Illuminate\Console\Command;
+use Symfony\Component\Console\Input\InputOption;
 use Webkul\Tenant\Models\Tenant;
 
 abstract class TenantAwareCommand extends Command
@@ -80,7 +81,7 @@ abstract class TenantAwareCommand extends Command
     protected function getOptions(): array
     {
         return array_merge(parent::getOptions(), [
-            ['tenant', null, \Symfony\Component\Console\Input\InputOption::VALUE_OPTIONAL, 'The tenant ID to run the command for'],
+            ['tenant', null, InputOption::VALUE_OPTIONAL, 'The tenant ID to run the command for'],
         ]);
     }
 }

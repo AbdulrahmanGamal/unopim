@@ -5,6 +5,7 @@ namespace Webkul\AdminApi\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Webkul\Tenant\Auth\TenantPermissionGuard;
 
 class ScopeMiddleware
 {
@@ -38,7 +39,7 @@ class ScopeMiddleware
 
         if ($user->apiKey->permission_type == 'all') {
             // Tenant API users with "all" still cannot access platform-reserved permissions (Story 5.5)
-            $guard = app(\Webkul\Tenant\Auth\TenantPermissionGuard::class);
+            $guard = app(TenantPermissionGuard::class);
 
             return $guard->isAllowed($user, $permission);
         }

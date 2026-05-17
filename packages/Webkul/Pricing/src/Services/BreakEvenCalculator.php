@@ -3,8 +3,11 @@
 namespace Webkul\Pricing\Services;
 
 use Carbon\CarbonImmutable;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Webkul\Pricing\Exceptions\ImpossibleBreakEvenException;
+use Webkul\Pricing\Models\ChannelCost;
 use Webkul\Pricing\Repositories\ChannelCostRepository;
 use Webkul\Pricing\Repositories\ProductCostRepository;
 use Webkul\Pricing\ValueObjects\BreakEvenResult;
@@ -61,8 +64,8 @@ class BreakEvenCalculator
      * @param  string|null  $currency  ISO 4217 currency code override (defaults to product cost currency).
      * @return BreakEvenResult Immutable value object with all calculation details.
      *
-     * @throws \Webkul\Pricing\Exceptions\ImpossibleBreakEvenException If variable rate >= 100%.
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException If product not found.
+     * @throws ImpossibleBreakEvenException If variable rate >= 100%.
+     * @throws ModelNotFoundException If product not found.
      */
     public function calculate(int $productId, ?int $channelId = null, ?string $currency = null): BreakEvenResult
     {
@@ -267,7 +270,7 @@ class BreakEvenCalculator
      *
      * Variable rate = (commission% + payment_processing% + marketing%) / 100
      *
-     * @param  \Webkul\Pricing\Models\ChannelCost|null  $channelCost  Active channel cost structure.
+     * @param  ChannelCost|null  $channelCost  Active channel cost structure.
      * @param  string  $marketingRate  Marketing percentage from product costs (BCMath string).
      * @return string The combined variable rate as a decimal string (0.0 to < 1.0).
      */
@@ -296,7 +299,7 @@ class BreakEvenCalculator
      * @param  string  $variableRate  Combined variable rate as decimal string (< 1.0).
      * @return string The break-even price (BCMath string).
      *
-     * @throws \Webkul\Pricing\Exceptions\ImpossibleBreakEvenException
+     * @throws ImpossibleBreakEvenException
      */
     protected function computeBreakEven(string $fixedCosts, string $variableRate): string
     {
@@ -306,7 +309,7 @@ class BreakEvenCalculator
                 'variable_rate' => $variableRate,
             ]);
 
-            throw new \Webkul\Pricing\Exceptions\ImpossibleBreakEvenException(
+            throw new ImpossibleBreakEvenException(
                 "Cannot calculate break-even: total variable cost rate ({$variableRate}) equals or exceeds 100%. "
                 .'This means every sale would incur a loss regardless of price. '
                 .'Review commission, payment processing, and marketing rates.'

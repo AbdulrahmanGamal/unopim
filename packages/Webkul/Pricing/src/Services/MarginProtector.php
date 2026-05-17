@@ -2,6 +2,7 @@
 
 namespace Webkul\Pricing\Services;
 
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Webkul\Pricing\Events\MarginApproved;
@@ -186,7 +187,7 @@ class MarginProtector
      * @param  string|null  $reason  Optional justification for the approval.
      * @return MarginProtectionEvent The updated event record.
      *
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException If event not found.
+     * @throws ModelNotFoundException If event not found.
      * @throws \LogicException If event is not in a state that can be approved.
      */
     public function approve(int $eventId, int $approverId, ?string $reason = null): MarginProtectionEvent
@@ -235,7 +236,7 @@ class MarginProtector
      * @param  string  $reason  Mandatory reason for rejection.
      * @return MarginProtectionEvent The updated event record.
      *
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException If event not found.
+     * @throws ModelNotFoundException If event not found.
      */
     public function reject(int $eventId, int $approverId, string $reason): MarginProtectionEvent
     {

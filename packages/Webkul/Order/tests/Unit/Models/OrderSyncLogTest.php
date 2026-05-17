@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Carbon;
 use Webkul\Channel\Models\Channel;
 use Webkul\Order\Models\OrderSyncLog;
 
@@ -96,8 +97,8 @@ it('casts attributes correctly', function () {
         'metadata'     => ['synced_count' => 10],
     ]);
 
-    expect($log->started_at)->toBeInstanceOf(\Illuminate\Support\Carbon::class)
-        ->and($log->completed_at)->toBeInstanceOf(\Illuminate\Support\Carbon::class)
+    expect($log->started_at)->toBeInstanceOf(Carbon::class)
+        ->and($log->completed_at)->toBeInstanceOf(Carbon::class)
         ->and($log->metadata)->toBeArray();
 });
 

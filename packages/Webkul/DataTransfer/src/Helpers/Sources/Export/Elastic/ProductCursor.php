@@ -2,6 +2,7 @@
 
 namespace Webkul\DataTransfer\Helpers\Sources\Export\Elastic;
 
+use Illuminate\Support\Facades\DB;
 use Webkul\Core\Facades\ElasticSearch;
 use Webkul\ElasticSearch\Cursor\AbstractElasticCursor;
 
@@ -84,7 +85,7 @@ class ProductCursor extends AbstractElasticCursor
 
         if ($tenantId) {
             try {
-                $uuid = \Illuminate\Support\Facades\DB::table('tenants')
+                $uuid = DB::table('tenants')
                     ->where('id', $tenantId)
                     ->value('es_index_uuid');
 

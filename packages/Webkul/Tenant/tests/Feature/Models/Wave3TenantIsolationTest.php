@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\DB;
+use Webkul\Attribute\Models\AttributeOption;
+use Webkul\Category\Models\CategoryField;
 use Webkul\DataTransfer\Models\JobInstances;
 use Webkul\Notification\Models\Notification;
 use Webkul\Tenant\Models\TenantOAuthClient;
@@ -117,12 +119,12 @@ it('isolates AttributeOption records between tenants', function () {
     ]);
 
     core()->setCurrentTenantId($tA);
-    $opts = \Webkul\Attribute\Models\AttributeOption::all();
+    $opts = AttributeOption::all();
     expect($opts)->toHaveCount(1);
     expect($opts->first()->code)->toBe('opt-red');
 
     core()->setCurrentTenantId($tB);
-    $opts = \Webkul\Attribute\Models\AttributeOption::all();
+    $opts = AttributeOption::all();
     expect($opts)->toHaveCount(1);
     expect($opts->first()->code)->toBe('opt-blue');
 });
@@ -147,12 +149,12 @@ it('isolates CategoryField records between tenants', function () {
     ]);
 
     core()->setCurrentTenantId($tA);
-    $fields = \Webkul\Category\Models\CategoryField::all();
+    $fields = CategoryField::all();
     expect($fields)->toHaveCount(1);
     expect($fields->first()->code)->toBe('field-a');
 
     core()->setCurrentTenantId($tB);
-    $fields = \Webkul\Category\Models\CategoryField::all();
+    $fields = CategoryField::all();
     expect($fields)->toHaveCount(1);
     expect($fields->first()->code)->toBe('field-b');
 });

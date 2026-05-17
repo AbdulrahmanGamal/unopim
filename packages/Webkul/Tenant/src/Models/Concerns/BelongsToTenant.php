@@ -3,6 +3,7 @@
 namespace Webkul\Tenant\Models\Concerns;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Query\Builder;
 use Webkul\Tenant\Eloquent\TenantAwareBuilder;
 use Webkul\Tenant\Models\Scopes\TenantScope;
 use Webkul\Tenant\Models\TenantProxy;
@@ -45,8 +46,8 @@ trait BelongsToTenant
     /**
      * Create a new Eloquent query builder with scope bypass detection.
      *
-     * @param  \Illuminate\Database\Query\Builder  $query
-     * @return \Webkul\Tenant\Eloquent\TenantAwareBuilder
+     * @param  Builder  $query
+     * @return TenantAwareBuilder
      */
     public function newEloquentBuilder($query)
     {

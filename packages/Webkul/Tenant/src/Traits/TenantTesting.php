@@ -2,13 +2,17 @@
 
 namespace Webkul\Tenant\Traits;
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\TestCase;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Testing\TestResponse;
 use PHPUnit\Framework\Assert;
+use Webkul\Admin\Database\Factories\AdminFactory;
 use Webkul\Tenant\Jobs\TenantAwareJob;
 use Webkul\Tenant\Models\Tenant;
 use Webkul\Tenant\Models\TenantProxy;
+use Webkul\Tenant\Services\TenantDemoSeeder;
 
 /**
  * TenantTesting trait provides comprehensive testing utilities for multi-tenant applications.
@@ -147,14 +151,14 @@ trait TenantTesting
 
         // Create user for the tenant
         if (class_exists('Webkul\Admin\Database\Factories\AdminFactory')) {
-            $user = \Webkul\Admin\Database\Factories\AdminFactory::new()->create(
+            $user = AdminFactory::new()->create(
                 array_merge($userAttributes, [
                     'tenant_id' => $tenant->id,
                 ])
             );
         } else {
             // Fallback for user creation
-            $user = \App\Models\User::factory()->create(
+            $user = User::factory()->create(
                 array_merge($userAttributes, [
                     'tenant_id' => $tenant->id,
                 ])
@@ -315,7 +319,7 @@ trait TenantTesting
     {
         // Run tenant seeder if available
         if (class_exists('Webkul\Tenant\Services\TenantDemoSeeder')) {
-            $seeder = new \Webkul\Tenant\Services\TenantDemoSeeder;
+            $seeder = new TenantDemoSeeder;
             $seeder->run($tenant->id);
         }
     }
@@ -452,14 +456,14 @@ trait TenantTesting
      * @param  string  $url  URL to test
      * @param  array  $data  Request data
      * @param  Tenant|null  $tenant  Tenant context
-     * @return \Illuminate\Testing\TestResponse The test response
+     * @return TestResponse The test response
      */
     protected function simulateTenantRequest(
         string $method,
         string $url,
         array $data = [],
         ?Tenant $tenant = null
-    ): \Illuminate\Testing\TestResponse {
+    ): TestResponse {
         $this->actingAsTenant($tenant ?? $this->testTenant);
 
         return $this->{$method}($url, $data);

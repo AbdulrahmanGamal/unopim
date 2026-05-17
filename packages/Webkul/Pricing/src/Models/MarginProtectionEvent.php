@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Webkul\Core\Models\ChannelProxy;
 use Webkul\Pricing\Contracts\MarginProtectionEvent as MarginProtectionEventContract;
+use Webkul\Pricing\Database\Factories\MarginProtectionEventFactory;
 use Webkul\Product\Models\ProductProxy;
 use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 use Webkul\User\Models\AdminProxy;
@@ -115,6 +116,6 @@ class MarginProtectionEvent extends Model implements MarginProtectionEventContra
      */
     protected static function newFactory()
     {
-        return \Webkul\Pricing\Database\Factories\MarginProtectionEventFactory::new();
+        return MarginProtectionEventFactory::new();
     }
 }

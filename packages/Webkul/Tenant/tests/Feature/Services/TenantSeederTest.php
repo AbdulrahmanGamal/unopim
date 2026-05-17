@@ -112,7 +112,7 @@ it('rolls back all records on seeder failure', function () {
         // by breaking the api_keys table temporarily
         $seeder = new class extends TenantSeeder
         {
-            public function seed(\Webkul\Tenant\Models\Tenant $tenant, array $options = []): array
+            public function seed(Tenant $tenant, array $options = []): array
             {
                 return DB::transaction(function () use ($tenant) {
                     // Insert a role (will be rolled back)
@@ -126,13 +126,13 @@ it('rolls back all records on seeder failure', function () {
                         'updated_at'      => now(),
                     ]);
 
-                    throw new \RuntimeException('Simulated seeding failure');
+                    throw new RuntimeException('Simulated seeding failure');
                 });
             }
         };
 
         $seeder->seed($tenant, ['email' => 'fail@test.com']);
-    } catch (\RuntimeException) {
+    } catch (RuntimeException) {
         // Expected
     }
 

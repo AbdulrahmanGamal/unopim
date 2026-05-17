@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Str;
 use Webkul\ChannelConnector\Models\ChannelConnector;
 use Webkul\ChannelConnector\Models\ChannelSyncJob;
 
@@ -11,7 +12,7 @@ it('creates sync job with correct status', function () {
 
     $job = ChannelSyncJob::create([
         'channel_connector_id' => $connector->id,
-        'job_id'               => \Illuminate\Support\Str::uuid()->toString(),
+        'job_id'               => Str::uuid()->toString(),
         'status'               => 'pending', 'sync_type' => 'full',
     ]);
 
@@ -27,7 +28,7 @@ it('tracks sync progress counters', function () {
 
     $job = ChannelSyncJob::create([
         'channel_connector_id' => $connector->id,
-        'job_id'               => \Illuminate\Support\Str::uuid()->toString(),
+        'job_id'               => Str::uuid()->toString(),
         'status'               => 'running', 'sync_type' => 'full',
         'total_products'       => 100, 'synced_products' => 50, 'failed_products' => 5,
     ]);

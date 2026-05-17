@@ -7,9 +7,11 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Order\DataGrids\Admin\OrderDataGrid;
 use Webkul\Order\Events\OrderStatusUpdated;
+use Webkul\Order\Models\Order;
 use Webkul\Order\Repositories\OrderRepository;
 
 /**
@@ -193,7 +195,7 @@ class OrderController extends Controller
     /**
      * Export orders to CSV/Excel.
      *
-     * @return \Symfony\Component\HttpFoundation\StreamedResponse
+     * @return StreamedResponse
      */
     public function export()
     {
@@ -207,7 +209,7 @@ class OrderController extends Controller
     /**
      * Calculate order profitability.
      *
-     * @param  \Webkul\Order\Models\Order  $order
+     * @param  Order  $order
      */
     protected function calculateOrderProfitability($order): array
     {

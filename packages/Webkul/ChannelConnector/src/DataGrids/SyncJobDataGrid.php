@@ -2,6 +2,7 @@
 
 namespace Webkul\ChannelConnector\DataGrids;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Webkul\DataGrid\DataGrid;
 
@@ -156,8 +157,8 @@ class SyncJobDataGrid extends DataGrid
                     return '-';
                 }
 
-                $start = \Carbon\Carbon::parse($row->started_at);
-                $end = \Carbon\Carbon::parse($row->completed_at);
+                $start = Carbon::parse($row->started_at);
+                $end = Carbon::parse($row->completed_at);
                 $diff = $start->diff($end);
 
                 if ($diff->h > 0) {

@@ -8,9 +8,11 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Tenant\Jobs\TenantAwareJob;
+use Webkul\Tenant\Providers\TenantServiceProvider;
 
 class BulkProductCompletenessJob implements ShouldBeUnique, ShouldQueue
 {
@@ -84,10 +86,10 @@ class BulkProductCompletenessJob implements ShouldBeUnique, ShouldQueue
 
     protected function dispatchInChunks(array $productIds): void
     {
-        $tenantPackageActive = class_exists(\Webkul\Tenant\Providers\TenantServiceProvider::class);
+        $tenantPackageActive = class_exists(TenantServiceProvider::class);
 
         if ($tenantPackageActive && is_null($this->tenantId)) {
-            \Illuminate\Support\Facades\Log::warning('BulkProductCompletenessJob: No tenant context, skipping child dispatches');
+            Log::warning('BulkProductCompletenessJob: No tenant context, skipping child dispatches');
 
             return;
         }

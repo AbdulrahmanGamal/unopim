@@ -13,8 +13,10 @@ use Webkul\DataTransfer\Helpers\Import;
 use Webkul\DataTransfer\Helpers\Importers\AbstractImporter;
 use Webkul\DataTransfer\Helpers\Importers\FieldProcessor;
 use Webkul\DataTransfer\Helpers\Importers\Product\SKUStorage;
+use Webkul\DataTransfer\Helpers\Source;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Shopify\Helpers\Iterator\ProductIterator;
 use Webkul\Shopify\Helpers\ShoifyMetaFieldType;
 use Webkul\Shopify\Repositories\ShopifyCredentialRepository;
 use Webkul\Shopify\Repositories\ShopifyExportMappingRepository;
@@ -246,7 +248,7 @@ class Importer extends AbstractImporter
     /**
      * Import instance.
      *
-     * @return \Webkul\DataTransfer\Helpers\Source
+     * @return Source
      */
     public function getSource()
     {
@@ -261,7 +263,7 @@ class Importer extends AbstractImporter
             'apiVersion'  => $this->credential?->apiVersion,
         ];
 
-        $products = new \Webkul\Shopify\Helpers\Iterator\ProductIterator($this->credentialArray);
+        $products = new ProductIterator($this->credentialArray);
 
         return $products;
     }

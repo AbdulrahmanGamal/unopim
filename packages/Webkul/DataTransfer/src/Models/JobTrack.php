@@ -3,6 +3,8 @@
 namespace Webkul\DataTransfer\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Webkul\DataTransfer\Contracts\JobTrack as JobTrackContract;
 use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 
@@ -63,7 +65,7 @@ class JobTrack extends Model implements JobTrackContract
     /**
      * Get the job that owns the job batch.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function batches()
     {
@@ -73,7 +75,7 @@ class JobTrack extends Model implements JobTrackContract
     /**
      * Get the job parent instance.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function jobInstance()
     {

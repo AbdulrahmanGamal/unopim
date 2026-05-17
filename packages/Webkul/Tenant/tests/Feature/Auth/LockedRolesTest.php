@@ -88,7 +88,7 @@ it('prevents deleting locked roles (FR-5.1)', function () {
         'is_locked'       => true,
     ]);
 
-    expect(fn () => $role->delete())->toThrow(\RuntimeException::class, 'Cannot delete a locked role.');
+    expect(fn () => $role->delete())->toThrow(RuntimeException::class, 'Cannot delete a locked role.');
 
     core()->setCurrentTenantId(null);
 });
@@ -105,7 +105,7 @@ it('prevents changing permission_type on locked roles (FR-5.1)', function () {
     ]);
 
     expect(fn () => $role->update(['permission_type' => 'custom']))
-        ->toThrow(\RuntimeException::class, 'Cannot change permission_type on a locked role.');
+        ->toThrow(RuntimeException::class, 'Cannot change permission_type on a locked role.');
 
     core()->setCurrentTenantId(null);
 });
@@ -122,7 +122,7 @@ it('prevents unlocking a locked role', function () {
     ]);
 
     expect(fn () => $role->update(['is_locked' => false]))
-        ->toThrow(\RuntimeException::class, 'Cannot unlock a locked role.');
+        ->toThrow(RuntimeException::class, 'Cannot unlock a locked role.');
 
     core()->setCurrentTenantId(null);
 });

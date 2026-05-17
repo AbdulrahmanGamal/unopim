@@ -1,6 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Mail;
+use Webkul\ElasticSearch\Indexing\Normalizer\ProductNormalizer;
+use Webkul\ElasticSearch\Observers\Category;
+use Webkul\ElasticSearch\Observers\Product;
 use Webkul\Tenant\Models\Tenant;
 
 beforeEach(function () {
@@ -21,9 +24,9 @@ it('generates tenant-specific ES category index name when tenant context exists'
 
     core()->setCurrentTenantId($tenant->id);
 
-    $observer = new \Webkul\ElasticSearch\Observers\Category;
+    $observer = new Category;
 
-    $reflection = new \ReflectionMethod($observer, 'getIndexName');
+    $reflection = new ReflectionMethod($observer, 'getIndexName');
     $reflection->setAccessible(true);
     $indexName = $reflection->invoke($observer);
 
@@ -36,9 +39,9 @@ it('generates tenant-specific ES category index name when tenant context exists'
 it('uses global category index name when no tenant context', function () {
     core()->setCurrentTenantId(null);
 
-    $observer = new \Webkul\ElasticSearch\Observers\Category;
+    $observer = new Category;
 
-    $reflection = new \ReflectionMethod($observer, 'getIndexName');
+    $reflection = new ReflectionMethod($observer, 'getIndexName');
     $reflection->setAccessible(true);
     $indexName = $reflection->invoke($observer);
 
@@ -51,9 +54,9 @@ it('falls back to tenant_id when tenants table query fails for category', functi
     $nonExistentId = 99999;
     core()->setCurrentTenantId($nonExistentId);
 
-    $observer = new \Webkul\ElasticSearch\Observers\Category;
+    $observer = new Category;
 
-    $reflection = new \ReflectionMethod($observer, 'getIndexName');
+    $reflection = new ReflectionMethod($observer, 'getIndexName');
     $reflection->setAccessible(true);
     $indexName = $reflection->invoke($observer);
 
@@ -73,13 +76,13 @@ it('generates different category index names for different tenants', function ()
     ]);
 
     core()->setCurrentTenantId($tenant1->id);
-    $observer1 = new \Webkul\ElasticSearch\Observers\Category;
-    $ref = new \ReflectionMethod($observer1, 'getIndexName');
+    $observer1 = new Category;
+    $ref = new ReflectionMethod($observer1, 'getIndexName');
     $ref->setAccessible(true);
     $name1 = $ref->invoke($observer1);
 
     core()->setCurrentTenantId($tenant2->id);
-    $observer2 = new \Webkul\ElasticSearch\Observers\Category;
+    $observer2 = new Category;
     $name2 = $ref->invoke($observer2);
 
     expect($name1)->not->toBe($name2);
@@ -104,15 +107,15 @@ it('category observer uses same tenant suffix pattern as product observer', func
     core()->setCurrentTenantId($tenant->id);
 
     // Product observer
-    $normalizer = app(\Webkul\ElasticSearch\Indexing\Normalizer\ProductNormalizer::class);
-    $productObserver = new \Webkul\ElasticSearch\Observers\Product($normalizer);
-    $productRef = new \ReflectionMethod($productObserver, 'getIndexName');
+    $normalizer = app(ProductNormalizer::class);
+    $productObserver = new Product($normalizer);
+    $productRef = new ReflectionMethod($productObserver, 'getIndexName');
     $productRef->setAccessible(true);
     $productIndex = $productRef->invoke($productObserver);
 
     // Category observer
-    $categoryObserver = new \Webkul\ElasticSearch\Observers\Category;
-    $categoryRef = new \ReflectionMethod($categoryObserver, 'getIndexName');
+    $categoryObserver = new Category;
+    $categoryRef = new ReflectionMethod($categoryObserver, 'getIndexName');
     $categoryRef->setAccessible(true);
     $categoryIndex = $categoryRef->invoke($categoryObserver);
 

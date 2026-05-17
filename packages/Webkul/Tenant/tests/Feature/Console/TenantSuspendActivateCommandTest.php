@@ -1,5 +1,9 @@
 <?php
 
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Webkul\Tenant\Http\Middleware\TenantMiddleware;
 use Webkul\Tenant\Models\Tenant;
 
 it('suspends an active tenant', function () {
@@ -80,16 +84,16 @@ it('suspended tenant returns 503 via middleware', function () {
     $tenant->transitionTo(Tenant::STATUS_SUSPENDED);
 
     // TenantMiddleware should return 503 for this tenant
-    $middleware = new \Webkul\Tenant\Http\Middleware\TenantMiddleware;
-    $request = \Illuminate\Http\Request::create('/');
+    $middleware = new TenantMiddleware;
+    $request = Request::create('/');
     $request->headers->set('X-Tenant-ID', (string) $tenant->id);
 
     try {
         $middleware->handle($request, function ($req) {
-            return new \Illuminate\Http\Response('OK');
+            return new Response('OK');
         });
         $this->fail('Expected 503 abort');
-    } catch (\Symfony\Component\HttpKernel\Exception\HttpException $e) {
+    } catch (HttpException $e) {
         expect($e->getStatusCode())->toBe(503);
     }
 });
@@ -104,12 +108,12 @@ it('reactivated tenant passes middleware', function () {
     $tenant->transitionTo(Tenant::STATUS_SUSPENDED);
     $tenant->transitionTo(Tenant::STATUS_ACTIVE);
 
-    $middleware = new \Webkul\Tenant\Http\Middleware\TenantMiddleware;
-    $request = \Illuminate\Http\Request::create('/');
+    $middleware = new TenantMiddleware;
+    $request = Request::create('/');
     $request->headers->set('X-Tenant-ID', (string) $tenant->id);
 
     $response = $middleware->handle($request, function () {
-        return new \Illuminate\Http\Response('OK');
+        return new Response('OK');
     });
 
     expect($response->getStatusCode())->toBe(200);

@@ -4,6 +4,7 @@ namespace Webkul\AdminApi\Guards;
 
 use Illuminate\Http\Request;
 use Laravel\Passport\Token;
+use Webkul\User\Models\Admin;
 
 /**
  * Test Token Guard - Accepts our fake test tokens without validation
@@ -44,6 +45,6 @@ class TestTokenGuard
      */
     protected function getTestUser(): mixed
     {
-        return \Webkul\User\Models\Admin::where('email', 'test@testingApi.com')->first() ?? null;
+        return Admin::where('email', 'test@testingApi.com')->first() ?? null;
     }
 }

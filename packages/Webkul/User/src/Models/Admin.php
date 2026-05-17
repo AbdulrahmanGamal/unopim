@@ -15,6 +15,7 @@ use Webkul\Admin\Mail\Admin\ResetPasswordNotification;
 use Webkul\AdminApi\Models\Apikey;
 use Webkul\Core\Models\LocaleProxy;
 use Webkul\Notification\Models\UserNotification;
+use Webkul\Tenant\Contracts\TenantPermissionGuard;
 use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 use Webkul\User\Contracts\Admin as AdminContract;
 use Webkul\User\Database\Factories\AdminFactory;
@@ -86,7 +87,7 @@ class Admin extends Authenticatable implements AdminContract, AuditableContract
     /**
      * Get the role that owns the admin.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function role()
     {
@@ -96,7 +97,7 @@ class Admin extends Authenticatable implements AdminContract, AuditableContract
     /**
      * Get the api integration that owns the admin.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function apiKey()
     {
@@ -119,7 +120,7 @@ class Admin extends Authenticatable implements AdminContract, AuditableContract
         }
 
         // Tenant users cannot access platform-reserved permissions (Story 5.5)
-        $guard = app(\Webkul\Tenant\Contracts\TenantPermissionGuard::class);
+        $guard = app(TenantPermissionGuard::class);
 
         if (! $guard->isAllowed($this, $permission)) {
             return false;

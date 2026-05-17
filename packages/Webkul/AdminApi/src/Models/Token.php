@@ -2,6 +2,9 @@
 
 namespace Webkul\AdminApi\Models;
 
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Laravel\Passport\Token as PassportToken;
 use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 
@@ -19,7 +22,7 @@ use Webkul\Tenant\Models\Concerns\BelongsToTenant;
  * - Token validation includes tenant verification
  * - Prevents token replay attacks across tenant boundaries
  *
- * @see \Webkul\Tenant\Models\Concerns\BelongsToTenant
+ * @see BelongsToTenant
  * @see https://laravel.com/docs/passport#customizing-the-token-model
  */
 class Token extends PassportToken
@@ -52,7 +55,7 @@ class Token extends PassportToken
      * tenant-scoped. This prevents tokens from being associated with
      * clients from other tenants.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function client()
     {
@@ -90,7 +93,7 @@ class Token extends PassportToken
      * Enhanced validation that includes tenant verification.
      * A token is only valid if it belongs to the same tenant as the user.
      *
-     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
+     * @param  Authenticatable  $user
      */
     public function isValidFor($user): bool
     {
@@ -140,8 +143,8 @@ class Token extends PassportToken
      * a specific tenant context. It's useful for administrative
      * operations that need to work within tenant boundaries.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @param  Builder  $query
+     * @return Builder
      */
     public function scopeForTenant($query, int $tenantId)
     {
@@ -151,8 +154,8 @@ class Token extends PassportToken
     /**
      * Scope a query to only include active (non-revoked, non-expired) tokens.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @param  Builder  $query
+     * @return Builder
      */
     public function scopeActive($query)
     {

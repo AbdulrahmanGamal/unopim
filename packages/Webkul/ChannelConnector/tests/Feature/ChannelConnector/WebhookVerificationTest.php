@@ -1,5 +1,6 @@
 <?php
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
 use Webkul\ChannelConnector\Contracts\ChannelAdapterContract;
@@ -456,7 +457,7 @@ describe('End-to-End Webhook Processing', function () {
 
         $event->refresh();
         expect($event->processed_at)->not->toBeNull()
-            ->and($event->processed_at)->toBeInstanceOf(\Carbon\Carbon::class);
+            ->and($event->processed_at)->toBeInstanceOf(Carbon::class);
 
         // Verify isProcessed now returns true
         expect(ChannelWebhookEvent::isProcessed($connector->id, $webhookEventId))

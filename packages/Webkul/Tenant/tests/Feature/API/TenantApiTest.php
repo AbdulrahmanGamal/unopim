@@ -1,5 +1,8 @@
 <?php
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use Webkul\Tenant\Http\Controllers\API\TenantApiController;
 use Webkul\Tenant\Models\Tenant;
 
 /*
@@ -27,7 +30,7 @@ it('registers API routes for tenant CRUD', function () {
     ];
 
     foreach ($routes as $routeName) {
-        expect(\Illuminate\Support\Facades\Route::has($routeName))
+        expect(Route::has($routeName))
             ->toBeTrue("Route {$routeName} should be registered");
     }
 });
@@ -35,20 +38,20 @@ it('registers API routes for tenant CRUD', function () {
 // -- API route middleware ---------------------------------------------------
 
 it('API tenant routes use auth:api middleware', function () {
-    $route = \Illuminate\Support\Facades\Route::getRoutes()->getByName('api.v1.tenants.index');
+    $route = Route::getRoutes()->getByName('api.v1.tenants.index');
 
     expect($route)->not->toBeNull();
     expect($route->gatherMiddleware())->toContain('auth:api');
 });
 
 it('API tenant routes use tenant.token middleware', function () {
-    $route = \Illuminate\Support\Facades\Route::getRoutes()->getByName('api.v1.tenants.index');
+    $route = Route::getRoutes()->getByName('api.v1.tenants.index');
 
     expect($route->gatherMiddleware())->toContain('tenant.token');
 });
 
 it('API tenant routes use tenant.safe-errors middleware', function () {
-    $route = \Illuminate\Support\Facades\Route::getRoutes()->getByName('api.v1.tenants.index');
+    $route = Route::getRoutes()->getByName('api.v1.tenants.index');
 
     expect($route->gatherMiddleware())->toContain('tenant.safe-errors');
 });
@@ -56,7 +59,7 @@ it('API tenant routes use tenant.safe-errors middleware', function () {
 // -- Controller unit tests via app() resolution -----------------------------
 
 it('TenantApiController index returns paginated tenants', function () {
-    $controller = app(\Webkul\Tenant\Http\Controllers\API\TenantApiController::class);
+    $controller = app(TenantApiController::class);
 
     $response = $controller->index();
 
@@ -67,7 +70,7 @@ it('TenantApiController index returns paginated tenants', function () {
 });
 
 it('TenantApiController show returns a single tenant', function () {
-    $controller = app(\Webkul\Tenant\Http\Controllers\API\TenantApiController::class);
+    $controller = app(TenantApiController::class);
 
     $response = $controller->show($this->tenantA->id);
 
@@ -77,9 +80,9 @@ it('TenantApiController show returns a single tenant', function () {
 });
 
 it('TenantApiController update modifies tenant name', function () {
-    $controller = app(\Webkul\Tenant\Http\Controllers\API\TenantApiController::class);
+    $controller = app(TenantApiController::class);
 
-    $request = new \Illuminate\Http\Request;
+    $request = new Request;
     $request->merge(['name' => 'API Updated']);
     $request->setMethod('PUT');
 
@@ -91,7 +94,7 @@ it('TenantApiController update modifies tenant name', function () {
 });
 
 it('TenantApiController suspend transitions tenant to suspended', function () {
-    $controller = app(\Webkul\Tenant\Http\Controllers\API\TenantApiController::class);
+    $controller = app(TenantApiController::class);
 
     $response = $controller->suspend($this->tenantA->id);
 
@@ -103,7 +106,7 @@ it('TenantApiController suspend transitions tenant to suspended', function () {
 it('TenantApiController activate transitions suspended tenant to active', function () {
     $this->tenantA->update(['status' => Tenant::STATUS_SUSPENDED]);
 
-    $controller = app(\Webkul\Tenant\Http\Controllers\API\TenantApiController::class);
+    $controller = app(TenantApiController::class);
 
     $response = $controller->activate($this->tenantA->id);
 
@@ -115,7 +118,7 @@ it('TenantApiController activate transitions suspended tenant to active', functi
 it('TenantApiController destroy rejects provisioning tenant', function () {
     $tenant = Tenant::factory()->create(['status' => Tenant::STATUS_PROVISIONING]);
 
-    $controller = app(\Webkul\Tenant\Http\Controllers\API\TenantApiController::class);
+    $controller = app(TenantApiController::class);
 
     $response = $controller->destroy($tenant->id);
 
@@ -126,7 +129,7 @@ it('TenantApiController suspend returns 400 for invalid transition', function ()
     // A provisioning tenant cannot transition directly to suspended
     $tenant = Tenant::factory()->create(['status' => Tenant::STATUS_PROVISIONING]);
 
-    $controller = app(\Webkul\Tenant\Http\Controllers\API\TenantApiController::class);
+    $controller = app(TenantApiController::class);
 
     $response = $controller->suspend($tenant->id);
 

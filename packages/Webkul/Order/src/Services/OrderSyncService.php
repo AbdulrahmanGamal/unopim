@@ -5,6 +5,9 @@ namespace Webkul\Order\Services;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use Webkul\Channel\Models\Channel;
+use Webkul\Order\Adapters\SallaOrderAdapter;
+use Webkul\Order\Adapters\ShopifyOrderAdapter;
+use Webkul\Order\Adapters\WooCommerceOrderAdapter;
 use Webkul\Order\Contracts\OrderSyncLog;
 use Webkul\Order\Contracts\UnifiedOrder;
 use Webkul\Order\Events\OrderSynced;
@@ -156,9 +159,9 @@ class OrderSyncService
     protected function getChannelAdapter(Channel $channel): mixed
     {
         return match ($channel->type) {
-            'salla'       => app(\Webkul\Order\Adapters\SallaOrderAdapter::class),
-            'shopify'     => app(\Webkul\Order\Adapters\ShopifyOrderAdapter::class),
-            'woocommerce' => app(\Webkul\Order\Adapters\WooCommerceOrderAdapter::class),
+            'salla'       => app(SallaOrderAdapter::class),
+            'shopify'     => app(ShopifyOrderAdapter::class),
+            'woocommerce' => app(WooCommerceOrderAdapter::class),
             default       => throw new Exception("Unsupported channel type: {$channel->type}")
         };
     }
@@ -170,12 +173,12 @@ class OrderSyncService
     {
         return match (strtolower($channelStatus)) {
             'pending', 'processing', 'awaiting_payment' => 'pending',
-            'paid', 'confirmed' => 'processing',
-            'shipped', 'in_transit' => 'shipped',
-            'delivered', 'completed' => 'completed',
-            'cancelled', 'canceled' => 'cancelled',
-            'refunded' => 'refunded',
-            default    => 'pending',
+            'paid', 'confirmed'                         => 'processing',
+            'shipped', 'in_transit'                     => 'shipped',
+            'delivered', 'completed'                    => 'completed',
+            'cancelled', 'canceled'                     => 'cancelled',
+            'refunded'                                  => 'refunded',
+            default                                     => 'pending',
         };
     }
 
@@ -186,11 +189,11 @@ class OrderSyncService
     {
         return match (strtolower($channelPaymentStatus)) {
             'pending', 'awaiting', 'unpaid' => 'pending',
-            'paid', 'authorized' => 'paid',
-            'partially_refunded' => 'partially_refunded',
-            'refunded'           => 'refunded',
-            'failed', 'declined' => 'failed',
-            default => 'pending',
+            'paid', 'authorized'            => 'paid',
+            'partially_refunded'            => 'partially_refunded',
+            'refunded'                      => 'refunded',
+            'failed', 'declined'            => 'failed',
+            default                         => 'pending',
         };
     }
 

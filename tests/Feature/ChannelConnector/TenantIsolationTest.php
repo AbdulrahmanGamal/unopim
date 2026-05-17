@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Database\QueryException;
 use Webkul\ChannelConnector\Models\ChannelConnector;
 
 it('scopes connectors to current tenant', function () {
@@ -38,5 +39,5 @@ it('enforces tenant-scoped unique code constraint', function () {
         'channel_type' => 'salla',
         'credentials'  => [],
         'status'       => 'disconnected',
-    ]))->toThrow(\Illuminate\Database\QueryException::class);
+    ]))->toThrow(QueryException::class);
 });

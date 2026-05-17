@@ -81,9 +81,9 @@ it('TenantSandbox clears context even on exception', function () {
 
     try {
         $sandbox->handle($job, function ($job) {
-            throw new \RuntimeException('Job failed');
+            throw new RuntimeException('Job failed');
         });
-    } catch (\RuntimeException) {
+    } catch (RuntimeException) {
         // Expected
     }
 

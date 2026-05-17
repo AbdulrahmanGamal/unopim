@@ -17,7 +17,7 @@ return new class extends Migration
             // For SQLite, we create a unique index if it doesn't exist.
             try {
                 DB::statement('DROP INDEX IF EXISTS products_sku_unique');
-            } catch (\Throwable) {
+            } catch (Throwable) {
                 // Index may not exist
             }
 
@@ -42,7 +42,7 @@ return new class extends Migration
         if ($driver === 'sqlite') {
             try {
                 DB::statement('DROP INDEX IF EXISTS products_tenant_sku_unique');
-            } catch (\Throwable) {
+            } catch (Throwable) {
                 // Ignore
             }
 

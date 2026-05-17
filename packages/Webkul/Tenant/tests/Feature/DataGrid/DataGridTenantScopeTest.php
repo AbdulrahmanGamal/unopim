@@ -1,7 +1,9 @@
 <?php
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Webkul\DataGrid\DataGrid;
 use Webkul\Tenant\Models\Tenant;
 
 beforeEach(function () {
@@ -16,7 +18,7 @@ it('injects tenant_id WHERE clause into DataGrid query builder', function () {
     $queryBuilder = DB::table('products')->select('products.id', 'products.sku');
 
     // Instantiate a test DataGrid and verify tenant scope is applied
-    $dataGrid = new class extends \Webkul\DataGrid\DataGrid
+    $dataGrid = new class extends DataGrid
     {
         public function prepareQueryBuilder()
         {
@@ -29,11 +31,11 @@ it('injects tenant_id WHERE clause into DataGrid query builder', function () {
     $dataGrid->setQueryBuilder();
 
     // Get the query and verify tenant_id is in the WHERE clause
-    $reflection = new \ReflectionProperty($dataGrid, 'queryBuilder');
+    $reflection = new ReflectionProperty($dataGrid, 'queryBuilder');
     $reflection->setAccessible(true);
     $builder = $reflection->getValue($dataGrid);
 
-    $query = $builder instanceof \Illuminate\Database\Eloquent\Builder
+    $query = $builder instanceof Builder
         ? $builder->getQuery()
         : $builder;
 
@@ -46,7 +48,7 @@ it('injects tenant_id WHERE clause into DataGrid query builder', function () {
 it('skips tenant scope when no tenant context', function () {
     core()->setCurrentTenantId(null);
 
-    $dataGrid = new class extends \Webkul\DataGrid\DataGrid
+    $dataGrid = new class extends DataGrid
     {
         public function prepareQueryBuilder()
         {
@@ -58,11 +60,11 @@ it('skips tenant scope when no tenant context', function () {
 
     $dataGrid->setQueryBuilder();
 
-    $reflection = new \ReflectionProperty($dataGrid, 'queryBuilder');
+    $reflection = new ReflectionProperty($dataGrid, 'queryBuilder');
     $reflection->setAccessible(true);
     $builder = $reflection->getValue($dataGrid);
 
-    $query = $builder instanceof \Illuminate\Database\Eloquent\Builder
+    $query = $builder instanceof Builder
         ? $builder->getQuery()
         : $builder;
 
@@ -74,7 +76,7 @@ it('handles aliased table names correctly', function () {
     $tenant = Tenant::factory()->create(['status' => Tenant::STATUS_ACTIVE]);
     core()->setCurrentTenantId($tenant->id);
 
-    $dataGrid = new class extends \Webkul\DataGrid\DataGrid
+    $dataGrid = new class extends DataGrid
     {
         public function prepareQueryBuilder()
         {
@@ -86,7 +88,7 @@ it('handles aliased table names correctly', function () {
 
     $dataGrid->setQueryBuilder();
 
-    $reflection = new \ReflectionProperty($dataGrid, 'queryBuilder');
+    $reflection = new ReflectionProperty($dataGrid, 'queryBuilder');
     $reflection->setAccessible(true);
     $builder = $reflection->getValue($dataGrid);
 

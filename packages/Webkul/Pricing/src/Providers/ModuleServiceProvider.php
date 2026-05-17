@@ -3,13 +3,17 @@
 namespace Webkul\Pricing\Providers;
 
 use Konekt\Concord\BaseModuleServiceProvider;
+use Webkul\Pricing\Models\ChannelCost;
+use Webkul\Pricing\Models\MarginProtectionEvent;
+use Webkul\Pricing\Models\PricingStrategy;
+use Webkul\Pricing\Models\ProductCost;
 
 class ModuleServiceProvider extends BaseModuleServiceProvider
 {
     protected $models = [
-        \Webkul\Pricing\Models\ProductCost::class,
-        \Webkul\Pricing\Models\ChannelCost::class,
-        \Webkul\Pricing\Models\MarginProtectionEvent::class,
-        \Webkul\Pricing\Models\PricingStrategy::class,
+        ProductCost::class,
+        ChannelCost::class,
+        MarginProtectionEvent::class,
+        PricingStrategy::class,
     ];
 }

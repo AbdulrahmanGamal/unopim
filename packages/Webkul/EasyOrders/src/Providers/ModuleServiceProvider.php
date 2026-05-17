@@ -5,14 +5,18 @@ namespace Webkul\EasyOrders\Providers;
 use Webkul\ChannelConnector\Services\AdapterResolver;
 use Webkul\Core\Providers\CoreModuleServiceProvider;
 use Webkul\EasyOrders\Adapters\EasyOrdersAdapter;
+use Webkul\EasyOrders\Models\EasyOrdersCredentialsConfig;
+use Webkul\EasyOrders\Models\EasyOrdersExportMappingConfig;
+use Webkul\EasyOrders\Models\EasyOrdersMappingConfig;
+use Webkul\EasyOrders\Models\EasyOrdersProductMapping;
 
 class ModuleServiceProvider extends CoreModuleServiceProvider
 {
     protected $models = [
-        \Webkul\EasyOrders\Models\EasyOrdersCredentialsConfig::class,
-        \Webkul\EasyOrders\Models\EasyOrdersExportMappingConfig::class,
-        \Webkul\EasyOrders\Models\EasyOrdersMappingConfig::class,
-        \Webkul\EasyOrders\Models\EasyOrdersProductMapping::class,
+        EasyOrdersCredentialsConfig::class,
+        EasyOrdersExportMappingConfig::class,
+        EasyOrdersMappingConfig::class,
+        EasyOrdersProductMapping::class,
     ];
 
     public function boot(): void

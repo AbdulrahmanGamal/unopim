@@ -2,6 +2,8 @@
 
 namespace Webkul\AdminApi\Models;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Laravel\Passport\RefreshToken as PassportRefreshToken;
 use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 
@@ -18,8 +20,8 @@ use Webkul\Tenant\Models\Concerns\BelongsToTenant;
  * - Validates associated access token belongs to same tenant
  * - Prevents token persistence attacks after tenant deletion
  *
- * @see \Webkul\AdminApi\Models\Token
- * @see \Webkul\Tenant\Models\Concerns\BelongsToTenant
+ * @see Token
+ * @see BelongsToTenant
  */
 class RefreshToken extends PassportRefreshToken
 {
@@ -43,7 +45,7 @@ class RefreshToken extends PassportRefreshToken
      * A refresh token can only be used with its associated access token
      * from the same tenant.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function accessToken()
     {
@@ -122,8 +124,8 @@ class RefreshToken extends PassportRefreshToken
     /**
      * Scope a query to only include refresh tokens for a specific tenant.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @param  Builder  $query
+     * @return Builder
      */
     public function scopeForTenant($query, int $tenantId)
     {
@@ -133,8 +135,8 @@ class RefreshToken extends PassportRefreshToken
     /**
      * Scope a query to only include active (non-revoked, non-expired) refresh tokens.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @param  Builder  $query
+     * @return Builder
      */
     public function scopeActive($query)
     {

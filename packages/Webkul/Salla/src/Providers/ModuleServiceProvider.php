@@ -5,14 +5,18 @@ namespace Webkul\Salla\Providers;
 use Webkul\ChannelConnector\Services\AdapterResolver;
 use Webkul\Core\Providers\CoreModuleServiceProvider;
 use Webkul\Salla\Adapters\SallaAdapter;
+use Webkul\Salla\Models\SallaCredentialsConfig;
+use Webkul\Salla\Models\SallaExportMappingConfig;
+use Webkul\Salla\Models\SallaMappingConfig;
+use Webkul\Salla\Models\SallaProductMapping;
 
 class ModuleServiceProvider extends CoreModuleServiceProvider
 {
     protected $models = [
-        \Webkul\Salla\Models\SallaCredentialsConfig::class,
-        \Webkul\Salla\Models\SallaExportMappingConfig::class,
-        \Webkul\Salla\Models\SallaMappingConfig::class,
-        \Webkul\Salla\Models\SallaProductMapping::class,
+        SallaCredentialsConfig::class,
+        SallaExportMappingConfig::class,
+        SallaMappingConfig::class,
+        SallaProductMapping::class,
     ];
 
     public function boot(): void

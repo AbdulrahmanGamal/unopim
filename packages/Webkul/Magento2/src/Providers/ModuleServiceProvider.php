@@ -5,14 +5,18 @@ namespace Webkul\Magento2\Providers;
 use Webkul\ChannelConnector\Services\AdapterResolver;
 use Webkul\Core\Providers\CoreModuleServiceProvider;
 use Webkul\Magento2\Adapters\Magento2Adapter;
+use Webkul\Magento2\Models\Magento2CredentialsConfig;
+use Webkul\Magento2\Models\Magento2ExportMappingConfig;
+use Webkul\Magento2\Models\Magento2MappingConfig;
+use Webkul\Magento2\Models\Magento2ProductMapping;
 
 class ModuleServiceProvider extends CoreModuleServiceProvider
 {
     protected $models = [
-        \Webkul\Magento2\Models\Magento2CredentialsConfig::class,
-        \Webkul\Magento2\Models\Magento2ExportMappingConfig::class,
-        \Webkul\Magento2\Models\Magento2MappingConfig::class,
-        \Webkul\Magento2\Models\Magento2ProductMapping::class,
+        Magento2CredentialsConfig::class,
+        Magento2ExportMappingConfig::class,
+        Magento2MappingConfig::class,
+        Magento2ProductMapping::class,
     ];
 
     public function boot(): void

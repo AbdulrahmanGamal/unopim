@@ -4,6 +4,7 @@ namespace Webkul\Tenant\Services;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Webkul\Category\Models\Category;
 use Webkul\Tenant\Models\Tenant;
 
 /**
@@ -96,7 +97,7 @@ class TenantDemoSeeder
 
         // Rebuild nested set
         try {
-            \Webkul\Category\Models\Category::fixTree();
+            Category::fixTree();
         } catch (\Throwable $e) {
             // Non-critical — tree still works
         }

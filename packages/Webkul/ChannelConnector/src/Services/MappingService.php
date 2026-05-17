@@ -2,6 +2,7 @@
 
 namespace Webkul\ChannelConnector\Services;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\ChannelConnector\Models\ChannelConnector;
@@ -113,7 +114,7 @@ class MappingService
         Cache::forget(TenantCache::key("channel_connector.{$connector->id}.channel_fields"));
     }
 
-    public function getMappingsForConnector(ChannelConnector $connector): \Illuminate\Support\Collection
+    public function getMappingsForConnector(ChannelConnector $connector): Collection
     {
         $cacheKey = TenantCache::key("channel_connector.{$connector->id}.mappings");
 

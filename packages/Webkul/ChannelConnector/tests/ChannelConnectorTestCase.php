@@ -4,6 +4,7 @@ namespace Webkul\ChannelConnector\Tests;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
@@ -78,7 +79,7 @@ abstract class ChannelConnectorTestCase extends TestCase
             ]);
 
             $admin = Admin::factory()->create([
-                'password' => \Illuminate\Support\Facades\Hash::make('password'),
+                'password' => Hash::make('password'),
                 'role_id'  => $role->id,
             ]);
         }
@@ -99,7 +100,7 @@ abstract class ChannelConnectorTestCase extends TestCase
         ]);
 
         $admin = Admin::factory()->create([
-            'password' => \Illuminate\Support\Facades\Hash::make('password'),
+            'password' => Hash::make('password'),
             'role_id'  => $role->id,
         ]);
 
@@ -119,7 +120,7 @@ abstract class ChannelConnectorTestCase extends TestCase
         ]);
 
         $admin = Admin::factory()->create([
-            'password' => \Illuminate\Support\Facades\Hash::make('password'),
+            'password' => Hash::make('password'),
             'role_id'  => $role->id,
         ]);
 

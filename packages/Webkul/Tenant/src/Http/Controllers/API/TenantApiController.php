@@ -5,6 +5,8 @@ namespace Webkul\Tenant\Http\Controllers\API;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Str;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Webkul\Tenant\Models\Tenant;
 use Webkul\Tenant\Repositories\TenantRepository;
 use Webkul\Tenant\Services\TenantPurger;
@@ -69,11 +71,11 @@ class TenantApiController extends Controller
 
         try {
             $tenant = Tenant::create([
-                'uuid'          => (string) \Illuminate\Support\Str::uuid(),
+                'uuid'          => (string) Str::uuid(),
                 'name'          => $request->input('name'),
                 'domain'        => $request->input('domain'),
                 'status'        => Tenant::STATUS_PROVISIONING,
-                'es_index_uuid' => (string) \Illuminate\Support\Str::uuid(),
+                'es_index_uuid' => (string) Str::uuid(),
             ]);
 
             $result = $this->tenantSeeder->seed($tenant, [
@@ -189,7 +191,7 @@ class TenantApiController extends Controller
      * Platform operators (tenant_id = null) may access any tenant.
      * Tenant-scoped users may only access their own tenant.
      *
-     * @throws \Symfony\Component\HttpKernel\Exception\HttpException
+     * @throws HttpException
      */
     protected function authorizeAccessToTenant(int $id): void
     {

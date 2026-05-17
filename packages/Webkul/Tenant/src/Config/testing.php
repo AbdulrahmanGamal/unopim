@@ -1,5 +1,7 @@
 <?php
 
+use Webkul\Tenant\Services\TenantDemoSeeder;
+
 return [
     /*
     |--------------------------------------------------------------------------
@@ -114,7 +116,7 @@ return [
     |
     */
     'seeders' => [
-        \Webkul\Tenant\Services\TenantDemoSeeder::class,
+        TenantDemoSeeder::class,
     ],
 
     /*

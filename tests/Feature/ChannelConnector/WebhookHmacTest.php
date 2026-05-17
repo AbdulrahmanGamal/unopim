@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Queue;
 use Webkul\ChannelConnector\Events\WebhookReceived;
 use Webkul\ChannelConnector\Jobs\ProcessWebhookJob;
 use Webkul\ChannelConnector\Models\ChannelConnector;
+use Webkul\ChannelConnector\Models\ChannelSyncConflict;
+use Webkul\ChannelConnector\Repositories\ChannelFieldMappingRepository;
 
 /*
 |--------------------------------------------------------------------------
@@ -171,9 +173,9 @@ it('drops webhook jobs older than the replay window (replay protection)', functi
         receivedAt: time() - 600,
     );
 
-    $mappingRepo = app(\Webkul\ChannelConnector\Repositories\ChannelFieldMappingRepository::class);
+    $mappingRepo = app(ChannelFieldMappingRepository::class);
     $stale->handle($mappingRepo);
 
     // No conflicts, no mappings, no updates should have been created.
-    expect(\Webkul\ChannelConnector\Models\ChannelSyncConflict::query()->count())->toBe(0);
+    expect(ChannelSyncConflict::query()->count())->toBe(0);
 });

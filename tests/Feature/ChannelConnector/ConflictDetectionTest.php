@@ -8,6 +8,7 @@ use Webkul\ChannelConnector\Models\ChannelConnector;
 use Webkul\ChannelConnector\Models\ChannelSyncConflict;
 use Webkul\ChannelConnector\Models\ChannelSyncJob;
 use Webkul\ChannelConnector\Models\ProductChannelMapping;
+use Webkul\ChannelConnector\Repositories\ChannelSyncConflictRepository;
 use Webkul\ChannelConnector\Services\ConflictResolver;
 use Webkul\ChannelConnector\Services\SyncEngine;
 use Webkul\Product\Models\Product;
@@ -82,7 +83,7 @@ it('detects conflict when both PIM hash and channel hash differ from stored hash
             return md5(json_encode($payload));
         });
 
-    $conflictRepo = app(\Webkul\ChannelConnector\Repositories\ChannelSyncConflictRepository::class);
+    $conflictRepo = app(ChannelSyncConflictRepository::class);
     $resolver = new ConflictResolver($conflictRepo, $syncEngine);
 
     $mappings = new Collection;
@@ -143,7 +144,7 @@ it('does not detect conflict when only PIM changed (normal sync proceeds)', func
             return md5(json_encode($payload));
         });
 
-    $conflictRepo = app(\Webkul\ChannelConnector\Repositories\ChannelSyncConflictRepository::class);
+    $conflictRepo = app(ChannelSyncConflictRepository::class);
     $resolver = new ConflictResolver($conflictRepo, $syncEngine);
 
     $mappings = new Collection;
@@ -188,7 +189,7 @@ it('does not detect conflict when hashes match (skip sync)', function () {
     // fetchProduct should NOT be called since PIM hash matches
     $adapter->shouldNotReceive('fetchProduct');
 
-    $conflictRepo = app(\Webkul\ChannelConnector\Repositories\ChannelSyncConflictRepository::class);
+    $conflictRepo = app(ChannelSyncConflictRepository::class);
     $resolver = new ConflictResolver($conflictRepo, $syncEngine);
 
     $mappings = new Collection;
@@ -253,7 +254,7 @@ it('includes per-locale values in conflicting_fields structure', function () {
             return md5(json_encode($payload));
         });
 
-    $conflictRepo = app(\Webkul\ChannelConnector\Repositories\ChannelSyncConflictRepository::class);
+    $conflictRepo = app(ChannelSyncConflictRepository::class);
     $resolver = new ConflictResolver($conflictRepo, $syncEngine);
 
     $mappings = new Collection;

@@ -5,6 +5,7 @@ namespace Webkul\Core\ImageCache;
 use Config;
 use Illuminate\Http\Response as IlluminateResponse;
 use Intervention\Image\ImageCacheController;
+use Webkul\Tenant\Cache\TenantCache;
 
 class Controller extends ImageCacheController
 {
@@ -72,8 +73,8 @@ class Controller extends ImageCacheController
          */
         $manager = new ImageManager(Config::get('image'));
 
-        $tenantPrefix = class_exists(\Webkul\Tenant\Cache\TenantCache::class)
-            ? \Webkul\Tenant\Cache\TenantCache::prefix()
+        $tenantPrefix = class_exists(TenantCache::class)
+            ? TenantCache::prefix()
             : '';
 
         try {

@@ -6,8 +6,15 @@ use Carbon\Carbon;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Passport;
 use Webkul\AdminApi\Console\ApiClientCommand;
+use Webkul\AdminApi\Http\Middleware\EnsureAcceptsJson;
+use Webkul\AdminApi\Http\Middleware\LocaleMiddleware;
+use Webkul\AdminApi\Http\Middleware\ScopeMiddleware;
+use Webkul\AdminApi\Models\Client;
+use Webkul\AdminApi\Models\RefreshToken;
+use Webkul\AdminApi\Models\Token;
 use Webkul\Core\Tree;
 
 class AdminApiServiceProvider extends ServiceProvider
@@ -18,9 +25,9 @@ class AdminApiServiceProvider extends ServiceProvider
      * @var array
      */
     protected $middlewareAliases = [
-        'accept.json'    => \Webkul\AdminApi\Http\Middleware\EnsureAcceptsJson::class,
-        'request.locale' => \Webkul\AdminApi\Http\Middleware\LocaleMiddleware::class,
-        'api.scope'      => \Webkul\AdminApi\Http\Middleware\ScopeMiddleware::class,
+        'accept.json'    => EnsureAcceptsJson::class,
+        'request.locale' => LocaleMiddleware::class,
+        'api.scope'      => ScopeMiddleware::class,
     ];
 
     /**
@@ -105,9 +112,9 @@ class AdminApiServiceProvider extends ServiceProvider
         Passport::loadKeysFrom(__DIR__.'/../Secrets/Oauth');
 
         Passport::$passwordGrantEnabled = true;
-        Passport::useClientModel(\Webkul\AdminApi\Models\Client::class);
-        Passport::useTokenModel(\Webkul\AdminApi\Models\Token::class);
-        Passport::useRefreshTokenModel(\Webkul\AdminApi\Models\RefreshToken::class);
+        Passport::useClientModel(Client::class);
+        Passport::useTokenModel(Token::class);
+        Passport::useRefreshTokenModel(RefreshToken::class);
 
         // Set access token TTL
         Passport::tokensExpireIn(Carbon::now()->addSeconds(config('api.access_token_ttl')));
@@ -115,7 +122,7 @@ class AdminApiServiceProvider extends ServiceProvider
         // Set refresh token TTL
         Passport::refreshTokensExpireIn(Carbon::now()->addSeconds(config('api.refresh_token_ttl')));
 
-        $this->app->bind(\Laravel\Passport\ClientRepository::class, \Webkul\AdminApi\Repositories\ClientRepository::class);
+        $this->app->bind(ClientRepository::class, \Webkul\AdminApi\Repositories\ClientRepository::class);
     }
 
     /**

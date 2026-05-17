@@ -2,6 +2,7 @@
 
 namespace Webkul\ChannelConnector\Services;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Webkul\ChannelConnector\Repositories\RateLimitMetricRepository;
 
@@ -93,7 +94,7 @@ class RateLimitTracker
     /**
      * Extract reset timestamp from headers
      */
-    protected function extractResetTime(array $headers): ?\Carbon\Carbon
+    protected function extractResetTime(array $headers): ?Carbon
     {
         $resetHeaders = [
             'X-RateLimit-Reset',
@@ -108,12 +109,12 @@ class RateLimitTracker
 
                 // Unix timestamp
                 if (is_numeric($value)) {
-                    return \Carbon\Carbon::createFromTimestamp((int) $value);
+                    return Carbon::createFromTimestamp((int) $value);
                 }
 
                 // ISO date string
                 try {
-                    return \Carbon\Carbon::parse($value);
+                    return Carbon::parse($value);
                 } catch (\Exception $e) {
                     continue;
                 }

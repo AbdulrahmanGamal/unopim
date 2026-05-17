@@ -6,6 +6,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Channel\Repositories\ChannelRepository;
 use Webkul\Order\DataGrids\Admin\ProfitabilityDataGrid;
@@ -131,7 +132,7 @@ class ProfitabilityController extends Controller
     /**
      * Export profitability report.
      *
-     * @return \Symfony\Component\HttpFoundation\StreamedResponse
+     * @return StreamedResponse
      */
     public function export(Request $request)
     {

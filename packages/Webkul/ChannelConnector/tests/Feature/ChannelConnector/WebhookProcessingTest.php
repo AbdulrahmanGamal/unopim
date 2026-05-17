@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Str;
 use Webkul\ChannelConnector\Contracts\ChannelAdapterContract;
 use Webkul\ChannelConnector\Jobs\ProcessWebhookJob;
 use Webkul\ChannelConnector\Models\ChannelConnector;
@@ -164,7 +165,7 @@ it('acknowledges but logs an unsupported event type (CHN-052)', function () {
 it('acknowledges webhook within 2 seconds (response time constraint)', function () {
     Queue::fake();
 
-    $token = \Illuminate\Support\Str::uuid()->toString();
+    $token = Str::uuid()->toString();
 
     $connector = ChannelConnector::create([
         'code'         => 'wh-perf',
@@ -175,10 +176,10 @@ it('acknowledges webhook within 2 seconds (response time constraint)', function 
         'status'       => 'connected',
     ]);
 
-    $mockAdapter = \Mockery::mock(ChannelAdapterContract::class);
+    $mockAdapter = Mockery::mock(ChannelAdapterContract::class);
     $mockAdapter->shouldReceive('verifyWebhook')->once()->andReturn(true);
 
-    $resolver = \Mockery::mock(AdapterResolver::class);
+    $resolver = Mockery::mock(AdapterResolver::class);
     $resolver->shouldReceive('resolve')->andReturn($mockAdapter);
 
     app()->instance(AdapterResolver::class, $resolver);

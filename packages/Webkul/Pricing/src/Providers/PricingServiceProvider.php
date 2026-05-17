@@ -3,6 +3,9 @@
 namespace Webkul\Pricing\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Webkul\Pricing\Services\BreakEvenCalculator;
+use Webkul\Pricing\Services\MarginProtector;
+use Webkul\Pricing\Services\RecommendedPriceEngine;
 
 class PricingServiceProvider extends ServiceProvider
 {
@@ -24,18 +27,18 @@ class PricingServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(dirname(__DIR__).'/Config/acl.php', 'acl');
 
         $this->app->singleton(
-            \Webkul\Pricing\Services\BreakEvenCalculator::class,
-            \Webkul\Pricing\Services\BreakEvenCalculator::class
+            BreakEvenCalculator::class,
+            BreakEvenCalculator::class
         );
 
         $this->app->singleton(
-            \Webkul\Pricing\Services\MarginProtector::class,
-            \Webkul\Pricing\Services\MarginProtector::class
+            MarginProtector::class,
+            MarginProtector::class
         );
 
         $this->app->singleton(
-            \Webkul\Pricing\Services\RecommendedPriceEngine::class,
-            \Webkul\Pricing\Services\RecommendedPriceEngine::class
+            RecommendedPriceEngine::class,
+            RecommendedPriceEngine::class
         );
     }
 }

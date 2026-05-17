@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Webkul\Tenant\Models\Tenant;
@@ -50,7 +51,7 @@ it('rejects duplicate SKU within the same tenant', function () {
         'tenant_id'  => $tenant->id,
         'created_at' => now(),
         'updated_at' => now(),
-    ]))->toThrow(\Illuminate\Database\QueryException::class);
+    ]))->toThrow(QueryException::class);
 });
 
 it('has composite unique index on tenant_id and sku', function () {

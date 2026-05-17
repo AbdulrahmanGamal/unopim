@@ -346,14 +346,14 @@ class ProcessSyncJob implements ShouldQueue
             'exception' => $exception->getMessage(),
         ]);
 
-        $syncJob = \Webkul\ChannelConnector\Models\ChannelSyncJob::find($this->syncJobId);
+        $syncJob = ChannelSyncJob::find($this->syncJobId);
         if ($syncJob) {
             $syncJob->update([
                 'status'        => 'failed',
                 'completed_at'  => now(),
                 'error_summary' => [['error' => $exception->getMessage()]],
             ]);
-            event(new \Webkul\ChannelConnector\Events\SyncFailed($syncJob));
+            event(new SyncFailed($syncJob));
         }
     }
 }

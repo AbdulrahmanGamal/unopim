@@ -10,6 +10,7 @@ use Webkul\ChannelConnector\Jobs\ProcessSyncJob;
 use Webkul\ChannelConnector\Models\ChannelConnector;
 use Webkul\ChannelConnector\Models\ChannelSyncJob;
 use Webkul\ChannelConnector\Repositories\ChannelSyncJobRepository;
+use Webkul\Product\Models\Product;
 use Webkul\Tenant\Cache\TenantCache;
 
 class SyncJobManager
@@ -60,7 +61,7 @@ class SyncJobManager
 
         $productIds = [];
         if (! empty($productCodes)) {
-            $productIds = \Webkul\Product\Models\Product::whereIn('sku', $productCodes)
+            $productIds = Product::whereIn('sku', $productCodes)
                 ->pluck('id')
                 ->toArray();
         }
@@ -133,7 +134,7 @@ class SyncJobManager
 
         $originalJob->update(['status' => 'retrying']);
 
-        $productIds = \Webkul\Product\Models\Product::whereIn('sku', $failedProductSkus)
+        $productIds = Product::whereIn('sku', $failedProductSkus)
             ->pluck('id')
             ->toArray();
 

@@ -4,6 +4,7 @@ namespace Webkul\ChannelConnector\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\ChannelConnector\Repositories\ChannelConnectorRepository;
 
@@ -40,7 +41,7 @@ class SallaOAuthController extends Controller
 
         $redirectUri = route('admin.channel_connector.salla.callback', $code);
 
-        $state = \Illuminate\Support\Str::random(40);
+        $state = Str::random(40);
         session()->put("channel_connector.salla_state.{$code}", $state);
 
         $params = http_build_query([

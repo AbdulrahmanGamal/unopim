@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Str;
 use Webkul\ChannelConnector\Models\ChannelConnector;
 use Webkul\ChannelConnector\Models\ChannelSyncJob;
 
@@ -29,7 +30,7 @@ it('prevents duplicate running sync jobs', function () {
 
     ChannelSyncJob::create([
         'channel_connector_id' => $connector->id,
-        'job_id'               => \Illuminate\Support\Str::uuid()->toString(),
+        'job_id'               => Str::uuid()->toString(),
         'status'               => 'running', 'sync_type' => 'full',
     ]);
 

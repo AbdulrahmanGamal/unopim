@@ -2,23 +2,30 @@
 
 namespace Webkul\ChannelConnector\Providers;
 
+use Webkul\ChannelConnector\Console\Commands\RunScheduledSyncsCommand;
+use Webkul\ChannelConnector\Models\ChannelConnector;
+use Webkul\ChannelConnector\Models\ChannelFieldMapping;
+use Webkul\ChannelConnector\Models\ChannelSyncConflict;
+use Webkul\ChannelConnector\Models\ChannelSyncJob;
+use Webkul\ChannelConnector\Models\ProductChannelMapping;
+use Webkul\ChannelConnector\Services\AdapterResolver;
 use Webkul\Core\Providers\CoreModuleServiceProvider;
 
 class ChannelConnectorServiceProvider extends CoreModuleServiceProvider
 {
     protected $models = [
-        \Webkul\ChannelConnector\Models\ChannelConnector::class,
-        \Webkul\ChannelConnector\Models\ChannelFieldMapping::class,
-        \Webkul\ChannelConnector\Models\ChannelSyncJob::class,
-        \Webkul\ChannelConnector\Models\ProductChannelMapping::class,
-        \Webkul\ChannelConnector\Models\ChannelSyncConflict::class,
+        ChannelConnector::class,
+        ChannelFieldMapping::class,
+        ChannelSyncJob::class,
+        ProductChannelMapping::class,
+        ChannelSyncConflict::class,
     ];
 
     public function register(): void
     {
         parent::register();
 
-        $this->app->singleton(\Webkul\ChannelConnector\Services\AdapterResolver::class);
+        $this->app->singleton(AdapterResolver::class);
     }
 
     public function boot(): void
@@ -43,7 +50,7 @@ class ChannelConnectorServiceProvider extends CoreModuleServiceProvider
 
         if ($this->app->runningInConsole()) {
             $this->commands([
-                \Webkul\ChannelConnector\Console\Commands\RunScheduledSyncsCommand::class,
+                RunScheduledSyncsCommand::class,
             ]);
         }
     }

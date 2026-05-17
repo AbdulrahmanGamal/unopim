@@ -5,14 +5,18 @@ namespace Webkul\WooCommerce\Providers;
 use Webkul\ChannelConnector\Services\AdapterResolver;
 use Webkul\Core\Providers\CoreModuleServiceProvider;
 use Webkul\WooCommerce\Adapters\WooCommerceAdapter;
+use Webkul\WooCommerce\Models\WooCommerceCredentialsConfig;
+use Webkul\WooCommerce\Models\WooCommerceExportMappingConfig;
+use Webkul\WooCommerce\Models\WooCommerceMappingConfig;
+use Webkul\WooCommerce\Models\WooCommerceProductMapping;
 
 class ModuleServiceProvider extends CoreModuleServiceProvider
 {
     protected $models = [
-        \Webkul\WooCommerce\Models\WooCommerceCredentialsConfig::class,
-        \Webkul\WooCommerce\Models\WooCommerceExportMappingConfig::class,
-        \Webkul\WooCommerce\Models\WooCommerceMappingConfig::class,
-        \Webkul\WooCommerce\Models\WooCommerceProductMapping::class,
+        WooCommerceCredentialsConfig::class,
+        WooCommerceExportMappingConfig::class,
+        WooCommerceMappingConfig::class,
+        WooCommerceProductMapping::class,
     ];
 
     public function boot(): void

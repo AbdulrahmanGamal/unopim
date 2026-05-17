@@ -1,5 +1,7 @@
 <?php
 
+use Webkul\Order\Models\UnifiedOrder;
+use Webkul\Order\Models\UnifiedOrderItem;
 use Webkul\Order\Tests\OrderTestCase;
 
 /*
@@ -46,13 +48,13 @@ expect()->extend('toHaveProfitability', function () {
 |
 */
 
-function createOrderWithProfitability(float $revenue, float $cost): \Webkul\Order\Models\UnifiedOrder
+function createOrderWithProfitability(float $revenue, float $cost): UnifiedOrder
 {
-    $order = \Webkul\Order\Models\UnifiedOrder::factory()->create([
+    $order = UnifiedOrder::factory()->create([
         'total_amount' => $revenue,
     ]);
 
-    \Webkul\Order\Models\UnifiedOrderItem::factory()->create([
+    UnifiedOrderItem::factory()->create([
         'unified_order_id' => $order->id,
         'price'            => $revenue,
         'quantity'         => 1,

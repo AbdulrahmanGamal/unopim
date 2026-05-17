@@ -5,6 +5,7 @@ use Illuminate\Http\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Webkul\Tenant\Http\Middleware\TenantMiddleware;
 use Webkul\Tenant\Models\Tenant;
+use Webkul\User\Models\Admin;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,7 +64,7 @@ it('resolves tenant from X-Tenant-ID header when user is authenticated', functio
     config(['app.url' => 'http://localhost']);
 
     // Header resolution requires an authenticated user (security fix)
-    $admin = \Webkul\User\Models\Admin::withoutGlobalScopes()->find($this->fixture($this->tenantB, 'admin_id'));
+    $admin = Admin::withoutGlobalScopes()->find($this->fixture($this->tenantB, 'admin_id'));
     auth('admin')->login($admin);
 
     $request = Request::create('http://localhost/api/v1/products');

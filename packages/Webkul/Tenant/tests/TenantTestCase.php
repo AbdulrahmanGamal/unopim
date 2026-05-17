@@ -2,6 +2,7 @@
 
 namespace Webkul\Tenant\Tests;
 
+use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
@@ -37,7 +38,7 @@ abstract class TenantTestCase extends TestCase
                 $table->timestamps();
             });
 
-            $this->app[\Illuminate\Contracts\Console\Kernel::class]->setArtisan(null);
+            $this->app[Kernel::class]->setArtisan(null);
 
             RefreshDatabaseState::$migrated = true;
         }

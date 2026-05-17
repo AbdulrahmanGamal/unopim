@@ -11,6 +11,7 @@ use Webkul\Core\Facades\ElasticSearch;
 use Webkul\ElasticSearch\Indexing\Normalizer\ProductNormalizer;
 use Webkul\ElasticSearch\Traits\ResolveTenantIndex;
 use Webkul\Product\Models\Product;
+use Webkul\Tenant\Providers\TenantServiceProvider;
 
 class ProductIndexer extends Command
 {
@@ -31,7 +32,7 @@ class ProductIndexer extends Command
 
     public function handle()
     {
-        if (! $this->option('tenant') && class_exists(\Webkul\Tenant\Providers\TenantServiceProvider::class)) {
+        if (! $this->option('tenant') && class_exists(TenantServiceProvider::class)) {
             $this->error('Multi-tenant mode detected. You must specify --tenant or run for each tenant individually.');
 
             return 1;

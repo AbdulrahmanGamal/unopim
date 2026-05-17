@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Mail;
+use Webkul\ElasticSearch\Indexing\Normalizer\ProductNormalizer;
+use Webkul\ElasticSearch\Observers\Product;
 use Webkul\Tenant\Models\Tenant;
 
 beforeEach(function () {
@@ -16,10 +18,10 @@ it('generates tenant-specific ES index name when tenant context exists', functio
     core()->setCurrentTenantId($tenant->id);
 
     // Use reflection to test the observer's getIndexName
-    $normalizer = app(\Webkul\ElasticSearch\Indexing\Normalizer\ProductNormalizer::class);
-    $observer = new \Webkul\ElasticSearch\Observers\Product($normalizer);
+    $normalizer = app(ProductNormalizer::class);
+    $observer = new Product($normalizer);
 
-    $reflection = new \ReflectionMethod($observer, 'getIndexName');
+    $reflection = new ReflectionMethod($observer, 'getIndexName');
     $reflection->setAccessible(true);
     $indexName = $reflection->invoke($observer);
 
@@ -33,10 +35,10 @@ it('generates tenant-specific ES index name when tenant context exists', functio
 it('uses global index name when no tenant context', function () {
     core()->setCurrentTenantId(null);
 
-    $normalizer = app(\Webkul\ElasticSearch\Indexing\Normalizer\ProductNormalizer::class);
-    $observer = new \Webkul\ElasticSearch\Observers\Product($normalizer);
+    $normalizer = app(ProductNormalizer::class);
+    $observer = new Product($normalizer);
 
-    $reflection = new \ReflectionMethod($observer, 'getIndexName');
+    $reflection = new ReflectionMethod($observer, 'getIndexName');
     $reflection->setAccessible(true);
     $indexName = $reflection->invoke($observer);
 
@@ -50,10 +52,10 @@ it('falls back to tenant_id when tenants table query fails', function () {
     $nonExistentId = 99999;
     core()->setCurrentTenantId($nonExistentId);
 
-    $normalizer = app(\Webkul\ElasticSearch\Indexing\Normalizer\ProductNormalizer::class);
-    $observer = new \Webkul\ElasticSearch\Observers\Product($normalizer);
+    $normalizer = app(ProductNormalizer::class);
+    $observer = new Product($normalizer);
 
-    $reflection = new \ReflectionMethod($observer, 'getIndexName');
+    $reflection = new ReflectionMethod($observer, 'getIndexName');
     $reflection->setAccessible(true);
     $indexName = $reflection->invoke($observer);
 
@@ -73,16 +75,16 @@ it('generates different index names for different tenants', function () {
         'es_index_uuid' => 'uuid-beta',
     ]);
 
-    $normalizer = app(\Webkul\ElasticSearch\Indexing\Normalizer\ProductNormalizer::class);
+    $normalizer = app(ProductNormalizer::class);
 
     core()->setCurrentTenantId($tenant1->id);
-    $observer1 = new \Webkul\ElasticSearch\Observers\Product($normalizer);
-    $ref = new \ReflectionMethod($observer1, 'getIndexName');
+    $observer1 = new Product($normalizer);
+    $ref = new ReflectionMethod($observer1, 'getIndexName');
     $ref->setAccessible(true);
     $name1 = $ref->invoke($observer1);
 
     core()->setCurrentTenantId($tenant2->id);
-    $observer2 = new \Webkul\ElasticSearch\Observers\Product($normalizer);
+    $observer2 = new Product($normalizer);
     $name2 = $ref->invoke($observer2);
 
     expect($name1)->not->toBe($name2);

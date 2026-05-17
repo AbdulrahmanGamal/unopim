@@ -4,12 +4,13 @@ namespace Webkul\Pricing\Repositories;
 
 use Illuminate\Support\Collection;
 use Webkul\Core\Eloquent\Repository;
+use Webkul\Pricing\Contracts\MarginProtectionEvent;
 
 class MarginProtectionEventRepository extends Repository
 {
     public function model(): string
     {
-        return \Webkul\Pricing\Contracts\MarginProtectionEvent::class;
+        return MarginProtectionEvent::class;
     }
 
     /**

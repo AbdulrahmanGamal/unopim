@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Carbon;
 use Webkul\Channel\Models\Channel;
 use Webkul\Order\Models\OrderWebhook;
 
@@ -96,7 +97,7 @@ it('records last delivery', function () {
     $webhook->recordDelivery();
 
     expect($webhook->last_delivery_at)->not->toBeNull()
-        ->and($webhook->last_delivery_at)->toBeInstanceOf(\Illuminate\Support\Carbon::class);
+        ->and($webhook->last_delivery_at)->toBeInstanceOf(Carbon::class);
 });
 
 it('has fillable attributes', function () {
@@ -117,7 +118,7 @@ it('casts attributes correctly', function () {
     expect($webhook->event_types)->toBeArray()
         ->and($webhook->is_active)->toBeBool()
         ->and($webhook->delivery_attempts)->toBeInt()
-        ->and($webhook->last_delivery_at)->toBeInstanceOf(\Illuminate\Support\Carbon::class);
+        ->and($webhook->last_delivery_at)->toBeInstanceOf(Carbon::class);
 });
 
 it('generates secret key on creation', function () {

@@ -5,6 +5,7 @@ namespace Webkul\Installer\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Webkul\Tenant\Providers\TenantServiceProvider;
 
 class PurgeUnusedImages extends Command
 {
@@ -29,7 +30,7 @@ class PurgeUnusedImages extends Command
      */
     public function handle()
     {
-        if (! $this->option('tenant') && class_exists(\Webkul\Tenant\Providers\TenantServiceProvider::class)) {
+        if (! $this->option('tenant') && class_exists(TenantServiceProvider::class)) {
             $this->error('Multi-tenant mode detected. You must specify --tenant or run for each tenant individually.');
 
             return 1;
@@ -136,9 +137,9 @@ class PurgeUnusedImages extends Command
 
         return match ($section) {
             'locale_specific', 'channel_specific' => $this->extractLocaleOrChannelSpecificImages($sectionData, $imageAttributes),
-            'channel_locale_specific' => $this->extractChannelLocaleSpecificImages($sectionData, $imageAttributes),
-            'common'                  => $this->extractImagesFromAttributes($sectionData, $imageAttributes),
-            default                   => [],
+            'channel_locale_specific'             => $this->extractChannelLocaleSpecificImages($sectionData, $imageAttributes),
+            'common'                              => $this->extractImagesFromAttributes($sectionData, $imageAttributes),
+            default                               => [],
         };
     }
 

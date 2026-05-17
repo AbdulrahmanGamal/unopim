@@ -95,7 +95,7 @@ class Export
     /**
      * Error helper instance.
      *
-     * @var \Webkul\DataTransfer\Helpers\Error
+     * @var Error
      */
     protected $typeExporter;
 
@@ -168,7 +168,7 @@ class Export
     /**
      * Returns error helper instance.
      *
-     * @return \Webkul\DataTransfer\Helpers\Error
+     * @return Error
      */
     public function getErrorHelper()
     {

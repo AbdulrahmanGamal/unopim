@@ -1,5 +1,6 @@
 <?php
 
+use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Webkul\ChannelConnector\Jobs\ProcessSyncJob;
 use Webkul\ChannelConnector\Models\ChannelConnector;
@@ -75,8 +76,8 @@ it('ChannelSyncJob timestamps are cast to datetime', function () {
 
     $this->syncJob->refresh();
 
-    expect($this->syncJob->started_at)->toBeInstanceOf(\Carbon\Carbon::class);
-    expect($this->syncJob->completed_at)->toBeInstanceOf(\Carbon\Carbon::class);
+    expect($this->syncJob->started_at)->toBeInstanceOf(Carbon::class);
+    expect($this->syncJob->completed_at)->toBeInstanceOf(Carbon::class);
 });
 
 it('ChannelSyncJob can track progress counters', function () {

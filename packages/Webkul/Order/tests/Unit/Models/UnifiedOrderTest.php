@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Carbon;
 use Webkul\Channel\Models\Channel;
 use Webkul\Order\Models\OrderSyncLog;
 use Webkul\Order\Models\UnifiedOrder;
@@ -134,7 +135,7 @@ it('casts attributes correctly', function () {
         'additional_data' => ['key' => 'value'],
     ]);
 
-    expect($order->order_date)->toBeInstanceOf(\Illuminate\Support\Carbon::class)
+    expect($order->order_date)->toBeInstanceOf(Carbon::class)
         ->and($order->total_amount)->toBeFloat()
         ->and($order->additional_data)->toBeArray();
 });

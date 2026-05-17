@@ -2,6 +2,7 @@
 
 namespace Webkul\Product\Factories\ElasticSearch\Cursor;
 
+use Illuminate\Support\Facades\DB;
 use Webkul\Core\Facades\ElasticSearch;
 use Webkul\ElasticSearch\Contracts\CursorFactory as CursorFactoryContract;
 use Webkul\ElasticSearch\Contracts\ResultCursor as ResultCursorContract;
@@ -32,11 +33,11 @@ class ResultCursorFactory implements CursorFactoryContract
         ];
 
         try {
-            $results = Elasticsearch::search($requestParam);
+            $results = ElasticSearch::search($requestParam);
         } catch (\Exception $e) {
             if (str_contains($e->getMessage(), 'attribute_family_id')) {
                 try {
-                    $results = Elasticsearch::search($requestParam);
+                    $results = ElasticSearch::search($requestParam);
                 } catch (\Exception $retryException) {
                     throw $retryException;
                 }
@@ -68,7 +69,7 @@ class ResultCursorFactory implements CursorFactoryContract
 
         if ($tenantId) {
             try {
-                $uuid = \Illuminate\Support\Facades\DB::table('tenants')
+                $uuid = DB::table('tenants')
                     ->where('id', $tenantId)
                     ->value('es_index_uuid');
 

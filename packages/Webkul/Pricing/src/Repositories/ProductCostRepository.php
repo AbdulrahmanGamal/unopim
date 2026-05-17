@@ -4,12 +4,13 @@ namespace Webkul\Pricing\Repositories;
 
 use Illuminate\Support\Collection;
 use Webkul\Core\Eloquent\Repository;
+use Webkul\Pricing\Contracts\ProductCost;
 
 class ProductCostRepository extends Repository
 {
     public function model(): string
     {
-        return \Webkul\Pricing\Contracts\ProductCost::class;
+        return ProductCost::class;
     }
 
     /**

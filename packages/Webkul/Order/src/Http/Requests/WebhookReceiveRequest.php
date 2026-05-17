@@ -2,7 +2,10 @@
 
 namespace Webkul\Order\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 /**
  * Webhook Receive Request
@@ -38,12 +41,12 @@ class WebhookReceiveRequest extends FormRequest
      *
      * @return void
      *
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
-    protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
+    protected function failedValidation(Validator $validator)
     {
         // Log validation failures for debugging
-        \Illuminate\Support\Facades\Log::warning('Webhook validation failed', [
+        Log::warning('Webhook validation failed', [
             'channel' => $this->route('channelCode'),
             'errors'  => $validator->errors()->toArray(),
             'payload' => $this->all(),

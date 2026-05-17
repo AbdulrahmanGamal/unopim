@@ -2,10 +2,13 @@
 
 namespace Webkul\Pricing\Services;
 
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Pricing\Events\RecommendationApplied;
+use Webkul\Pricing\Exceptions\ImpossibleBreakEvenException;
 use Webkul\Pricing\Models\PricingStrategy;
 use Webkul\Pricing\Repositories\PricingStrategyRepository;
 use Webkul\Pricing\ValueObjects\BreakEvenResult;
@@ -39,7 +42,7 @@ class RecommendedPriceEngine
      * @param  array<int>|null  $channelIds  Specific channels, or null for all active channels.
      * @return array<int, PriceRecommendation> Recommendations keyed by channel_id.
      *
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException If product not found.
+     * @throws ModelNotFoundException If product not found.
      */
     public function recommend(int $productId, ?array $channelIds = null): array
     {
@@ -75,7 +78,7 @@ class RecommendedPriceEngine
                 );
 
                 $recommendations[$channel->id] = $recommendation;
-            } catch (\Webkul\Pricing\Exceptions\ImpossibleBreakEvenException $e) {
+            } catch (ImpossibleBreakEvenException $e) {
                 Log::warning('Skipping channel due to impossible break-even', [
                     'product_id' => $productId,
                     'channel_id' => $channel->id,
@@ -115,7 +118,7 @@ class RecommendedPriceEngine
      * @return bool True if the price was successfully applied.
      *
      * @throws \InvalidArgumentException If the tier is not recognized.
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException If product not found.
+     * @throws ModelNotFoundException If product not found.
      */
     public function apply(int $productId, int $channelId, string $tier, ?float $overridePrice = null): bool
     {
@@ -264,7 +267,7 @@ class RecommendedPriceEngine
      * Resolve channels from explicit IDs or fall back to all active channels.
      *
      * @param  array<int>|null  $channelIds
-     * @return \Illuminate\Support\Collection
+     * @return Collection
      */
     protected function resolveChannels(?array $channelIds)
     {

@@ -3,12 +3,17 @@
 namespace Webkul\Pricing\Providers;
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Log;
+use Webkul\Category\Models\Category;
+use Webkul\Core\Models\Channel;
 use Webkul\Pricing\Events\CostUpdated;
 use Webkul\Pricing\Events\MarginApproved;
 use Webkul\Pricing\Events\MarginBlocked;
 use Webkul\Pricing\Events\RecommendationApplied;
 use Webkul\Pricing\Listeners\InvalidatePricingCache;
 use Webkul\Pricing\Listeners\NotifyMarginViolation;
+use Webkul\Pricing\Models\PricingStrategy;
+use Webkul\Product\Models\Product;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -48,9 +53,9 @@ class EventServiceProvider extends ServiceProvider
     protected function cleanupOrphanStrategies($model): void
     {
         $scopeType = match (true) {
-            $model instanceof \Webkul\Product\Models\Product   => 'product',
-            $model instanceof \Webkul\Core\Models\Channel      => 'channel',
-            $model instanceof \Webkul\Category\Models\Category => 'category',
+            $model instanceof Product                          => 'product',
+            $model instanceof Channel                          => 'channel',
+            $model instanceof Category                         => 'category',
             default                                            => null,
         };
 
@@ -59,17 +64,17 @@ class EventServiceProvider extends ServiceProvider
         }
 
         try {
-            \Webkul\Pricing\Models\PricingStrategy::query()
+            PricingStrategy::query()
                 ->where('scope_type', $scopeType)
                 ->where('scope_id', $model->id)
                 ->delete();
 
-            \Illuminate\Support\Facades\Log::debug('Orphan strategies cleaned up', [
+            Log::debug('Orphan strategies cleaned up', [
                 'scope_type' => $scopeType,
                 'scope_id'   => $model->id,
             ]);
         } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::warning('Failed to cleanup orphan strategies', [
+            Log::warning('Failed to cleanup orphan strategies', [
                 'scope_type' => $scopeType,
                 'scope_id'   => $model->id,
                 'error'      => $e->getMessage(),

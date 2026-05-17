@@ -5,14 +5,18 @@ namespace Webkul\Noon\Providers;
 use Webkul\ChannelConnector\Services\AdapterResolver;
 use Webkul\Core\Providers\CoreModuleServiceProvider;
 use Webkul\Noon\Adapters\NoonAdapter;
+use Webkul\Noon\Models\NoonCredentialsConfig;
+use Webkul\Noon\Models\NoonExportMappingConfig;
+use Webkul\Noon\Models\NoonMappingConfig;
+use Webkul\Noon\Models\NoonProductMapping;
 
 class ModuleServiceProvider extends CoreModuleServiceProvider
 {
     protected $models = [
-        \Webkul\Noon\Models\NoonCredentialsConfig::class,
-        \Webkul\Noon\Models\NoonExportMappingConfig::class,
-        \Webkul\Noon\Models\NoonMappingConfig::class,
-        \Webkul\Noon\Models\NoonProductMapping::class,
+        NoonCredentialsConfig::class,
+        NoonExportMappingConfig::class,
+        NoonMappingConfig::class,
+        NoonProductMapping::class,
     ];
 
     public function boot(): void

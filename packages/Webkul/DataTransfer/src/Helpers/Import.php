@@ -102,7 +102,7 @@ class Import
     /**
      * Error helper instance.
      *
-     * @var \Webkul\DataTransfer\Helpers\Error
+     * @var Error
      */
     protected $typeImporter;
 
@@ -161,7 +161,7 @@ class Import
     /**
      * Returns error helper instance.
      *
-     * @return \Webkul\DataTransfer\Helpers\Error
+     * @return Error
      */
     public function getErrorHelper()
     {

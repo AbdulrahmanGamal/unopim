@@ -3,21 +3,23 @@
 namespace Webkul\Tenant\Eloquent;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Scope;
 use Illuminate\Support\Facades\Log;
+use Webkul\Tenant\Models\Scopes\TenantScope;
 
 class TenantAwareBuilder extends Builder
 {
     /**
      * Remove a registered global scope — log + allow strategy (Decision D5).
      *
-     * @param  \Illuminate\Database\Eloquent\Scope|string  $scope
+     * @param  Scope|string  $scope
      * @return $this
      */
     public function withoutGlobalScope($scope)
     {
         $scopeName = is_string($scope) ? $scope : get_class($scope);
 
-        if ($scopeName === \Webkul\Tenant\Models\Scopes\TenantScope::class || $scopeName === 'tenant') {
+        if ($scopeName === TenantScope::class || $scopeName === 'tenant') {
             $this->logTenantScopeBypass('TenantScope bypass detected', [
                 'scope'     => $scopeName,
                 'model'     => get_class($this->getModel()),
@@ -36,7 +38,7 @@ class TenantAwareBuilder extends Builder
     public function withoutGlobalScopes(?array $scopes = null)
     {
         $removingAll = is_null($scopes);
-        $removingTenant = $removingAll || in_array(\Webkul\Tenant\Models\Scopes\TenantScope::class, $scopes ?? []);
+        $removingTenant = $removingAll || in_array(TenantScope::class, $scopes ?? []);
 
         if ($removingTenant) {
             $this->logTenantScopeBypass('TenantScope bypass detected (bulk removal)', [

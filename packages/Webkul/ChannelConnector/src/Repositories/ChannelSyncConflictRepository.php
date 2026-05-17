@@ -2,12 +2,13 @@
 
 namespace Webkul\ChannelConnector\Repositories;
 
+use Webkul\ChannelConnector\Contracts\ChannelSyncConflict;
 use Webkul\Core\Eloquent\Repository;
 
 class ChannelSyncConflictRepository extends Repository
 {
     public function model(): string
     {
-        return \Webkul\ChannelConnector\Contracts\ChannelSyncConflict::class;
+        return ChannelSyncConflict::class;
     }
 }

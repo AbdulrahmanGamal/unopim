@@ -52,7 +52,7 @@ it('syncs orders from channel adapter successfully', function () {
 
 it('handles sync failures gracefully', function () {
     $this->mock(SallaOrderAdapter::class, function ($mock) {
-        $mock->shouldReceive('fetchOrders')->andThrow(new \Exception('Connection timeout'));
+        $mock->shouldReceive('fetchOrders')->andThrow(new Exception('Connection timeout'));
     });
 
     $result = $this->service->syncChannel($this->channel->id);
@@ -142,7 +142,7 @@ it('tracks sync statistics', function () {
 
 it('validates channel exists before syncing', function () {
     expect(fn () => $this->service->syncChannel(99999))
-        ->toThrow(\Exception::class);
+        ->toThrow(Exception::class);
 });
 
 it('supports retry mechanism for failed syncs', function () {

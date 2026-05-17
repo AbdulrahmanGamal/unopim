@@ -72,7 +72,7 @@ it('TenantPermissionGuard blocks platform-reserved permissions for tenant users'
     $guard = new TenantPermissionGuard;
 
     // Create a mock tenant user with tenant_id set
-    $user = new \stdClass;
+    $user = new stdClass;
     $user->tenant_id = 1;
 
     expect($guard->isAllowed($user, 'platform.tenants'))->toBeFalse();
@@ -83,7 +83,7 @@ it('TenantPermissionGuard blocks platform-reserved permissions for tenant users'
 it('TenantPermissionGuard allows regular permissions for tenant users', function () {
     $guard = new TenantPermissionGuard;
 
-    $user = new \stdClass;
+    $user = new stdClass;
     $user->tenant_id = 1;
 
     expect($guard->isAllowed($user, 'dashboard'))->toBeTrue();
@@ -94,7 +94,7 @@ it('TenantPermissionGuard allows regular permissions for tenant users', function
 it('TenantPermissionGuard allows all permissions for platform users', function () {
     $guard = new TenantPermissionGuard;
 
-    $user = new \stdClass;
+    $user = new stdClass;
     $user->tenant_id = null;
 
     expect($guard->isAllowed($user, 'platform.tenants'))->toBeTrue();
@@ -105,7 +105,7 @@ it('TenantPermissionGuard allows all permissions for platform users', function (
 it('TenantPermissionGuard filters permissions list for tenant users', function () {
     $guard = new TenantPermissionGuard;
 
-    $user = new \stdClass;
+    $user = new stdClass;
     $user->tenant_id = 1;
 
     $permissions = ['dashboard', 'catalog', 'platform.tenants', 'platform.system'];
@@ -120,7 +120,7 @@ it('TenantPermissionGuard filters permissions list for tenant users', function (
 it('TenantPermissionGuard does not filter for platform users', function () {
     $guard = new TenantPermissionGuard;
 
-    $user = new \stdClass;
+    $user = new stdClass;
     $user->tenant_id = null;
 
     $permissions = ['dashboard', 'platform.tenants', 'platform.system'];
@@ -141,7 +141,7 @@ it('isPlatformReserved correctly identifies platform prefixes', function () {
 it('isRoleScopeValid validates tenant role must have tenant_id', function () {
     $guard = new TenantPermissionGuard;
 
-    $role = new \stdClass;
+    $role = new stdClass;
     $role->code = 'tenant-admin';
     $role->tenant_id = 1;
 
@@ -154,7 +154,7 @@ it('isRoleScopeValid validates tenant role must have tenant_id', function () {
 it('isRoleScopeValid validates platform role must have null tenant_id', function () {
     $guard = new TenantPermissionGuard;
 
-    $role = new \stdClass;
+    $role = new stdClass;
     $role->code = 'platform-operator';
     $role->tenant_id = null;
 

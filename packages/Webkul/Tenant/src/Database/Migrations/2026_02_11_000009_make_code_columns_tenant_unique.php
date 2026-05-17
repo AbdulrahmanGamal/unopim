@@ -43,7 +43,7 @@ return new class extends Migration
             if ($driver === 'sqlite') {
                 try {
                     DB::statement("DROP INDEX IF EXISTS {$globalIndex}");
-                } catch (\Throwable) {
+                } catch (Throwable) {
                     // Index may not exist or have a different name
                 }
 
@@ -77,7 +77,7 @@ return new class extends Migration
             if ($driver === 'sqlite') {
                 try {
                     DB::statement("DROP INDEX IF EXISTS {$compositeIndex}");
-                } catch (\Throwable) {
+                } catch (Throwable) {
                     // Ignore
                 }
 

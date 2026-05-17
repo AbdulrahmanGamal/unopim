@@ -1,6 +1,8 @@
 <?php
 
+use Illuminate\Database\QueryException;
 use Webkul\Core\Models\ChannelProxy as Channel;
+use Webkul\Pricing\Contracts\PricingStrategyRepository;
 use Webkul\Pricing\Models\PricingStrategy;
 use Webkul\Product\Models\ProductProxy as Product;
 
@@ -134,7 +136,7 @@ it('should enforce unique constraint on scope_type + scope_id', function () {
         'scope_id'   => 0,
     ]);
 
-    $this->expectException(\Illuminate\Database\QueryException::class);
+    $this->expectException(QueryException::class);
 
     PricingStrategy::factory()->create([
         'scope_type' => 'global',
@@ -163,7 +165,7 @@ it('should retrieve strategies for a product with cascading priority', function 
         'priority'                  => 10,
     ]);
 
-    $repo = app(\Webkul\Pricing\Contracts\PricingStrategyRepository::class);
+    $repo = app(PricingStrategyRepository::class);
     $strategy = $repo->resolve($product->id, $channel->id, null);
 
     expect($strategy)->not->toBeNull()

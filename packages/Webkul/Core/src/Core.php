@@ -3,15 +3,19 @@
 namespace Webkul\Core;
 
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\Intl\Currencies;
 use Symfony\Component\Intl\Exception\MissingResourceException;
 use Webkul\Core\Models\Channel;
+use Webkul\Core\Models\Currency;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Core\Repositories\CoreConfigRepository;
 use Webkul\Core\Repositories\CurrencyRepository;
 use Webkul\Core\Repositories\LocaleRepository;
+use Webkul\Customer\Models\CustomerGroup;
+use Webkul\Tenant\Contracts\Tenant;
 
 class Core
 {
@@ -25,42 +29,42 @@ class Core
     /**
      * Current Channel.
      *
-     * @var \Webkul\Core\Models\Channel
+     * @var Channel
      */
     protected $currentChannel;
 
     /**
      * Default Channel.
      *
-     * @var \Webkul\Core\Models\Channel
+     * @var Channel
      */
     protected $defaultChannel;
 
     /**
      * Currency.
      *
-     * @var \Webkul\Core\Models\Currency
+     * @var Currency
      */
     protected $currentCurrency;
 
     /**
      * Base Currency.
      *
-     * @var \Webkul\Core\Models\Currency
+     * @var Currency
      */
     protected $baseCurrency;
 
     /**
      * Current Locale.
      *
-     * @var \Webkul\Core\Models\Locale
+     * @var Models\Locale
      */
     protected $currentLocale;
 
     /**
      * Guest Customer Group
      *
-     * @var \Webkul\Customer\Models\CustomerGroup
+     * @var CustomerGroup
      */
     protected $guestCustomerGroup;
 
@@ -193,7 +197,7 @@ class Core
             return null;
         }
 
-        return app(\Webkul\Tenant\Contracts\Tenant::class)
+        return app(Tenant::class)
             ->newQuery()
             ->find($this->currentTenantId);
     }
@@ -201,7 +205,7 @@ class Core
     /**
      * Returns all channels.
      *
-     * @return \Illuminate\Support\Collection
+     * @return Collection
      */
     public function getAllChannels()
     {
@@ -219,7 +223,7 @@ class Core
     /**
      * Returns current channel models.
      *
-     * @return \Webkul\Core\Contracts\Channel
+     * @return Contracts\Channel
      */
     public function getCurrentChannel()
     {
@@ -229,7 +233,7 @@ class Core
     /**
      * Returns default channel models.
      *
-     * @return \Webkul\Core\Contracts\Channel
+     * @return Contracts\Channel
      */
     public function getDefaultChannel(): ?Channel
     {
@@ -273,7 +277,7 @@ class Core
     /**
      * Get channel code from request.
      *
-     * @return \Webkul\Core\Contracts\Channel
+     * @return Contracts\Channel
      */
     public function getRequestedChannel()
     {
@@ -322,7 +326,7 @@ class Core
     /**
      * Return all locales.
      *
-     * @return \Illuminate\Support\Collection
+     * @return Collection
      */
     public function getAllLocales()
     {
@@ -332,7 +336,7 @@ class Core
     /**
      * Return all active locales.
      *
-     * @return \Illuminate\Support\Collection
+     * @return Collection
      */
     public function getAllActiveLocales()
     {
@@ -342,7 +346,7 @@ class Core
     /**
      * Returns current locale.
      *
-     * @return \Webkul\Core\Contracts\Locale
+     * @return Contracts\Locale
      */
     public function getCurrentLocale()
     {
@@ -416,7 +420,7 @@ class Core
     /**
      * Returns all currencies.
      *
-     * @return \Illuminate\Support\Collection
+     * @return Collection
      */
     public function getAllCurrencies()
     {
@@ -426,7 +430,7 @@ class Core
     /**
      * Return all active currencies.
      *
-     * @return \Illuminate\Support\Collection
+     * @return Collection
      */
     public function getAllActiveCurrencies()
     {
@@ -436,7 +440,7 @@ class Core
     /**
      * Returns base channel's currency model.
      *
-     * @return \Webkul\Core\Contracts\Currency
+     * @return Contracts\Currency
      */
     public function getBaseCurrency()
     {
@@ -525,12 +529,12 @@ class Core
     /**
      * Return currency symbol from currency code.
      *
-     * @param  string|\Webkul\Core\Contracts\Currency  $currency
+     * @param  string|Contracts\Currency  $currency
      * @return string
      */
     public function currencySymbol($currency)
     {
-        $code = $currency instanceof \Webkul\Core\Contracts\Currency ? $currency->code : $currency;
+        $code = $currency instanceof Contracts\Currency ? $currency->code : $currency;
 
         $formatter = new \NumberFormatter(app()->getLocale().'@currency='.$code, \NumberFormatter::CURRENCY);
 
@@ -607,7 +611,7 @@ class Core
     /**
      * Get channel timestamp, timestamp will be builded with channel timezone settings.
      *
-     * @param  \Webkul\Core\Contracts\Channel  $channel
+     * @param  Contracts\Channel  $channel
      * @return int
      */
     public function channelTimeStamp($channel)
@@ -710,7 +714,7 @@ class Core
     /**
      * Retrieve all countries.
      *
-     * @return \Illuminate\Support\Collection
+     * @return Collection
      */
     public function countries()
     {

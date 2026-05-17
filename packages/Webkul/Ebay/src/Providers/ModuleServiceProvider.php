@@ -5,14 +5,18 @@ namespace Webkul\Ebay\Providers;
 use Webkul\ChannelConnector\Services\AdapterResolver;
 use Webkul\Core\Providers\CoreModuleServiceProvider;
 use Webkul\Ebay\Adapters\EbayAdapter;
+use Webkul\Ebay\Models\EbayCredentialsConfig;
+use Webkul\Ebay\Models\EbayExportMappingConfig;
+use Webkul\Ebay\Models\EbayMappingConfig;
+use Webkul\Ebay\Models\EbayProductMapping;
 
 class ModuleServiceProvider extends CoreModuleServiceProvider
 {
     protected $models = [
-        \Webkul\Ebay\Models\EbayCredentialsConfig::class,
-        \Webkul\Ebay\Models\EbayExportMappingConfig::class,
-        \Webkul\Ebay\Models\EbayMappingConfig::class,
-        \Webkul\Ebay\Models\EbayProductMapping::class,
+        EbayCredentialsConfig::class,
+        EbayExportMappingConfig::class,
+        EbayMappingConfig::class,
+        EbayProductMapping::class,
     ];
 
     public function boot(): void

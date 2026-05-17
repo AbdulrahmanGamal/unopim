@@ -10,6 +10,7 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use Webkul\Category\Models\Category;
 use Webkul\Core\Facades\ElasticSearch;
 use Webkul\ElasticSearch\Traits\ResolveTenantIndex;
+use Webkul\Tenant\Providers\TenantServiceProvider;
 
 class CategoryIndexer extends Command
 {
@@ -30,7 +31,7 @@ class CategoryIndexer extends Command
 
     public function handle()
     {
-        if (! $this->option('tenant') && class_exists(\Webkul\Tenant\Providers\TenantServiceProvider::class)) {
+        if (! $this->option('tenant') && class_exists(TenantServiceProvider::class)) {
             $this->error('Multi-tenant mode detected. You must specify --tenant or run for each tenant individually.');
 
             return 1;
