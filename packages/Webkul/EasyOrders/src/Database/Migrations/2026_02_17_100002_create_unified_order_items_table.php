@@ -12,7 +12,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('tenant_id');
             $table->unsignedBigInteger('unified_order_id');
-            $table->unsignedBigInteger('product_id')->nullable();
+            // products.id is INT UNSIGNED (legacy $table->increments('id')); FK column must match.
+            $table->unsignedInteger('product_id')->nullable();
             $table->string('channel_product_id')->nullable();
             $table->string('sku');
             $table->string('name');

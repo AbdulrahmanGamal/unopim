@@ -11,7 +11,8 @@ return new class extends Migration
         Schema::create('margin_protection_events', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('tenant_id');
-            $table->unsignedBigInteger('product_id');
+            // products.id is INT UNSIGNED (legacy $table->increments('id')); FK column must match.
+            $table->unsignedInteger('product_id');
             $table->unsignedBigInteger('channel_id')->nullable();
             $table->enum('event_type', ['blocked', 'warning', 'approved', 'expired']);
             $table->decimal('proposed_price', 12, 4);

@@ -13,7 +13,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('tenant_id');
             $table->unsignedBigInteger('channel_connector_id');
-            $table->unsignedBigInteger('product_id');
+            // products.id is INT UNSIGNED (legacy $table->increments('id')); FK column must match.
+            $table->unsignedInteger('product_id');
             $table->string('external_id');
             $table->string('external_variant_id')->nullable();
             $table->string('entity_type', 20)->default('product');

@@ -12,7 +12,8 @@ return new class extends Migration
         Schema::create('product_costs', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('tenant_id');
-            $table->unsignedBigInteger('product_id');
+            // products.id is INT UNSIGNED (legacy $table->increments('id')); FK column must match.
+            $table->unsignedInteger('product_id');
             $table->enum('cost_type', ['cogs', 'operational', 'marketing', 'platform', 'shipping', 'overhead']);
             $table->decimal('amount', 12, 4)->default(0);
             $table->string('currency_code', 3)->default('USD');

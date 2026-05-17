@@ -13,7 +13,8 @@ return new class extends Migration
             $table->unsignedBigInteger('tenant_id');
             $table->unsignedBigInteger('channel_connector_id');
             $table->unsignedBigInteger('channel_sync_job_id')->nullable();
-            $table->unsignedBigInteger('product_id')->nullable();
+            // products.id is INT UNSIGNED (legacy $table->increments('id')); FK column must match.
+            $table->unsignedInteger('product_id')->nullable();
             $table->string('conflict_type', 30);
             $table->json('conflicting_fields');
             $table->timestamp('pim_modified_at')->nullable();

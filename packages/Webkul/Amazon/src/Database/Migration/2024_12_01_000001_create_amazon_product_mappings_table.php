@@ -14,7 +14,9 @@ return new class extends Migration
         Schema::create('amazon_product_mappings', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('tenant_id')->nullable();
-            $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
+            // products.id is INT UNSIGNED (legacy $table->increments('id')); FK column must match.
+            $table->unsignedInteger('product_id');
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->foreignId('connector_id')->constrained('channel_connectors')->onDelete('cascade');
             $table->string('external_id')->nullable();
             $table->string('external_sku')->nullable();
