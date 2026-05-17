@@ -4,11 +4,11 @@ namespace Webkul\ChannelConnector\Services;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
-use Webkul\Attribute\Models\Attribute;
+use Webkul\Attribute\Models\AttributeProxy as Attribute;
 use Webkul\ChannelConnector\Models\ChannelConnector;
 use Webkul\ChannelConnector\Models\ProductChannelMapping;
 use Webkul\ChannelConnector\Repositories\ChannelFieldMappingRepository;
-use Webkul\Product\Models\Product;
+use Webkul\Product\Contracts\Product;
 
 class SyncEngine
 {

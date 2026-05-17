@@ -5,9 +5,9 @@ namespace Webkul\ChannelConnector\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Webkul\ChannelConnector\Contracts\ChannelSyncConflict as ChannelSyncConflictContract;
-use Webkul\Product\Models\Product;
+use Webkul\Product\Models\ProductProxy;
 use Webkul\Tenant\Models\Concerns\BelongsToTenant;
-use Webkul\User\Models\Admin;
+use Webkul\User\Models\AdminProxy;
 
 class ChannelSyncConflict extends Model implements ChannelSyncConflictContract
 {
@@ -49,11 +49,11 @@ class ChannelSyncConflict extends Model implements ChannelSyncConflictContract
 
     public function product(): BelongsTo
     {
-        return $this->belongsTo(Product::class, 'product_id');
+        return $this->belongsTo(ProductProxy::class, 'product_id');
     }
 
     public function resolvedBy(): BelongsTo
     {
-        return $this->belongsTo(Admin::class, 'resolved_by');
+        return $this->belongsTo(AdminProxy::class, 'resolved_by');
     }
 }

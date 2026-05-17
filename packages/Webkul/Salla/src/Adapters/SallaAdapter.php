@@ -39,9 +39,11 @@ class SallaAdapter extends AbstractChannelAdapter
 
             $apiBase = $this->getApiBaseUrl();
 
-            $response = Http::withToken($accessToken)
-                ->timeout(30)
-                ->get($apiBase.'/products', ['per_page' => 1]);
+            $response = $this->executeWithRateLimitRetry(
+                fn () => Http::withToken($accessToken)
+                    ->timeout(30)
+                    ->get($apiBase.'/products', ['per_page' => 1])
+            );
 
             if ($response->failed()) {
                 return new ConnectionResult(
@@ -88,13 +90,17 @@ class SallaAdapter extends AbstractChannelAdapter
             $body = $this->buildSallaProductBody($localeMappedData);
 
             if ($existingExternalId) {
-                $response = Http::withToken($accessToken)
-                    ->timeout(30)
-                    ->put($apiBase.'/products/'.$existingExternalId, $body);
+                $response = $this->executeWithRateLimitRetry(
+                    fn () => Http::withToken($accessToken)
+                        ->timeout(30)
+                        ->put($apiBase.'/products/'.$existingExternalId, $body)
+                );
             } else {
-                $response = Http::withToken($accessToken)
-                    ->timeout(30)
-                    ->post($apiBase.'/products', $body);
+                $response = $this->executeWithRateLimitRetry(
+                    fn () => Http::withToken($accessToken)
+                        ->timeout(30)
+                        ->post($apiBase.'/products', $body)
+                );
             }
 
             if ($response->failed()) {
@@ -168,9 +174,11 @@ class SallaAdapter extends AbstractChannelAdapter
             $this->ensureValidToken();
             $apiBase = $this->getApiBaseUrl();
 
-            $response = Http::withToken($this->credentials['access_token'] ?? '')
-                ->timeout(30)
-                ->get($apiBase.'/products/'.$externalId);
+            $response = $this->executeWithRateLimitRetry(
+                fn () => Http::withToken($this->credentials['access_token'] ?? '')
+                    ->timeout(30)
+                    ->get($apiBase.'/products/'.$externalId)
+            );
 
             if ($response->failed()) {
                 return null;
@@ -202,9 +210,11 @@ class SallaAdapter extends AbstractChannelAdapter
             $this->ensureValidToken();
             $apiBase = $this->getApiBaseUrl();
 
-            $response = Http::withToken($this->credentials['access_token'] ?? '')
-                ->timeout(30)
-                ->delete($apiBase.'/products/'.$externalId);
+            $response = $this->executeWithRateLimitRetry(
+                fn () => Http::withToken($this->credentials['access_token'] ?? '')
+                    ->timeout(30)
+                    ->delete($apiBase.'/products/'.$externalId)
+            );
 
             if ($response->successful()) {
                 Log::info('[Salla] Product deleted', ['external_id' => $externalId]);
@@ -256,12 +266,14 @@ class SallaAdapter extends AbstractChannelAdapter
             $allSuccess = true;
 
             foreach ($events as $event) {
-                $response = Http::withToken($accessToken)
-                    ->timeout(30)
-                    ->post($apiBase.'/webhooks', [
-                        'event' => $event,
-                        'url'   => $callbackUrl,
-                    ]);
+                $response = $this->executeWithRateLimitRetry(
+                    fn () => Http::withToken($accessToken)
+                        ->timeout(30)
+                        ->post($apiBase.'/webhooks', [
+                            'event' => $event,
+                            'url'   => $callbackUrl,
+                        ])
+                );
 
                 if ($response->failed()) {
                     Log::warning('[Salla] Webhook registration failed', [

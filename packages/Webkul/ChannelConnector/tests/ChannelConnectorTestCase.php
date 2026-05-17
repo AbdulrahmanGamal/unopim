@@ -10,8 +10,8 @@ use Tests\TestCase;
 use Webkul\AdminApi\Models\Apikey;
 use Webkul\Tenant\Models\Tenant;
 use Webkul\User\Contracts\Admin as AdminContract;
-use Webkul\User\Models\Admin;
-use Webkul\User\Models\Role;
+use Webkul\User\Models\AdminProxy as Admin;
+use Webkul\User\Models\RoleProxy as Role;
 use Webkul\User\Tests\Concerns\UserAssertions;
 
 abstract class ChannelConnectorTestCase extends TestCase
@@ -131,7 +131,7 @@ abstract class ChannelConnectorTestCase extends TestCase
     /**
      * Create an API token for admin authentication via OAuth2.
      */
-    protected function createAdminApiToken(?Admin $admin = null, array $scopes = []): string
+    protected function createAdminApiToken(?AdminContract $admin = null, array $scopes = []): string
     {
         // Ensure tenant context is set before creating admin
         if (Schema::hasTable('tenants') && $this->testTenant) {

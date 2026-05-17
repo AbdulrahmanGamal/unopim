@@ -1,12 +1,12 @@
 <?php
 
 use Webkul\Pricing\Models\ProductCost;
-use Webkul\Product\Models\Product;
+use Webkul\Product\Models\ProductProxy as Product;
 
+use function Pest\Laravel\deleteJson;
 use function Pest\Laravel\get;
 use function Pest\Laravel\postJson;
 use function Pest\Laravel\putJson;
-use function Pest\Laravel\deleteJson;
 
 it('should return the costs index page', function () {
     $this->loginAsAdmin();
@@ -53,19 +53,19 @@ it('should create a product cost', function () {
     $product = Product::factory()->create();
 
     $costData = [
-        'product_id' => $product->id,
-        'cost_type' => 'cogs',
-        'amount' => 125.50,
-        'currency_code' => 'USD',
+        'product_id'     => $product->id,
+        'cost_type'      => 'cogs',
+        'amount'         => 125.50,
+        'currency_code'  => 'USD',
         'effective_from' => now()->format('Y-m-d'),
     ];
 
     $response = postJson(route('admin.pricing.costs.store'), $costData);
 
     $this->assertDatabaseHas($this->getFullTableName(ProductCost::class), [
-        'product_id' => $product->id,
-        'cost_type' => 'cogs',
-        'amount' => 125.50,
+        'product_id'    => $product->id,
+        'cost_type'     => 'cogs',
+        'amount'        => 125.50,
         'currency_code' => 'USD',
     ]);
 
@@ -100,15 +100,15 @@ it('should update a product cost', function () {
     ]);
 
     $updateData = [
-        'amount' => 150.00,
+        'amount'        => 150.00,
         'currency_code' => $cost->currency_code,
-        'effective_to' => now()->addMonth()->format('Y-m-d'),
+        'effective_to'  => now()->addMonth()->format('Y-m-d'),
     ];
 
     $response = putJson(route('admin.pricing.costs.update', $cost->id), $updateData);
 
     $this->assertDatabaseHas($this->getFullTableName(ProductCost::class), [
-        'id' => $cost->id,
+        'id'     => $cost->id,
         'amount' => 150.00,
     ]);
 
@@ -171,16 +171,16 @@ it('should enforce unique constraint on product_id + cost_type + effective_from'
     $effectiveFrom = now()->format('Y-m-d');
 
     ProductCost::factory()->create([
-        'product_id' => $product->id,
-        'cost_type' => 'cogs',
+        'product_id'     => $product->id,
+        'cost_type'      => 'cogs',
         'effective_from' => $effectiveFrom,
     ]);
 
     $this->expectException(\Illuminate\Database\QueryException::class);
 
     ProductCost::factory()->create([
-        'product_id' => $product->id,
-        'cost_type' => 'cogs',
+        'product_id'     => $product->id,
+        'cost_type'      => 'cogs',
         'effective_from' => $effectiveFrom,
     ]);
 });

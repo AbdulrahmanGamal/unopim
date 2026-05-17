@@ -8,7 +8,7 @@ use Webkul\ChannelConnector\ValueObjects\BatchSyncResult;
 use Webkul\ChannelConnector\ValueObjects\ConnectionResult;
 use Webkul\ChannelConnector\ValueObjects\RateLimitConfig;
 use Webkul\ChannelConnector\ValueObjects\SyncResult;
-use Webkul\Product\Models\Product;
+use Webkul\Product\Contracts\Product;
 
 interface ChannelAdapterContract
 {

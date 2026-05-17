@@ -3,8 +3,9 @@
 return [
     'exporters' => [
         'shopify' => [
-            'product'  => 'Produit Shopify',
-            'category' => 'Catégorie Shopify',
+            'product'    => 'Produit Shopify',
+            'category'   => 'Catégorie Shopify',
+            'metafields' => 'Shopify Metafields Definition',
         ],
     ],
     'importers' => [
@@ -16,19 +17,19 @@ return [
             'metafield' => 'Définitions des métachamps Shopify',
         ],
     ],
-
     'components' => [
         'layouts' => [
             'sidebar' => [
-                'shopify'         => 'Shopify',
-                'credentials'     => 'Identifiants',
-                'export-mappings' => 'Mappages d\'exportation',
-                'import-mappings' => 'Importer les correspondances',
-                'settings'        => 'Paramètres',
+                'settings'              => 'Paramètres',
+                'shopify'               => 'Shopify',
+                'credentials'           => 'Identifiants',
+                'export-mappings'       => 'Mappages d\'exportation',
+                'import-mappings'       => 'Importer les correspondances',
+                'meta-fields'           => 'Metafield Definitions',
+                'metafield-definitions' => 'Metafield Definitions',
             ],
         ],
     ],
-
     'shopify' => [
         'acl' => [
             'credential' => [
@@ -36,7 +37,6 @@ return [
                 'edit'   => 'Modifier',
                 'delete' => 'Supprimer',
             ],
-
             'metafield' => [
                 'create'      => 'Créer un métachamp',
                 'edit'        => 'Modifier un métachamp',
@@ -44,9 +44,7 @@ return [
                 'mass_delete' => 'Suppression massive de métachamps',
             ],
         ],
-
-        'version' => 'Version : 1.0.0',
-
+        'version'    => 'Version : 1.0.0',
         'credential' => [
             'export' => [
                 'locales' => 'Mappage de langue',
@@ -95,10 +93,27 @@ return [
                 'save'          => 'Sauvegarder',
                 'created'       => 'Mappage d\'exportation créé',
                 'image'         => 'Attribut à utiliser comme image',
+                'gallery'       => 'Attribute to used as gallery',
                 'metafields'    => 'Attributs à utiliser comme Méta-champs',
                 'filed-shopify' => 'Champ dans Shopify',
                 'attribute'     => 'Attribut',
                 'fixed-value'   => 'Valeur fixe',
+                'images'        => [
+                    'title' => 'Shopify Media Mapping',
+                    'label' => [
+                        'type'      => 'Media Type',
+                        'attribute' => 'Media Attributes',
+                    ],
+                ],
+                'unit' => [
+                    'title'     => 'Shopify unit Mapping',
+                    'weight'    => 'Unit Weight',
+                    'volume'    => 'Unit Volume',
+                    'dimension' => 'Unit Dimension',
+                ],
+            ],
+            'settings' => [
+                'created' => 'Export Settings saved successfully',
             ],
             'setting' => [
                 'title'                        => 'Paramètre',
@@ -110,11 +125,11 @@ return [
                 'metafields'                   => 'Paramètres d\'exportation des Méta-champs',
                 'metaFieldsKey'                => 'Utiliser la clé pour Méta-champ comme Code/Label d\'attribut',
                 'metaFieldsNameSpace'          => 'Utiliser l\'espace de nom pour Méta-champ comme Code de groupe d\'attribut ou global',
+                'credentials'                  => 'Credentials Export',
                 'other-settings'               => 'Autres paramètres',
                 'roundof-attribute-value'      => 'Supprimer les zéros fractionnaires supplémentaires des valeurs d\'attributs métriques (ex. 201.2000 en 201.2)',
                 'option_name_label'            => 'Valeur du nom de l\'option comme étiquette d\'attribut (par défaut Code d\'attribut)',
             ],
-
             'errors' => [
                 'invalid-credential' => 'Informations d\'identification non valides. Les informations d\'identification sont désactivées ou incorrectes.',
                 'invalid-locale'     => 'Locale invalide. Veuillez mapper la locale dans la section de modification des identifiants.',
@@ -127,12 +142,21 @@ return [
                 'save'                 => 'Enregistrer',
                 'created'              => 'Mapping d’importation enregistré avec succès',
                 'image'                => 'Attribut utilisé comme image',
+                'gallery'              => 'Attribute to used as gallery',
                 'filed-shopify'        => 'Champ dans Shopify',
                 'attribute'            => 'Attribut UnoPim',
                 'variantimage'         => 'Attribut utilisé comme image de variante',
                 'other'                => 'Autres mappings Shopify',
                 'family'               => 'Mapping de la famille (pour les produits)',
+                'families'             => 'Choose Family',
                 'metafieldDefinitions' => 'Mapping des définitions de champs personnalisés Shopify',
+                'images'               => [
+                    'title' => 'Shopify Media Mapping',
+                    'label' => [
+                        'type'      => 'Media Type',
+                        'attribute' => 'Media Attributes',
+                    ],
+                ],
             ],
             'setting' => [
                 'credentialmapping' => 'Mapping des identifiants',
@@ -150,7 +174,6 @@ return [
                 ],
             ],
         ],
-
         'fields' => [
             'name'                        => 'Nom',
             'description'                 => 'Description',
@@ -179,35 +202,37 @@ return [
             'locale'           => 'Langue',
             'attribute-groups' => 'Groupes d’attributs',
         ],
-
-        'metafield'     => [
+        'metafield' => [
             'datagrid' => [
                 'definitiontype'  => 'Utilisé pour',
-                'attribute-label'  => 'Attribut Unopim',
+                'attribute-label' => 'Attribut Unopim',
                 'definitionName'  => 'Nom de la définition',
                 'contentTypeName' => 'Type',
                 'pin'             => 'Épingler',
             ],
-            'index'    => [
-                'title'                     => 'Définitions des champs méta',
-                'create'                    => 'Ajouter une définition',
-                'definitiontype'            => 'Utilisé pour',
-                'attribute'                 => 'Attribut UnoPim',
-                'ContentTypeName'           => 'Type',
-                'attributes'                => 'Nom de la définition',
-                'urlvalidation'             => 'Validation',
-                'urlvalidationdata'         => 'Les valeurs doivent être préfixées par : « HTTPS », « HTTP », « mailto: », « sms: » ou « tel: »',
-                'name_space_key'            => 'Espace de noms et clé',
-                'description'               => 'Description',
-                'onevalue'                  => 'Une valeur',
-                'listvalue'                 => 'Liste de valeurs',
-                'validation'                => 'Validations',
-                'maxvalue'                  => 'Valeur maximale',
-                'adminFilterable'           => 'Filtrage pour les produits',
-                'smartCollectionCondition'  => 'Collections intelligentes',
-                'storefronts'               => 'Accès aux vitrines',
+            'index' => [
+                'title'                    => 'Définitions des champs méta',
+                'create'                   => 'Ajouter une définition',
+                'definitiontype'           => 'Utilisé pour',
+                'attribute'                => 'Attribut UnoPim',
+                'ContentTypeName'          => 'Type',
+                'attributes'               => 'Nom de la définition',
+                'urlvalidation'            => 'Validation',
+                'urlvalidationdata'        => 'Les valeurs doivent être préfixées par : « HTTPS », « HTTP », « mailto: », « sms: » ou « tel: »',
+                'name_space_key'           => 'Espace de noms et clé',
+                'description'              => 'Description',
+                'onevalue'                 => 'Une valeur',
+                'listvalue'                => 'Liste de valeurs',
+                'validation'               => 'Validations',
+                'maxvalue'                 => 'Valeur maximale',
+                'adminFilterable'          => 'Filtrage pour les produits',
+                'smartCollectionCondition' => 'Collections intelligentes',
+                'storefronts'              => 'Accès aux vitrines',
+                'unit'                     => [
+                    'minvalue' => '',
+                    'maxvalue' => '',
+                ],
             ],
-
             'type' => [
                 'single_line_text_field' => 'Texte sur une seule ligne',
                 'color'                  => 'Couleur',
@@ -223,12 +248,26 @@ return [
                 'weight'                 => 'Poids',
                 'volume'                 => 'Volume',
             ],
-
-            'edit'     => [
-                'title'           => 'Modifier la définition du champ méta',
-                'back-btn'        => 'Retour',
-                'update'          => 'Mettre à jour',
-                'save'            => 'Enregistrer',
+            'edit' => [
+                'title'    => 'Modifier la définition du champ méta',
+                'back-btn' => 'Retour',
+                'update'   => 'Mettre à jour',
+                'save'     => 'Enregistrer',
+            ],
+            'validation' => [
+                'pin-limit'               => 'Pin limit reached, You can only have 20 pinned fields',
+                'definition-exists'       => 'Definition already created in :type',
+                'namespace-taken'         => 'Namespace and key are already taken for :type',
+                'namespace-format'        => 'You need to use one period (.) to separate the namespace and key',
+                'key-min-length'          => 'Key must be a minimum of 2 characters',
+                'key-max-length'          => 'Key must be a maximum of 64 characters',
+                'namespace-invalid-chars' => 'Namespace and key can only use letters, numbers, underscores, and dashes',
+                'name-too-long'           => 'Name is too long (maximum is 255 characters)',
+                'type-required'           => 'Type Field is required',
+                'description-max-length'  => 'Description must be a maximum of 100 characters',
+                'only-number'             => 'Only Number Allowed',
+                'min-less-than-max'       => 'Validations contains an invalid value: min must be less than max',
+                'rating-min-max-required' => 'Rating field must have both min and max values',
             ],
             'delete-success'      => 'Définition du champ méta supprimée avec succès',
             'update-success'      => 'Définition du champ méta mise à jour avec succès',
@@ -237,31 +276,30 @@ return [
             'metafield'           => [
                 'datagrid' => [
                     'definitiontype'  => '用于',
-                    'attribute-label'  => 'Unopim 属性',
+                    'attribute-label' => 'Unopim 属性',
                     'definitionName'  => '定义名称',
                     'contentTypeName' => '类型',
                     'pin'             => '固定',
                 ],
-                'index'    => [
-                    'title'                     => '元字段定义',
-                    'create'                    => '添加定义',
-                    'definitiontype'            => '用于',
-                    'attribute'                 => 'UnoPim 属性',
-                    'ContentTypeName'           => '类型',
-                    'attributes'                => '定义名称',
-                    'urlvalidation'             => '验证',
-                    'urlvalidationdata'         => '值必须以 "HTTPS"、"HTTP"、"mailto:"、"sms:" 或 "tel:" 开头',
-                    'name_space_key'            => '命名空间和键',
-                    'description'               => '描述',
-                    'onevalue'                  => '单个值',
-                    'listvalue'                 => '值列表',
-                    'validation'                => '验证',
-                    'maxvalue'                  => '最大值',
-                    'adminFilterable'           => '产品筛选',
-                    'smartCollectionCondition'  => '智能集合',
-                    'storefronts'               => '店面访问',
+                'index' => [
+                    'title'                    => '元字段定义',
+                    'create'                   => '添加定义',
+                    'definitiontype'           => '用于',
+                    'attribute'                => 'UnoPim 属性',
+                    'ContentTypeName'          => '类型',
+                    'attributes'               => '定义名称',
+                    'urlvalidation'            => '验证',
+                    'urlvalidationdata'        => '值必须以 "HTTPS"、"HTTP"、"mailto:"、"sms:" 或 "tel:" 开头',
+                    'name_space_key'           => '命名空间和键',
+                    'description'              => '描述',
+                    'onevalue'                 => '单个值',
+                    'listvalue'                => '值列表',
+                    'validation'               => '验证',
+                    'maxvalue'                 => '最大值',
+                    'adminFilterable'          => '产品筛选',
+                    'smartCollectionCondition' => '智能集合',
+                    'storefronts'              => '店面访问',
                 ],
-
                 'type' => [
                     'single_line_text_field' => 'Texte sur une seule ligne',
                     'color'                  => 'Couleur',
@@ -277,19 +315,17 @@ return [
                     'weight'                 => 'Poids',
                     'volume'                 => 'Volume',
                 ],
-
-                'edit'     => [
-                    'title'           => '编辑元字段定义',
-                    'back-btn'        => '返回',
-                    'update'          => '更新',
-                    'save'            => '保存',
+                'edit' => [
+                    'title'    => '编辑元字段定义',
+                    'back-btn' => '返回',
+                    'update'   => '更新',
+                    'save'     => '保存',
                 ],
                 'delete-success'      => '元字段定义删除成功',
                 'update-success'      => '元字段定义更新成功',
                 'created'             => '元字段定义创建成功',
                 'mass-delete-success' => '批量删除元字段定义成功',
             ],
-
         ],
     ],
 ];

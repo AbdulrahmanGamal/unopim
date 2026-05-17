@@ -3,10 +3,10 @@
 namespace Webkul\Pricing\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Webkul\Core\Models\ChannelProxy as Channel;
 use Webkul\Pricing\Models\MarginProtectionEvent;
-use Webkul\Product\Models\Product;
-use Webkul\Core\Models\Channel;
-use Webkul\User\Models\Admin;
+use Webkul\Product\Models\ProductProxy as Product;
+use Webkul\User\Models\AdminProxy as Admin;
 
 class MarginProtectionEventFactory extends Factory
 {
@@ -20,19 +20,19 @@ class MarginProtectionEventFactory extends Factory
         $targetMarginPrice = $proposedPrice * 1.2;
 
         return [
-            'product_id' => Product::factory(),
-            'channel_id' => Channel::factory(),
-            'event_type' => $this->faker->randomElement(['blocked', 'approved', 'rejected']),
-            'proposed_price' => $proposedPrice,
-            'break_even_price' => $breakEvenPrice,
-            'minimum_margin_price' => $minimumMarginPrice,
-            'target_margin_price' => $targetMarginPrice,
-            'margin_percentage' => $this->faker->randomFloat(2, 5, 40),
+            'product_id'                => Product::factory(),
+            'channel_id'                => Channel::factory(),
+            'event_type'                => $this->faker->randomElement(['blocked', 'approved', 'rejected']),
+            'proposed_price'            => $proposedPrice,
+            'break_even_price'          => $breakEvenPrice,
+            'minimum_margin_price'      => $minimumMarginPrice,
+            'target_margin_price'       => $targetMarginPrice,
+            'margin_percentage'         => $this->faker->randomFloat(2, 5, 40),
             'minimum_margin_percentage' => 20.00,
-            'reason' => $this->faker->sentence(),
-            'approved_by' => null,
-            'approved_at' => null,
-            'expires_at' => null,
+            'reason'                    => $this->faker->sentence(),
+            'approved_by'               => null,
+            'approved_at'               => null,
+            'expires_at'                => null,
         ];
     }
 
@@ -47,10 +47,10 @@ class MarginProtectionEventFactory extends Factory
     public function approved(): self
     {
         return $this->state(fn (array $attributes) => [
-            'event_type' => 'approved',
+            'event_type'  => 'approved',
             'approved_by' => Admin::factory(),
             'approved_at' => now(),
-            'expires_at' => now()->addDays(30),
+            'expires_at'  => now()->addDays(30),
         ]);
     }
 }

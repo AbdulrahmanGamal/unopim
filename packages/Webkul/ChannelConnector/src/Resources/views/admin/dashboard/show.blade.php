@@ -14,12 +14,17 @@
             </a>
 
             @if ($job->status === 'failed' && bouncer()->hasPermission('channel_connector.sync.create'))
-                <form action="{{ route('admin.channel_connector.dashboard.retry', $job->id) }}" method="POST" class="inline">
+                <x-admin::form
+                    as="form"
+                    :action="route('admin.channel_connector.dashboard.retry', $job->id)"
+                    method="POST"
+                    class="inline"
+                >
                     @csrf
                     <button type="submit" class="primary-button">
                         @lang('channel_connector::app.sync.actions.retry-failed')
                     </button>
-                </form>
+                </x-admin::form>
             @endif
         </div>
     </div>
@@ -110,22 +115,22 @@
                 <p class="mb-3 text-base font-semibold text-gray-800 dark:text-white">@lang('channel_connector::app.sync.errors.title')</p>
 
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm">
-                        <thead class="border-b bg-gray-50 dark:border-gray-700 dark:bg-gray-800">
-                            <tr>
-                                <th class="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">@lang('channel_connector::app.sync.errors.product')</th>
-                                <th class="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">@lang('channel_connector::app.sync.errors.message')</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+                    <x-admin::table>
+                        <x-admin::table.thead>
+                            <x-admin::table.thead.tr>
+                                <x-admin::table.th>@lang('channel_connector::app.sync.errors.product')</x-admin::table.th>
+                                <x-admin::table.th>@lang('channel_connector::app.sync.errors.message')</x-admin::table.th>
+                            </x-admin::table.thead.tr>
+                        </x-admin::table.thead>
+                        <x-admin::table.tbody>
                             @foreach ($job->error_summary as $error)
-                                <tr class="border-b dark:border-gray-700">
-                                    <td class="px-4 py-3 font-mono text-sm text-gray-800 dark:text-white">{{ $error['product_sku'] ?? 'N/A' }}</td>
-                                    <td class="px-4 py-3 text-red-600 dark:text-red-400">{{ implode(', ', $error['errors'] ?? []) }}</td>
-                                </tr>
+                                <x-admin::table.tbody.tr>
+                                    <x-admin::table.td class="font-mono">{{ $error['product_sku'] ?? 'N/A' }}</x-admin::table.td>
+                                    <x-admin::table.td class="text-red-600 dark:text-red-400">{{ implode(', ', $error['errors'] ?? []) }}</x-admin::table.td>
+                                </x-admin::table.tbody.tr>
                             @endforeach
-                        </tbody>
-                    </table>
+                        </x-admin::table.tbody>
+                    </x-admin::table>
                 </div>
             </div>
         </div>
@@ -138,41 +143,41 @@
                 <p class="mb-3 text-base font-semibold text-gray-800 dark:text-white">@lang('channel_connector::app.dashboard.show.retry-history')</p>
 
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm">
-                        <thead class="border-b bg-gray-50 dark:border-gray-700 dark:bg-gray-800">
-                            <tr>
-                                <th class="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">#</th>
-                                <th class="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">@lang('channel_connector::app.sync.fields.status')</th>
-                                <th class="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">@lang('channel_connector::app.sync.fields.synced-products')</th>
-                                <th class="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">@lang('channel_connector::app.sync.fields.failed-products')</th>
-                                <th class="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">@lang('channel_connector::app.sync.fields.started-at')</th>
-                                <th class="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">@lang('channel_connector::app.general.actions')</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+                    <x-admin::table>
+                        <x-admin::table.thead>
+                            <x-admin::table.thead.tr>
+                                <x-admin::table.th>#</x-admin::table.th>
+                                <x-admin::table.th>@lang('channel_connector::app.sync.fields.status')</x-admin::table.th>
+                                <x-admin::table.th>@lang('channel_connector::app.sync.fields.synced-products')</x-admin::table.th>
+                                <x-admin::table.th>@lang('channel_connector::app.sync.fields.failed-products')</x-admin::table.th>
+                                <x-admin::table.th>@lang('channel_connector::app.sync.fields.started-at')</x-admin::table.th>
+                                <x-admin::table.th>@lang('channel_connector::app.general.actions')</x-admin::table.th>
+                            </x-admin::table.thead.tr>
+                        </x-admin::table.thead>
+                        <x-admin::table.tbody>
                             @foreach ($job->retries as $retry)
-                                <tr class="border-b dark:border-gray-700">
-                                    <td class="px-4 py-3 text-gray-800 dark:text-white">{{ $retry->id }}</td>
-                                    <td class="px-4 py-3">
+                                <x-admin::table.tbody.tr>
+                                    <x-admin::table.td>{{ $retry->id }}</x-admin::table.td>
+                                    <x-admin::table.td>
                                         <span class="rounded px-2 py-0.5 text-xs font-medium
                                             {{ $retry->status === 'completed' ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' : '' }}
                                             {{ $retry->status === 'failed' ? 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300' : '' }}
                                             {{ $retry->status === 'running' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' : '' }}
                                             {{ $retry->status === 'pending' ? 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300' : '' }}
                                         ">{{ trans("channel_connector::app.sync.status.{$retry->status}") }}</span>
-                                    </td>
-                                    <td class="px-4 py-3 text-green-600 dark:text-green-400">{{ $retry->synced_products ?? 0 }}</td>
-                                    <td class="px-4 py-3 text-red-600 dark:text-red-400">{{ $retry->failed_products ?? 0 }}</td>
-                                    <td class="px-4 py-3 text-gray-800 dark:text-white">{{ $retry->started_at?->format('Y-m-d H:i:s') ?? '-' }}</td>
-                                    <td class="px-4 py-3">
+                                    </x-admin::table.td>
+                                    <x-admin::table.td class="text-green-600 dark:text-green-400">{{ $retry->synced_products ?? 0 }}</x-admin::table.td>
+                                    <x-admin::table.td class="text-red-600 dark:text-red-400">{{ $retry->failed_products ?? 0 }}</x-admin::table.td>
+                                    <x-admin::table.td>{{ $retry->started_at?->format('Y-m-d H:i:s') ?? '-' }}</x-admin::table.td>
+                                    <x-admin::table.td>
                                         <a href="{{ route('admin.channel_connector.dashboard.show', $retry->id) }}" class="text-blue-600 hover:underline dark:text-blue-400">
                                             @lang('channel_connector::app.acl.view')
                                         </a>
-                                    </td>
-                                </tr>
+                                    </x-admin::table.td>
+                                </x-admin::table.tbody.tr>
                             @endforeach
-                        </tbody>
-                    </table>
+                        </x-admin::table.tbody>
+                    </x-admin::table>
                 </div>
             </div>
         </div>

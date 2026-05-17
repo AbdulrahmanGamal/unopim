@@ -5,11 +5,11 @@ namespace Webkul\Pricing\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Webkul\Core\Models\Channel;
+use Webkul\Core\Models\ChannelProxy;
 use Webkul\Pricing\Contracts\MarginProtectionEvent as MarginProtectionEventContract;
-use Webkul\Product\Models\Product;
+use Webkul\Product\Models\ProductProxy;
 use Webkul\Tenant\Models\Concerns\BelongsToTenant;
-use Webkul\User\Models\Admin;
+use Webkul\User\Models\AdminProxy;
 
 class MarginProtectionEvent extends Model implements MarginProtectionEventContract
 {
@@ -50,7 +50,7 @@ class MarginProtectionEvent extends Model implements MarginProtectionEventContra
      */
     public function product(): BelongsTo
     {
-        return $this->belongsTo(Product::class, 'product_id');
+        return $this->belongsTo(ProductProxy::class, 'product_id');
     }
 
     /**
@@ -58,7 +58,7 @@ class MarginProtectionEvent extends Model implements MarginProtectionEventContra
      */
     public function channel(): BelongsTo
     {
-        return $this->belongsTo(Channel::class, 'channel_id');
+        return $this->belongsTo(ChannelProxy::class, 'channel_id');
     }
 
     /**
@@ -66,7 +66,7 @@ class MarginProtectionEvent extends Model implements MarginProtectionEventContra
      */
     public function approver(): BelongsTo
     {
-        return $this->belongsTo(Admin::class, 'approved_by');
+        return $this->belongsTo(AdminProxy::class, 'approved_by');
     }
 
     /**

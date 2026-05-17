@@ -1,9 +1,9 @@
 <?php
 
-use Webkul\Pricing\Models\ProductCost;
-use Webkul\Pricing\Models\PricingStrategy;
 use Webkul\Pricing\Models\MarginProtectionEvent;
-use Webkul\Product\Models\Product;
+use Webkul\Pricing\Models\PricingStrategy;
+use Webkul\Pricing\Models\ProductCost;
+use Webkul\Product\Contracts\Product;
 
 // Product Costs ACL Tests
 it('should not display costs list without permission', function () {
@@ -136,7 +136,7 @@ it('should approve margin event with permission', function () {
         ->assertStatus(200);
 
     $this->assertDatabaseHas($this->getFullTableName(MarginProtectionEvent::class), [
-        'id' => $event->id,
+        'id'         => $event->id,
         'event_type' => 'approved',
     ]);
 });

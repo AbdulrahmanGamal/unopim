@@ -9,7 +9,7 @@ use Webkul\ChannelConnector\Models\ChannelSyncConflict;
 use Webkul\ChannelConnector\Models\ProductChannelMapping;
 use Webkul\ChannelConnector\Repositories\ChannelFieldMappingRepository;
 use Webkul\ChannelConnector\Services\AdapterResolver;
-use Webkul\Product\Models\Product;
+use Webkul\Product\Models\ProductProxy as Product;
 
 it('updates PIM product values with auto_update strategy on product.updated', function () {
     $connector = ChannelConnector::create([

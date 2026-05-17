@@ -155,31 +155,31 @@
 
                     {{-- Common Fields Table --}}
                     <div class="locale-content" id="locale-content-common">
-                        <table class="w-full text-left text-sm">
-                            <thead class="border-b bg-gray-50 dark:border-gray-700 dark:bg-gray-800">
-                                <tr>
-                                    <th class="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">@lang('channel_connector::app.conflicts.show.field')</th>
-                                    <th class="px-4 py-3 font-medium text-blue-600 dark:text-blue-400">@lang('channel_connector::app.conflicts.fields.pim-value')</th>
-                                    <th class="px-4 py-3 font-medium text-orange-600 dark:text-orange-400">@lang('channel_connector::app.conflicts.fields.channel-value')</th>
-                                    <th class="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">@lang('channel_connector::app.conflicts.show.winner')</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                        <x-admin::table>
+                            <x-admin::table.thead>
+                                <x-admin::table.thead.tr>
+                                    <x-admin::table.th>@lang('channel_connector::app.conflicts.show.field')</x-admin::table.th>
+                                    <x-admin::table.th class="text-blue-600 dark:text-blue-400">@lang('channel_connector::app.conflicts.fields.pim-value')</x-admin::table.th>
+                                    <x-admin::table.th class="text-orange-600 dark:text-orange-400">@lang('channel_connector::app.conflicts.fields.channel-value')</x-admin::table.th>
+                                    <x-admin::table.th>@lang('channel_connector::app.conflicts.show.winner')</x-admin::table.th>
+                                </x-admin::table.thead.tr>
+                            </x-admin::table.thead>
+                            <x-admin::table.tbody>
                                 @foreach($conflictingFields as $fieldCode => $fieldData)
                                     @if(empty($fieldData['is_locale_specific']))
-                                        <tr class="border-b dark:border-gray-700">
-                                            <td class="px-4 py-3 font-medium text-gray-800 dark:text-white">{{ $fieldCode }}</td>
-                                            <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
+                                        <x-admin::table.tbody.tr>
+                                            <x-admin::table.td class="font-medium">{{ $fieldCode }}</x-admin::table.td>
+                                            <x-admin::table.td>
                                                 <div class="rounded bg-blue-50 p-2 dark:bg-blue-900/20">
                                                     {{ is_array($fieldData['pim_value']) ? json_encode($fieldData['pim_value']) : ($fieldData['pim_value'] ?? '-') }}
                                                 </div>
-                                            </td>
-                                            <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
+                                            </x-admin::table.td>
+                                            <x-admin::table.td>
                                                 <div class="rounded bg-orange-50 p-2 dark:bg-orange-900/20">
                                                     {{ is_array($fieldData['channel_value']) ? json_encode($fieldData['channel_value']) : ($fieldData['channel_value'] ?? '-') }}
                                                 </div>
-                                            </td>
-                                            <td class="px-4 py-3">
+                                            </x-admin::table.td>
+                                            <x-admin::table.td>
                                                 <div class="flex gap-3">
                                                     <label class="flex items-center gap-1 text-sm">
                                                         <input
@@ -201,42 +201,42 @@
                                                         <span class="text-gray-700 dark:text-gray-300">@lang('channel_connector::app.conflicts.show.channel')</span>
                                                     </label>
                                                 </div>
-                                            </td>
-                                        </tr>
+                                            </x-admin::table.td>
+                                        </x-admin::table.tbody.tr>
                                     @endif
                                 @endforeach
-                            </tbody>
-                        </table>
+                            </x-admin::table.tbody>
+                        </x-admin::table>
                     </div>
 
                     {{-- Locale-Specific Fields Tables --}}
                     @foreach($locales as $locale)
                         <div class="locale-content hidden" id="locale-content-{{ $locale }}">
-                            <table class="w-full text-left text-sm">
-                                <thead class="border-b bg-gray-50 dark:border-gray-700 dark:bg-gray-800">
-                                    <tr>
-                                        <th class="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">@lang('channel_connector::app.conflicts.show.field')</th>
-                                        <th class="px-4 py-3 font-medium text-blue-600 dark:text-blue-400">@lang('channel_connector::app.conflicts.fields.pim-value') ({{ strtoupper($locale) }})</th>
-                                        <th class="px-4 py-3 font-medium text-orange-600 dark:text-orange-400">@lang('channel_connector::app.conflicts.fields.channel-value') ({{ strtoupper($locale) }})</th>
-                                        <th class="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">@lang('channel_connector::app.conflicts.show.winner')</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
+                            <x-admin::table>
+                                <x-admin::table.thead>
+                                    <x-admin::table.thead.tr>
+                                        <x-admin::table.th>@lang('channel_connector::app.conflicts.show.field')</x-admin::table.th>
+                                        <x-admin::table.th class="text-blue-600 dark:text-blue-400">@lang('channel_connector::app.conflicts.fields.pim-value') ({{ strtoupper($locale) }})</x-admin::table.th>
+                                        <x-admin::table.th class="text-orange-600 dark:text-orange-400">@lang('channel_connector::app.conflicts.fields.channel-value') ({{ strtoupper($locale) }})</x-admin::table.th>
+                                        <x-admin::table.th>@lang('channel_connector::app.conflicts.show.winner')</x-admin::table.th>
+                                    </x-admin::table.thead.tr>
+                                </x-admin::table.thead>
+                                <x-admin::table.tbody>
                                     @foreach($conflictingFields as $fieldCode => $fieldData)
                                         @if(! empty($fieldData['locales'][$locale]))
-                                            <tr class="border-b dark:border-gray-700">
-                                                <td class="px-4 py-3 font-medium text-gray-800 dark:text-white">{{ $fieldCode }}</td>
-                                                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
+                                            <x-admin::table.tbody.tr>
+                                                <x-admin::table.td class="font-medium">{{ $fieldCode }}</x-admin::table.td>
+                                                <x-admin::table.td>
                                                     <div class="rounded bg-blue-50 p-2 dark:bg-blue-900/20">
                                                         {{ is_array($fieldData['locales'][$locale]['pim_value']) ? json_encode($fieldData['locales'][$locale]['pim_value']) : ($fieldData['locales'][$locale]['pim_value'] ?? '-') }}
                                                     </div>
-                                                </td>
-                                                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
+                                                </x-admin::table.td>
+                                                <x-admin::table.td>
                                                     <div class="rounded bg-orange-50 p-2 dark:bg-orange-900/20">
                                                         {{ is_array($fieldData['locales'][$locale]['channel_value']) ? json_encode($fieldData['locales'][$locale]['channel_value']) : ($fieldData['locales'][$locale]['channel_value'] ?? '-') }}
                                                     </div>
-                                                </td>
-                                                <td class="px-4 py-3">
+                                                </x-admin::table.td>
+                                                <x-admin::table.td>
                                                     <div class="flex gap-3">
                                                         <label class="flex items-center gap-1 text-sm">
                                                             <input
@@ -258,12 +258,12 @@
                                                             <span class="text-gray-700 dark:text-gray-300">@lang('channel_connector::app.conflicts.show.channel')</span>
                                                         </label>
                                                     </div>
-                                                </td>
-                                            </tr>
+                                                </x-admin::table.td>
+                                            </x-admin::table.tbody.tr>
                                         @endif
                                     @endforeach
-                                </tbody>
-                            </table>
+                                </x-admin::table.tbody>
+                            </x-admin::table>
                         </div>
                     @endforeach
 
@@ -316,47 +316,47 @@
                     @lang('channel_connector::app.conflicts.show.field-comparison')
                 </p>
 
-                <table class="w-full text-left text-sm">
-                    <thead class="border-b bg-gray-50 dark:border-gray-700 dark:bg-gray-800">
-                        <tr>
-                            <th class="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">@lang('channel_connector::app.conflicts.show.field')</th>
-                            <th class="px-4 py-3 font-medium text-blue-600 dark:text-blue-400">@lang('channel_connector::app.conflicts.fields.pim-value')</th>
-                            <th class="px-4 py-3 font-medium text-orange-600 dark:text-orange-400">@lang('channel_connector::app.conflicts.fields.channel-value')</th>
-                            <th class="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">@lang('channel_connector::app.conflicts.show.locale')</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                <x-admin::table>
+                    <x-admin::table.thead>
+                        <x-admin::table.thead.tr>
+                            <x-admin::table.th>@lang('channel_connector::app.conflicts.show.field')</x-admin::table.th>
+                            <x-admin::table.th class="text-blue-600 dark:text-blue-400">@lang('channel_connector::app.conflicts.fields.pim-value')</x-admin::table.th>
+                            <x-admin::table.th class="text-orange-600 dark:text-orange-400">@lang('channel_connector::app.conflicts.fields.channel-value')</x-admin::table.th>
+                            <x-admin::table.th>@lang('channel_connector::app.conflicts.show.locale')</x-admin::table.th>
+                        </x-admin::table.thead.tr>
+                    </x-admin::table.thead>
+                    <x-admin::table.tbody>
                         @foreach($conflictingFields as $fieldCode => $fieldData)
                             @if(empty($fieldData['is_locale_specific']))
-                                <tr class="border-b dark:border-gray-700">
-                                    <td class="px-4 py-3 font-medium text-gray-800 dark:text-white">{{ $fieldCode }}</td>
-                                    <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
+                                <x-admin::table.tbody.tr>
+                                    <x-admin::table.td class="font-medium">{{ $fieldCode }}</x-admin::table.td>
+                                    <x-admin::table.td>
                                         {{ is_array($fieldData['pim_value']) ? json_encode($fieldData['pim_value']) : ($fieldData['pim_value'] ?? '-') }}
-                                    </td>
-                                    <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
+                                    </x-admin::table.td>
+                                    <x-admin::table.td>
                                         {{ is_array($fieldData['channel_value']) ? json_encode($fieldData['channel_value']) : ($fieldData['channel_value'] ?? '-') }}
-                                    </td>
-                                    <td class="px-4 py-3 text-gray-500 dark:text-gray-400">-</td>
-                                </tr>
+                                    </x-admin::table.td>
+                                    <x-admin::table.td class="text-gray-500 dark:text-gray-400">-</x-admin::table.td>
+                                </x-admin::table.tbody.tr>
                             @endif
 
                             @if(! empty($fieldData['locales']))
                                 @foreach($fieldData['locales'] as $locale => $localeValues)
-                                    <tr class="border-b dark:border-gray-700">
-                                        <td class="px-4 py-3 font-medium text-gray-800 dark:text-white">{{ $fieldCode }}</td>
-                                        <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
+                                    <x-admin::table.tbody.tr>
+                                        <x-admin::table.td class="font-medium">{{ $fieldCode }}</x-admin::table.td>
+                                        <x-admin::table.td>
                                             {{ is_array($localeValues['pim_value']) ? json_encode($localeValues['pim_value']) : ($localeValues['pim_value'] ?? '-') }}
-                                        </td>
-                                        <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
+                                        </x-admin::table.td>
+                                        <x-admin::table.td>
                                             {{ is_array($localeValues['channel_value']) ? json_encode($localeValues['channel_value']) : ($localeValues['channel_value'] ?? '-') }}
-                                        </td>
-                                        <td class="px-4 py-3 text-gray-500 dark:text-gray-400">{{ strtoupper($locale) }}</td>
-                                    </tr>
+                                        </x-admin::table.td>
+                                        <x-admin::table.td class="text-gray-500 dark:text-gray-400">{{ strtoupper($locale) }}</x-admin::table.td>
+                                    </x-admin::table.tbody.tr>
                                 @endforeach
                             @endif
                         @endforeach
-                    </tbody>
-                </table>
+                    </x-admin::table.tbody>
+                </x-admin::table>
             </div>
         </div>
     @endif

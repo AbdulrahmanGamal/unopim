@@ -3,11 +3,11 @@
 return [
     'exporters' => [
         'shopify' => [
-            'product'  => 'منتج شوبفاي',
-            'category' => 'فئة شوبفاي',
+            'product'    => 'منتج شوبفاي',
+            'category'   => 'فئة شوبفاي',
+            'metafields' => 'Shopify Metafields Definition',
         ],
     ],
-
     'importers' => [
         'shopify' => [
             'product'   => 'منتج شوبيفاي',
@@ -17,19 +17,19 @@ return [
             'metafield' => 'تعريفات الحقول الوصفية في شوبيفاي',
         ],
     ],
-
     'components' => [
         'layouts' => [
             'sidebar' => [
-                'shopify'         => 'شوبفاي',
-                'credentials'     => 'بيانات الاعتماد',
-                'export-mappings' => 'تعيينات التصدير',
-                'import-mappings' => 'استيراد التعيينات',
-                'settings'        => 'الإعدادات',
+                'settings'              => 'الإعدادات',
+                'shopify'               => 'شوبفاي',
+                'credentials'           => 'بيانات الاعتماد',
+                'export-mappings'       => 'تعيينات التصدير',
+                'import-mappings'       => 'استيراد التعيينات',
+                'meta-fields'           => 'Metafield Definitions',
+                'metafield-definitions' => 'Metafield Definitions',
             ],
         ],
     ],
-
     'shopify' => [
         'acl' => [
             'credential' => [
@@ -37,16 +37,14 @@ return [
                 'edit'   => 'تحرير',
                 'delete' => 'حذف',
             ],
-            'metafield'  => [
+            'metafield' => [
                 'create'      => 'إنشاء ميتافيلد',
                 'edit'        => 'تحرير ميتافيلد',
                 'delete'      => 'حذف ميتافيلد',
                 'mass_delete' => 'الحذف الجماعي لميتافيلد',
             ],
         ],
-
-        'version' => 'الإصدار: 1.0.0',
-
+        'version'    => 'الإصدار: 1.0.0',
         'credential' => [
             'export' => [
                 'locales' => 'تعيين اللغات',
@@ -95,10 +93,27 @@ return [
                 'save'          => 'حفظ',
                 'created'       => 'تم إنشاء تعيين التصدير',
                 'image'         => 'خاصية تستخدم كصورة',
+                'gallery'       => 'Attribute to used as gallery',
                 'metafields'    => 'خصائص تستخدم كحقول ميتا',
                 'filed-shopify' => 'حقل في شوبفاي',
                 'attribute'     => 'خاصية',
                 'fixed-value'   => 'قيمة ثابتة',
+                'images'        => [
+                    'title' => 'Shopify Media Mapping',
+                    'label' => [
+                        'type'      => 'Media Type',
+                        'attribute' => 'Media Attributes',
+                    ],
+                ],
+                'unit' => [
+                    'title'     => 'Shopify unit Mapping',
+                    'weight'    => 'Unit Weight',
+                    'volume'    => 'Unit Volume',
+                    'dimension' => 'Unit Dimension',
+                ],
+            ],
+            'settings' => [
+                'created' => 'Export Settings saved successfully',
             ],
             'setting' => [
                 'title'                        => 'الإعدادات',
@@ -110,13 +125,14 @@ return [
                 'metafields'                   => 'إعدادات تصدير الحقول الميتا',
                 'metaFieldsKey'                => 'استخدام المفتاح للحقول الميتا كرمز الخاصية / التسمية',
                 'metaFieldsNameSpace'          => 'استخدام النطاق للحقول الميتا كرمز مجموعة الخصائص / عام',
+                'credentials'                  => 'Credentials Export',
                 'other-settings'               => 'إعدادات أخرى',
                 'roundof-attribute-value'      => 'إزالة الكسور الإضافية من القيم المترية (مثل 201,2000 كـ 201.2)',
                 'option_name_label'            => 'قيمة اسم الخيارات كاسم خاصية (افتراضيًا كود الخاصية)',
             ],
-
             'errors' => [
                 'invalid-credential' => 'بيانات الاعتماد غير صالحة. بيانات الاعتماد معطلة أو غير صحيحة',
+                'invalid-locale'     => 'Invalid Locale. Please mapp the locale in credential edit section',
             ],
         ],
         'import' => [
@@ -126,12 +142,21 @@ return [
                 'save'                 => 'حفظ',
                 'created'              => 'تم حفظ خريطة الاستيراد بنجاح',
                 'image'                => 'السمة المستخدمة كصورة',
+                'gallery'              => 'Attribute to used as gallery',
                 'filed-shopify'        => 'الحقل في Shopify',
                 'attribute'            => 'سمة UnoPim',
                 'variantimage'         => 'السمة المستخدمة كصورة للمتغير',
                 'other'                => 'خرائط أخرى في Shopify',
                 'family'               => 'تعيين العائلة (للمنتجات)',
+                'families'             => 'Choose Family',
                 'metafieldDefinitions' => 'تعيين تعريف الحقول الوصفية في Shopify',
+                'images'               => [
+                    'title' => 'Shopify Media Mapping',
+                    'label' => [
+                        'type'      => 'Media Type',
+                        'attribute' => 'Media Attributes',
+                    ],
+                ],
             ],
             'setting' => [
                 'credentialmapping' => 'تعيين بيانات الاعتماد',
@@ -149,7 +174,6 @@ return [
                 ],
             ],
         ],
-
         'fields' => [
             'name'                        => 'اسم',
             'description'                 => 'وصف',
@@ -178,34 +202,37 @@ return [
             'locale'           => 'اللغة',
             'attribute-groups' => 'مجموعات السمات',
         ],
-        'metafield'     => [
+        'metafield' => [
             'datagrid' => [
                 'definitiontype'  => 'تستخدم لـ',
-                'attribute-label'  => 'سمة Unopim',
+                'attribute-label' => 'سمة Unopim',
                 'definitionName'  => 'اسم التعريف',
                 'contentTypeName' => 'نوع',
                 'pin'             => 'دبوس',
             ],
-            'index'    => [
-                'title'                     => 'تعريفات الحقول الوصفية',
-                'create'                    => 'إضافة تعريف',
-                'definitiontype'            => 'تستخدم لـ',
-                'attribute'                 => 'سمة UnoPim',
-                'ContentTypeName'           => 'نوع',
-                'attributes'                => 'اسم التعريف',
-                'urlvalidation'             => 'التحقق من صحة URL',
-                'urlvalidationdata'         => 'يجب أن تكون القيم مسبوقة بـ: "HTTPS"، "HTTP"، "mailto:"، "sms:"، أو "tel:"',
-                'name_space_key'            => 'المجال والمفتاح',
-                'description'               => 'وصف',
-                'onevalue'                  => 'قيمة واحدة',
-                'listvalue'                 => 'قائمة القيم',
-                'validation'                => 'التحقق',
-                'maxvalue'                  => 'القيمة القصوى',
-                'adminFilterable'           => 'التصفية للمنتجات',
-                'smartCollectionCondition'  => 'مجموعات ذكية',
-                'storefronts'               => 'الوصول إلى الواجهات الأمامية',
+            'index' => [
+                'title'                    => 'تعريفات الحقول الوصفية',
+                'create'                   => 'إضافة تعريف',
+                'definitiontype'           => 'تستخدم لـ',
+                'attribute'                => 'سمة UnoPim',
+                'ContentTypeName'          => 'نوع',
+                'attributes'               => 'اسم التعريف',
+                'urlvalidation'            => 'التحقق من صحة URL',
+                'urlvalidationdata'        => 'يجب أن تكون القيم مسبوقة بـ: "HTTPS"، "HTTP"، "mailto:"، "sms:"، أو "tel:"',
+                'name_space_key'           => 'المجال والمفتاح',
+                'description'              => 'وصف',
+                'onevalue'                 => 'قيمة واحدة',
+                'listvalue'                => 'قائمة القيم',
+                'validation'               => 'التحقق',
+                'maxvalue'                 => 'القيمة القصوى',
+                'adminFilterable'          => 'التصفية للمنتجات',
+                'smartCollectionCondition' => 'مجموعات ذكية',
+                'storefronts'              => 'الوصول إلى الواجهات الأمامية',
+                'unit'                     => [
+                    'minvalue' => '',
+                    'maxvalue' => '',
+                ],
             ],
-
             'type' => [
                 'single_line_text_field' => 'سطر نصي واحد',
                 'color'                  => 'لون',
@@ -221,18 +248,31 @@ return [
                 'weight'                 => 'وزن',
                 'volume'                 => 'حجم',
             ],
-
-            'edit'     => [
-                'title'           => 'تحرير تعريف الحقل الوصفي',
-                'back-btn'        => 'رجوع',
-                'update'          => 'تحديث',
-                'save'            => 'حفظ',
+            'edit' => [
+                'title'    => 'تحرير تعريف الحقل الوصفي',
+                'back-btn' => 'رجوع',
+                'update'   => 'تحديث',
+                'save'     => 'حفظ',
+            ],
+            'validation' => [
+                'pin-limit'               => 'Pin limit reached, You can only have 20 pinned fields',
+                'definition-exists'       => 'Definition already created in :type',
+                'namespace-taken'         => 'Namespace and key are already taken for :type',
+                'namespace-format'        => 'You need to use one period (.) to separate the namespace and key',
+                'key-min-length'          => 'Key must be a minimum of 2 characters',
+                'key-max-length'          => 'Key must be a maximum of 64 characters',
+                'namespace-invalid-chars' => 'Namespace and key can only use letters, numbers, underscores, and dashes',
+                'name-too-long'           => 'Name is too long (maximum is 255 characters)',
+                'type-required'           => 'Type Field is required',
+                'description-max-length'  => 'Description must be a maximum of 100 characters',
+                'only-number'             => 'Only Number Allowed',
+                'min-less-than-max'       => 'Validations contains an invalid value: min must be less than max',
+                'rating-min-max-required' => 'Rating field must have both min and max values',
             ],
             'delete-success'      => 'تم حذف تعريف الحقل الوصفي بنجاح',
             'update-success'      => 'تم تحديث تعريف الحقل الوصفي بنجاح',
             'created'             => 'تم إنشاء تعريف الحقل الوصفي بنجاح',
             'mass-delete-success' => 'تم حذف تعريفات الحقول الوصفية بنجاح',
         ],
-
     ],
 ];

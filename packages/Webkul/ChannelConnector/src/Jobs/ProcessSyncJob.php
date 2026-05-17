@@ -22,7 +22,7 @@ use Webkul\ChannelConnector\Services\AdapterResolver;
 use Webkul\ChannelConnector\Services\ConflictResolver;
 use Webkul\ChannelConnector\Services\SyncEngine;
 use Webkul\ChannelConnector\Services\ValidationEngine;
-use Webkul\Product\Models\Product;
+use Webkul\Product\Models\ProductProxy as Product;
 use Webkul\Tenant\Cache\TenantCache;
 use Webkul\Tenant\Jobs\TenantAwareJob;
 
@@ -82,6 +82,10 @@ class ProcessSyncJob implements ShouldQueue
 
         try {
             $adapter = $adapterResolver->resolve($connector);
+            // ProcessSyncJob is always a local-origin sync trigger (user or schedule).
+            // Tag explicitly so adapters can rely on isOriginWebhook() returning false
+            // for any of their internal checks.
+            $adapter->setChangeOrigin($adapter::CHANGE_ORIGIN_LOCAL);
         } catch (\Exception $e) {
             Log::error('[ChannelConnector] Adapter resolution failed for sync job', [
                 'sync_job_id'  => $syncJob->id,
@@ -136,15 +140,16 @@ class ProcessSyncJob implements ShouldQueue
         $failed = 0;
         $conflicted = 0;
         $processed = 0;
+        $skippedInboundDebounce = 0;
 
         $conflictStrategy = $connector->settings['conflict_strategy'] ?? 'always_ask';
 
         $query->chunk(100, function ($products) use (
-            $adapter, $syncEngine, $conflictResolver, $mappings, $syncJob, $connector, $conflictStrategy, $totalProducts, &$errors, &$synced, &$failed, &$conflicted, &$processed
+            $adapter, $syncEngine, $conflictResolver, $mappings, $syncJob, $connector, $conflictStrategy, $totalProducts, &$errors, &$synced, &$failed, &$conflicted, &$processed, &$skippedInboundDebounce
         ) {
             // Wrap each chunk in a database transaction for atomicity
             DB::transaction(function () use (
-                $products, $adapter, $syncEngine, $conflictResolver, $mappings, $syncJob, $connector, $conflictStrategy, $totalProducts, &$errors, &$synced, &$failed, &$conflicted, &$processed
+                $products, $adapter, $syncEngine, $conflictResolver, $mappings, $syncJob, $connector, $conflictStrategy, &$errors, &$synced, &$failed, &$conflicted, &$processed, &$skippedInboundDebounce
             ) {
                 foreach ($products as $product) {
                     try {
@@ -155,6 +160,25 @@ class ProcessSyncJob implements ShouldQueue
                             ->where('product_id', $product->id)
                             ->where('entity_type', 'product')
                             ->first();
+
+                        // Bidirectional-loop debounce: if this mapping was just updated from an
+                        // inbound webhook (within ProductChannelMapping::DEFAULT_INBOUND_DEBOUNCE_SECONDS),
+                        // skip pushing the same change back to the channel. The channel already
+                        // has this value — re-syncing would echo the webhook and trigger another
+                        // webhook fire on the channel side.
+                        if ($existingMapping && $existingMapping->wasRecentlyInbound()) {
+                            $skippedInboundDebounce++;
+                            $processed++;
+
+                            Log::info('[ChannelConnector] Skipping outbound sync — recent inbound (loop prevention)', [
+                                'connector_id'      => $connector->id,
+                                'product_id'        => $product->id,
+                                'last_inbound_at'   => $existingMapping->last_inbound_at?->toIso8601String(),
+                                'debounce_seconds'  => ProductChannelMapping::DEFAULT_INBOUND_DEBOUNCE_SECONDS,
+                            ]);
+
+                            continue;
+                        }
 
                         // Conflict detection: only when a mapping with a data_hash already exists
                         if ($existingMapping && $existingMapping->data_hash) {
@@ -274,24 +298,26 @@ class ProcessSyncJob implements ShouldQueue
             ]);
 
             Log::info('[ChannelConnector] Sync batch progress', [
-                'sync_job_id'  => $syncJob->id,
-                'connector_id' => $connector->id,
-                'processed'    => $processed,
-                'total'        => $totalProducts,
-                'synced'       => $synced,
-                'failed'       => $failed,
-                'conflicted'   => $conflicted,
+                'sync_job_id'               => $syncJob->id,
+                'connector_id'              => $connector->id,
+                'processed'                 => $processed,
+                'total'                     => $totalProducts,
+                'synced'                    => $synced,
+                'failed'                    => $failed,
+                'conflicted'                => $conflicted,
+                'skipped_inbound_debounce'  => $skippedInboundDebounce,
             ]);
         });
 
         Log::info('[ChannelConnector] Sync job processing complete', [
-            'sync_job_id'    => $syncJob->id,
-            'connector_id'   => $connector->id,
-            'total_products' => $totalProducts,
-            'synced'         => $synced,
-            'failed'         => $failed,
-            'conflicted'     => $conflicted,
-            'error_count'    => count($errors),
+            'sync_job_id'              => $syncJob->id,
+            'connector_id'             => $connector->id,
+            'total_products'           => $totalProducts,
+            'synced'                   => $synced,
+            'failed'                   => $failed,
+            'conflicted'               => $conflicted,
+            'skipped_inbound_debounce' => $skippedInboundDebounce,
+            'error_count'              => count($errors),
         ]);
 
         $status = $failed > 0 && $synced === 0 && $conflicted === 0 ? 'failed' : 'completed';

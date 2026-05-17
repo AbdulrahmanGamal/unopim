@@ -6,9 +6,11 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Str;
 use Webkul\Tenant\DataGrids\TenantDataGrid;
 use Webkul\Tenant\Models\Tenant;
 use Webkul\Tenant\Repositories\TenantRepository;
+use Webkul\Tenant\Services\TenantContextSwitcher;
 use Webkul\Tenant\Services\TenantPurger;
 use Webkul\Tenant\Services\TenantSeeder;
 
@@ -18,6 +20,7 @@ class TenantController extends Controller
         protected TenantRepository $tenantRepository,
         protected TenantSeeder $tenantSeeder,
         protected TenantPurger $tenantPurger,
+        protected TenantContextSwitcher $contextSwitcher,
     ) {}
 
     /**
@@ -54,12 +57,12 @@ class TenantController extends Controller
         Event::dispatch('tenant.create.before');
 
         try {
-            $tenant = Tenant::create([
-                'uuid'          => (string) \Illuminate\Support\Str::uuid(),
+            $tenant = $this->tenantRepository->create([
+                'uuid'          => (string) Str::uuid(),
                 'name'          => $request->input('name'),
                 'domain'        => $request->input('domain'),
                 'status'        => Tenant::STATUS_PROVISIONING,
-                'es_index_uuid' => (string) \Illuminate\Support\Str::uuid(),
+                'es_index_uuid' => (string) Str::uuid(),
             ]);
 
             $this->tenantSeeder->seed($tenant, [
@@ -201,45 +204,29 @@ class TenantController extends Controller
     public function switchContext(Request $request): JsonResponse
     {
         $admin = auth()->guard('admin')->user();
-
-        if ($admin->tenant_id) {
-            return new JsonResponse([
-                'message' => 'Only platform operators can switch tenant context.',
-            ], 403);
-        }
-
         $tenantId = $request->input('tenant_id');
+        $tenantId = $tenantId !== null && $tenantId !== '' ? (int) $tenantId : null;
 
-        if ($tenantId) {
-            $tenant = Tenant::where('id', $tenantId)
-                ->where('status', Tenant::STATUS_ACTIVE)
-                ->first();
+        $result = $this->contextSwitcher->switchTo($admin, $tenantId);
 
-            if (! $tenant) {
-                return new JsonResponse([
-                    'message' => 'Tenant not found or not active.',
-                ], 404);
-            }
-
-            session(['tenant_context_id' => (int) $tenant->id]);
-            core()->setCurrentTenantId($tenant->id);
-
-            return new JsonResponse([
-                'message' => "Switched to tenant: {$tenant->name}",
+        return match ($result['status']) {
+            TenantContextSwitcher::RESULT_FORBIDDEN => new JsonResponse([
+                'message' => trans('tenant::app.tenants.switch-forbidden'),
+            ], 403),
+            TenantContextSwitcher::RESULT_NOT_FOUND => new JsonResponse([
+                'message' => trans('tenant::app.tenants.switch-not-found'),
+            ], 404),
+            TenantContextSwitcher::RESULT_CLEARED => new JsonResponse([
+                'message' => trans('tenant::app.tenants.switch-cleared'),
+                'tenant'  => null,
+            ]),
+            TenantContextSwitcher::RESULT_OK => new JsonResponse([
+                'message' => trans('tenant::app.tenants.switch-success', ['name' => $result['tenant']->name]),
                 'tenant'  => [
-                    'id'   => $tenant->id,
-                    'name' => $tenant->name,
+                    'id'   => $result['tenant']->id,
+                    'name' => $result['tenant']->name,
                 ],
-            ]);
-        }
-
-        // Clear tenant context — back to platform view
-        session()->forget('tenant_context_id');
-        core()->setCurrentTenantId(null);
-
-        return new JsonResponse([
-            'message' => 'Switched to Platform view (all tenants).',
-            'tenant'  => null,
-        ]);
+            ]),
+        };
     }
 }

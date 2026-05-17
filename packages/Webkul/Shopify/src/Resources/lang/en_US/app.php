@@ -20,7 +20,7 @@ return [
     'components' => [
         'layouts' => [
             'sidebar' => [
-                'settings'        => 'Settings',
+                'settings'              => 'Settings',
                 'shopify'               => 'Shopify',
                 'credentials'           => 'Credentials',
                 'export-mappings'       => 'Export Mappings',
@@ -215,11 +215,11 @@ return [
         ],
         'metafield' => [
             'datagrid' => [
-                'definitiontype'  => 'Used For',
+                'definitiontype'   => 'Used For',
                 'attribute-label'  => 'Unopim Attribute',
-                'definitionName'  => 'Definition name',
-                'contentTypeName' => 'Type',
-                'pin'             => 'Pin',
+                'definitionName'   => 'Definition name',
+                'contentTypeName'  => 'Type',
+                'pin'              => 'Pin',
             ],
             'index'    => [
                 'title'                     => 'Metafield definitions',

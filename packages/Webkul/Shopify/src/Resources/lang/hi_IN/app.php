@@ -3,33 +3,33 @@
 return [
     'exporters' => [
         'shopify' => [
-            'product'  => 'Shopify उत्पाद',
-            'category' => 'Shopify श्रेणी',
+            'product'    => 'Shopify उत्पाद',
+            'category'   => 'Shopify श्रेणी',
+            'metafields' => 'Shopify Metafields Definition',
         ],
     ],
-
     'importers' => [
         'shopify' => [
-            'product'  => 'शोपिफाई उत्पाद',
-            'category' => 'शोपिफाई श्रेणी',
-            'attribute'=> 'शोपिफाई विशेषता',
-            'family'   => 'शोपिफाई परिवार',
-            'metafield'=> 'शॉपिफ़ाई मेटाफ़ील्ड परिभाषाएँ',
+            'product'   => 'शोपिफाई उत्पाद',
+            'category'  => 'शोपिफाई श्रेणी',
+            'attribute' => 'शोपिफाई विशेषता',
+            'family'    => 'शोपिफाई परिवार',
+            'metafield' => 'शॉपिफ़ाई मेटाफ़ील्ड परिभाषाएँ',
         ],
     ],
-
     'components' => [
         'layouts' => [
             'sidebar' => [
-                'shopify'         => 'Shopify',
-                'credentials'     => 'प्रमाण पत्र',
-                'export-mappings' => 'निर्यात मानचित्रण',
-                'import-mappings' => 'आयात मैपिंग्स',
-                'settings'        => 'सेटिंग्स',
+                'settings'              => 'सेटिंग्स',
+                'shopify'               => 'Shopify',
+                'credentials'           => 'प्रमाण पत्र',
+                'export-mappings'       => 'निर्यात मानचित्रण',
+                'import-mappings'       => 'आयात मैपिंग्स',
+                'meta-fields'           => 'Metafield Definitions',
+                'metafield-definitions' => 'Metafield Definitions',
             ],
         ],
     ],
-
     'shopify' => [
         'acl' => [
             'credential' => [
@@ -37,7 +37,6 @@ return [
                 'edit'   => 'संपादित करें',
                 'delete' => 'हटाएँ',
             ],
-
             'metafield' => [
                 'create'      => 'मेटाफील्ड बनाएं',
                 'edit'        => 'मेटाफील्ड संपादित करें',
@@ -45,9 +44,7 @@ return [
                 'mass_delete' => 'मेटाफील्ड को सामूहिक रूप से हटाएं',
             ],
         ],
-
-        'version' => 'संस्करण: 1.0.0',
-
+        'version'    => 'संस्करण: 1.0.0',
         'credential' => [
             'export' => [
                 'locales' => 'स्थानीय मानचित्रण',
@@ -96,10 +93,27 @@ return [
                 'save'          => 'सहेजें',
                 'created'       => 'निर्यात मानचित्रण बनाया गया',
                 'image'         => 'छवि के रूप में उपयोग की जाने वाली विशेषता',
+                'gallery'       => 'Attribute to used as gallery',
                 'metafields'    => 'मेटाफील्ड के रूप में उपयोग की जाने वाली विशेषताएँ',
                 'filed-shopify' => 'Shopify में फ़ील्ड',
                 'attribute'     => 'विशेषता',
                 'fixed-value'   => 'स्थिर मान',
+                'images'        => [
+                    'title' => 'Shopify Media Mapping',
+                    'label' => [
+                        'type'      => 'Media Type',
+                        'attribute' => 'Media Attributes',
+                    ],
+                ],
+                'unit' => [
+                    'title'     => 'Shopify unit Mapping',
+                    'weight'    => 'Unit Weight',
+                    'volume'    => 'Unit Volume',
+                    'dimension' => 'Unit Dimension',
+                ],
+            ],
+            'settings' => [
+                'created' => 'Export Settings saved successfully',
             ],
             'setting' => [
                 'title'                        => 'सेटिंग',
@@ -111,13 +125,14 @@ return [
                 'metafields'                   => 'मेटाफील्ड निर्यात सेटिंग',
                 'metaFieldsKey'                => 'मेटाफील्ड कुंजी के रूप में विशेषता कोड/लेबल का उपयोग करें',
                 'metaFieldsNameSpace'          => 'मेटाफील्ड के नामस्थान के रूप में विशेषता समूह कोड/वैश्विक का उपयोग करें',
+                'credentials'                  => 'Credentials Export',
                 'other-settings'               => 'अन्य सेटिंग्स',
                 'roundof-attribute-value'      => 'मेट्रिक विशेषता मान के अतिरिक्त अंशात्मक शून्य हटाएं (उदा. 201.2000 को 201.2 के रूप में दिखाएं)',
                 'option_name_label'            => 'विकल्प नाम के लिए मान को विशेषता लेबल के रूप में दिखाएं (डिफ़ॉल्ट रूप से विशेषता कोड)',
             ],
-
             'errors' => [
                 'invalid-credential' => 'अमान्य क्रेडेंशियल। क्रेडेंशियल या तो अक्षम है या गलत है',
+                'invalid-locale'     => 'Invalid Locale. Please mapp the locale in credential edit section',
             ],
         ],
         'import' => [
@@ -127,12 +142,21 @@ return [
                 'save'                 => 'सहेजें',
                 'created'              => 'आयात मैपिंग सफलतापूर्वक सहेजा गया',
                 'image'                => 'चित्र के रूप में उपयोग करने के लिए गुण',
+                'gallery'              => 'Attribute to used as gallery',
                 'filed-shopify'        => 'Shopify में फ़ील्ड',
                 'attribute'            => 'UnoPim गुण',
                 'variantimage'         => 'वेरिएंट छवि के रूप में उपयोग करने के लिए गुण',
                 'other'                => 'Shopify अन्य मैपिंग्स',
                 'family'               => 'परिवार मैपिंग (उत्पादों के लिए)',
+                'families'             => 'Choose Family',
                 'metafieldDefinitions' => 'Shopify मेटाफील्ड परिभाषा मैपिंग',
+                'images'               => [
+                    'title' => 'Shopify Media Mapping',
+                    'label' => [
+                        'type'      => 'Media Type',
+                        'attribute' => 'Media Attributes',
+                    ],
+                ],
             ],
             'setting' => [
                 'credentialmapping' => 'क्रेडेंशियल मैपिंग',
@@ -150,7 +174,6 @@ return [
                 ],
             ],
         ],
-
         'fields' => [
             'name'                        => 'नाम',
             'description'                 => 'विवरण',
@@ -178,6 +201,78 @@ return [
             'productfilter'    => 'उत्पाद फ़िल्टर (SKU)',
             'locale'           => 'भाषा',
             'attribute-groups' => 'गुण समूह',
+        ],
+        'metafield' => [
+            'datagrid' => [
+                'definitiontype'  => 'Used For',
+                'attribute-label' => 'Unopim Attribute',
+                'definitionName'  => 'Definition name',
+                'contentTypeName' => 'Type',
+                'pin'             => 'Pin',
+            ],
+            'index' => [
+                'title'                    => 'Metafield definitions',
+                'create'                   => 'Add definition',
+                'definitiontype'           => 'Used For',
+                'attribute'                => 'UnoPim Attribute',
+                'ContentTypeName'          => 'Type',
+                'attributes'               => 'Definition Name',
+                'urlvalidation'            => 'Validation',
+                'urlvalidationdata'        => 'Values must be prefixed with: “HTTPS”, “HTTP”, “mailto:”, “sms:”, or “tel:”',
+                'name_space_key'           => 'Namespace and key',
+                'description'              => 'Description',
+                'onevalue'                 => 'One Value',
+                'listvalue'                => 'List of Values',
+                'validation'               => 'Validations',
+                'maxvalue'                 => 'Max value',
+                'adminFilterable'          => 'Filtering for products',
+                'smartCollectionCondition' => 'Smart collections',
+                'storefronts'              => 'Storefronts access',
+                'unit'                     => [
+                    'minvalue' => '',
+                    'maxvalue' => '',
+                ],
+            ],
+            'type' => [
+                'single_line_text_field' => 'Single line text',
+                'color'                  => 'Color',
+                'rating'                 => 'Rating',
+                'url'                    => 'Url',
+                'multi_line_text_field'  => 'Multi-line text',
+                'json'                   => 'JSON',
+                'boolean'                => 'True and False',
+                'date'                   => 'Date',
+                'number_decimal'         => 'Decimal',
+                'number_integer'         => 'Number',
+                'dimension'              => 'Dimension',
+                'weight'                 => 'Weight',
+                'volume'                 => 'Volume',
+            ],
+            'edit' => [
+                'title'    => 'Edit Metafield Definition',
+                'back-btn' => 'Back',
+                'update'   => 'Update',
+                'save'     => 'Save',
+            ],
+            'validation' => [
+                'pin-limit'               => 'Pin limit reached, You can only have 20 pinned fields',
+                'definition-exists'       => 'Definition already created in :type',
+                'namespace-taken'         => 'Namespace and key are already taken for :type',
+                'namespace-format'        => 'You need to use one period (.) to separate the namespace and key',
+                'key-min-length'          => 'Key must be a minimum of 2 characters',
+                'key-max-length'          => 'Key must be a maximum of 64 characters',
+                'namespace-invalid-chars' => 'Namespace and key can only use letters, numbers, underscores, and dashes',
+                'name-too-long'           => 'Name is too long (maximum is 255 characters)',
+                'type-required'           => 'Type Field is required',
+                'description-max-length'  => 'Description must be a maximum of 100 characters',
+                'only-number'             => 'Only Number Allowed',
+                'min-less-than-max'       => 'Validations contains an invalid value: min must be less than max',
+                'rating-min-max-required' => 'Rating field must have both min and max values',
+            ],
+            'delete-success'      => 'Metafield Definition Deleted successfully',
+            'update-success'      => 'MetaField Definition Updated successfully',
+            'created'             => 'Create Metafield Definition successfully',
+            'mass-delete-success' => 'Mass Delete Metafield Definition successfully',
         ],
     ],
 ];

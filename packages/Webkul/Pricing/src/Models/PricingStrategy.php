@@ -4,9 +4,9 @@ namespace Webkul\Pricing\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Webkul\Core\Models\Channel;
+use Webkul\Core\Contracts\Channel;
 use Webkul\Pricing\Contracts\PricingStrategy as PricingStrategyContract;
-use Webkul\Product\Models\Product;
+use Webkul\Product\Contracts\Product;
 use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 
 class PricingStrategy extends Model implements PricingStrategyContract

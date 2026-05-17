@@ -3,7 +3,7 @@
 namespace Webkul\ChannelConnector\Events;
 
 use Webkul\ChannelConnector\Models\ChannelConnector;
-use Webkul\Product\Models\Product;
+use Webkul\Product\Contracts\Product;
 
 class SyncProductSyncing
 {

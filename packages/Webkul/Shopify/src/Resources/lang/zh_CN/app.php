@@ -3,32 +3,33 @@
 return [
     'exporters' => [
         'shopify' => [
-            'product'  => 'Shopify 产品',
-            'category' => 'Shopify 类别',
+            'product'    => 'Shopify 产品',
+            'category'   => 'Shopify 类别',
+            'metafields' => 'Shopify Metafields Definition',
         ],
     ],
     'importers' => [
         'shopify' => [
-            'product'  => 'Shopify 产品',
-            'category' => 'Shopify 类别',
-            'attribute'=> 'Shopify 属性',
-            'family'   => 'Shopify 家族',
-            'metafield'=> 'Shopify 元字段定义',
+            'product'   => 'Shopify 产品',
+            'category'  => 'Shopify 类别',
+            'attribute' => 'Shopify 属性',
+            'family'    => 'Shopify 家族',
+            'metafield' => 'Shopify 元字段定义',
         ],
     ],
-
     'components' => [
         'layouts' => [
             'sidebar' => [
-                'shopify'         => 'Shopify',
-                'credentials'     => '凭据',
-                'export-mappings' => '导出映射',
-                'import-mappings' => '导入映射',
-                'settings'        => '设置',
+                'settings'              => '设置',
+                'shopify'               => 'Shopify',
+                'credentials'           => '凭据',
+                'export-mappings'       => '导出映射',
+                'import-mappings'       => '导入映射',
+                'meta-fields'           => 'Metafield Definitions',
+                'metafield-definitions' => 'Metafield Definitions',
             ],
         ],
     ],
-
     'shopify' => [
         'acl' => [
             'credential' => [
@@ -36,7 +37,6 @@ return [
                 'edit'   => '编辑',
                 'delete' => '删除',
             ],
-
             'metafield' => [
                 'create'      => '创建元字段',
                 'edit'        => '编辑元字段',
@@ -44,9 +44,7 @@ return [
                 'mass_delete' => '批量删除元字段',
             ],
         ],
-
-        'version' => '版本: 1.0.0',
-
+        'version'    => '版本: 1.0.0',
         'credential' => [
             'export' => [
                 'locales' => '语言映射',
@@ -86,7 +84,6 @@ return [
                 'shopUrl'    => 'Shopify URL',
                 'apiVersion' => 'API 版本',
                 'enabled'    => '启用',
-
             ],
         ],
         'export' => [
@@ -96,10 +93,27 @@ return [
                 'save'          => '保存',
                 'created'       => '导出映射已创建',
                 'image'         => '用于图像的属性',
+                'gallery'       => 'Attribute to used as gallery',
                 'metafields'    => '用于元字段的属性',
                 'filed-shopify' => 'Shopify 字段',
                 'attribute'     => '属性',
                 'fixed-value'   => '固定值',
+                'images'        => [
+                    'title' => 'Shopify Media Mapping',
+                    'label' => [
+                        'type'      => 'Media Type',
+                        'attribute' => 'Media Attributes',
+                    ],
+                ],
+                'unit' => [
+                    'title'     => 'Shopify unit Mapping',
+                    'weight'    => 'Unit Weight',
+                    'volume'    => 'Unit Volume',
+                    'dimension' => 'Unit Dimension',
+                ],
+            ],
+            'settings' => [
+                'created' => 'Export Settings saved successfully',
             ],
             'setting' => [
                 'title'                        => '设置',
@@ -111,11 +125,11 @@ return [
                 'metafields'                   => '元字段导出设置',
                 'metaFieldsKey'                => '使用属性代码/标签作为元字段键',
                 'metaFieldsNameSpace'          => '使用属性组代码/全局作为元字段命名空间',
+                'credentials'                  => 'Credentials Export',
                 'other-settings'               => '其他设置',
                 'roundof-attribute-value'      => '去除公制属性值的小数点后多余的零（例如，201.2000 显示为 201.2）',
                 'option_name_label'            => '选项名称的值使用属性标签（默认使用属性代码）',
             ],
-
             'errors' => [
                 'invalid-credential' => '凭证无效。凭证已禁用或不正确',
                 'invalid-locale'     => '无效的区域设置。请在凭据编辑部分中映射区域设置',
@@ -128,12 +142,21 @@ return [
                 'save'                 => '保存',
                 'created'              => '导入映射已成功保存',
                 'image'                => '用于图片的属性',
+                'gallery'              => 'Attribute to used as gallery',
                 'filed-shopify'        => 'Shopify 字段',
                 'attribute'            => 'UnoPim 属性',
                 'variantimage'         => '用于变体图片的属性',
                 'other'                => 'Shopify 其他映射',
                 'family'               => '家族映射（用于产品）',
+                'families'             => 'Choose Family',
                 'metafieldDefinitions' => 'Shopify 元字段定义映射',
+                'images'               => [
+                    'title' => 'Shopify Media Mapping',
+                    'label' => [
+                        'type'      => 'Media Type',
+                        'attribute' => 'Media Attributes',
+                    ],
+                ],
             ],
             'setting' => [
                 'credentialmapping' => '凭证映射',
@@ -151,51 +174,6 @@ return [
                 ],
             ],
         ],
-
-        'metafield' => [
-            'datagrid' => [
-                'definitiontype'  => '用途',
-                'attribute-label' => 'UnoPim 属性',
-                'definitionName'  => '定义名称',
-                'contentTypeName' => '类型',
-                'pin'             => '固定',
-            ],
-            'index' => [
-                'title'                    => '元字段定义',
-                'create'                   => '添加定义',
-                'definitiontype'           => '用途',
-                'attribute'                => 'UnoPim 属性',
-                'ContentTypeName'          => '类型',
-                'attributes'               => '定义名称',
-                'urlvalidation'            => '验证',
-                'urlvalidationdata'        => '值必须以以下前缀之一开头：“HTTPS”、“HTTP”、“mailto:”、“sms:” 或 “tel:”',
-                'name_space_key'           => '命名空间和键',
-                'description'              => '描述',
-                'onevalue'                 => '单个值',
-                'listvalue'                => '值列表',
-                'validation'               => '验证',
-                'maxvalue'                 => '最大值',
-                'adminFilterable'          => '产品筛选',
-                'smartCollectionCondition' => '智能集合',
-                'storefronts'              => '店面访问',
-            ],
-            'type' => [
-                'single_line_text_field' => '单行文本',
-                'color'                  => '颜色',
-                'rating'                 => '评分',
-                'url'                    => 'URL',
-                'multi_line_text_field'  => '多行文本',
-                'json'                   => 'JSON',
-                'boolean'                => '真假值',
-                'date'                   => '日期',
-                'number_decimal'         => '小数',
-                'number_integer'         => '整数',
-                'dimension'              => '尺寸',
-                'weight'                 => '重量',
-                'volume'                 => '体积',
-            ],
-        ],
-
         'fields' => [
             'name'                        => '名称',
             'description'                 => '描述',
@@ -223,6 +201,78 @@ return [
             'productfilter'    => '产品过滤器 (SKU)',
             'locale'           => '语言区域',
             'attribute-groups' => '属性组',
+        ],
+        'metafield' => [
+            'datagrid' => [
+                'definitiontype'  => '用途',
+                'attribute-label' => 'UnoPim 属性',
+                'definitionName'  => '定义名称',
+                'contentTypeName' => '类型',
+                'pin'             => '固定',
+            ],
+            'index' => [
+                'title'                    => '元字段定义',
+                'create'                   => '添加定义',
+                'definitiontype'           => '用途',
+                'attribute'                => 'UnoPim 属性',
+                'ContentTypeName'          => '类型',
+                'attributes'               => '定义名称',
+                'urlvalidation'            => '验证',
+                'urlvalidationdata'        => '值必须以以下前缀之一开头：“HTTPS”、“HTTP”、“mailto:”、“sms:” 或 “tel:”',
+                'name_space_key'           => '命名空间和键',
+                'description'              => '描述',
+                'onevalue'                 => '单个值',
+                'listvalue'                => '值列表',
+                'validation'               => '验证',
+                'maxvalue'                 => '最大值',
+                'adminFilterable'          => '产品筛选',
+                'smartCollectionCondition' => '智能集合',
+                'storefronts'              => '店面访问',
+                'unit'                     => [
+                    'minvalue' => '',
+                    'maxvalue' => '',
+                ],
+            ],
+            'type' => [
+                'single_line_text_field' => '单行文本',
+                'color'                  => '颜色',
+                'rating'                 => '评分',
+                'url'                    => 'URL',
+                'multi_line_text_field'  => '多行文本',
+                'json'                   => 'JSON',
+                'boolean'                => '真假值',
+                'date'                   => '日期',
+                'number_decimal'         => '小数',
+                'number_integer'         => '整数',
+                'dimension'              => '尺寸',
+                'weight'                 => '重量',
+                'volume'                 => '体积',
+            ],
+            'edit' => [
+                'title'    => 'Edit Metafield Definition',
+                'back-btn' => 'Back',
+                'update'   => 'Update',
+                'save'     => 'Save',
+            ],
+            'validation' => [
+                'pin-limit'               => 'Pin limit reached, You can only have 20 pinned fields',
+                'definition-exists'       => 'Definition already created in :type',
+                'namespace-taken'         => 'Namespace and key are already taken for :type',
+                'namespace-format'        => 'You need to use one period (.) to separate the namespace and key',
+                'key-min-length'          => 'Key must be a minimum of 2 characters',
+                'key-max-length'          => 'Key must be a maximum of 64 characters',
+                'namespace-invalid-chars' => 'Namespace and key can only use letters, numbers, underscores, and dashes',
+                'name-too-long'           => 'Name is too long (maximum is 255 characters)',
+                'type-required'           => 'Type Field is required',
+                'description-max-length'  => 'Description must be a maximum of 100 characters',
+                'only-number'             => 'Only Number Allowed',
+                'min-less-than-max'       => 'Validations contains an invalid value: min must be less than max',
+                'rating-min-max-required' => 'Rating field must have both min and max values',
+            ],
+            'delete-success'      => 'Metafield Definition Deleted successfully',
+            'update-success'      => 'MetaField Definition Updated successfully',
+            'created'             => 'Create Metafield Definition successfully',
+            'mass-delete-success' => 'Mass Delete Metafield Definition successfully',
         ],
     ],
 ];

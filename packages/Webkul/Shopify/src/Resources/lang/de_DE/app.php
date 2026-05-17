@@ -3,8 +3,9 @@
 return [
     'exporters' => [
         'shopify' => [
-            'product'  => 'Shopify-Produkt',
-            'category' => 'Shopify-Kategorie',
+            'product'    => 'Shopify-Produkt',
+            'category'   => 'Shopify-Kategorie',
+            'metafields' => 'Shopify Metafields Definition',
         ],
     ],
     'importers' => [
@@ -16,19 +17,19 @@ return [
             'metafield' => 'Metafelddefinitionen von Shopify',
         ],
     ],
-
     'components' => [
         'layouts' => [
             'sidebar' => [
-                'shopify'         => 'Shopify',
-                'credentials'     => 'Anmeldeinformationen',
-                'export-mappings' => 'Export-Zuordnungen',
-                'import-mappings' => 'Importzuordnungen',
-                'settings'        => 'Einstellungen',
+                'settings'              => 'Einstellungen',
+                'shopify'               => 'Shopify',
+                'credentials'           => 'Anmeldeinformationen',
+                'export-mappings'       => 'Export-Zuordnungen',
+                'import-mappings'       => 'Importzuordnungen',
+                'meta-fields'           => 'Metafield Definitions',
+                'metafield-definitions' => 'Metafield Definitions',
             ],
         ],
     ],
-
     'shopify' => [
         'acl' => [
             'credential' => [
@@ -36,17 +37,14 @@ return [
                 'edit'   => 'Bearbeiten',
                 'delete' => 'Löschen',
             ],
-
-            'metafield'  => [
+            'metafield' => [
                 'create'      => 'Metafeld erstellen',
                 'edit'        => 'Metafeld bearbeiten',
                 'delete'      => 'Metafeld löschen',
                 'mass_delete' => 'Metafelder massenhaft löschen',
             ],
         ],
-
-        'version' => 'Version: 1.0.0',
-
+        'version'    => 'Version: 1.0.0',
         'credential' => [
             'export' => [
                 'locales' => 'Sprachzuordnung',
@@ -95,10 +93,27 @@ return [
                 'save'          => 'Speichern',
                 'created'       => 'Export-Zuordnung erstellt',
                 'image'         => 'Attribut, das als Bild verwendet wird',
+                'gallery'       => 'Attribute to used as gallery',
                 'metafields'    => 'Attribute, die als Metafelder verwendet werden',
                 'filed-shopify' => 'Feld in Shopify',
                 'attribute'     => 'Attribut',
                 'fixed-value'   => 'Fester Wert',
+                'images'        => [
+                    'title' => 'Shopify Media Mapping',
+                    'label' => [
+                        'type'      => 'Media Type',
+                        'attribute' => 'Media Attributes',
+                    ],
+                ],
+                'unit' => [
+                    'title'     => 'Shopify unit Mapping',
+                    'weight'    => 'Unit Weight',
+                    'volume'    => 'Unit Volume',
+                    'dimension' => 'Unit Dimension',
+                ],
+            ],
+            'settings' => [
+                'created' => 'Export Settings saved successfully',
             ],
             'setting' => [
                 'title'                        => 'Einstellungen',
@@ -110,11 +125,11 @@ return [
                 'metafields'                   => 'Metafelder-Export-Einstellungen',
                 'metaFieldsKey'                => 'Schlüssel für Metafeld als Attributcode / Beschriftung verwenden',
                 'metaFieldsNameSpace'          => 'Namespace für Metafeld als Attributgruppen-Code / global verwenden',
+                'credentials'                  => 'Credentials Export',
                 'other-settings'               => 'Weitere Einstellungen',
                 'roundof-attribute-value'      => 'Zusätzliche Bruchstellen bei metrischen Attributwerten entfernen (z.B. 201,2000 als 201,2)',
                 'option_name_label'            => 'Wert für Optionsnamen als Attributbeschriftung (Standardmäßig Attributcode)',
             ],
-
             'errors' => [
                 'invalid-credential' => 'Ungültige Anmeldeinformationen. Die Anmeldeinformationen sind entweder deaktiviert oder falsch',
                 'invalid-locale'     => 'Ungültige Locale. Bitte mappen Sie die Locale im Abschnitt zur Bearbeitung der Anmeldeinformationen.',
@@ -127,12 +142,21 @@ return [
                 'save'                 => 'Speichern',
                 'created'              => 'Importzuordnung erfolgreich gespeichert',
                 'image'                => 'Attribut, das als Bild verwendet wird',
+                'gallery'              => 'Attribute to used as gallery',
                 'filed-shopify'        => 'Feld in Shopify',
                 'attribute'            => 'UnoPim-Attribut',
                 'variantimage'         => 'Attribut, das als Variantenbild verwendet wird',
                 'other'                => 'Andere Shopify-Zuordnungen',
                 'family'               => 'Familienzuordnung (für Produkte)',
+                'families'             => 'Choose Family',
                 'metafieldDefinitions' => 'Shopify-Metafeld-Definitionszuordnung',
+                'images'               => [
+                    'title' => 'Shopify Media Mapping',
+                    'label' => [
+                        'type'      => 'Media Type',
+                        'attribute' => 'Media Attributes',
+                    ],
+                ],
             ],
             'setting' => [
                 'credentialmapping' => 'Anmeldezuordnung',
@@ -150,7 +174,6 @@ return [
                 ],
             ],
         ],
-
         'fields' => [
             'name'                        => 'Name',
             'description'                 => 'Beschreibung',
@@ -179,35 +202,37 @@ return [
             'locale'           => 'Sprache',
             'attribute-groups' => 'Attributgruppen',
         ],
-
-        'metafield'     => [
+        'metafield' => [
             'datagrid' => [
                 'definitiontype'  => 'Verwendet für',
-                'attribute-label'  => 'Unopim-Attribut',
+                'attribute-label' => 'Unopim-Attribut',
                 'definitionName'  => 'Definitionsname',
                 'contentTypeName' => 'Typ',
                 'pin'             => 'Pin',
             ],
-            'index'    => [
-                'title'                     => 'Metafeldd Definitionen',
-                'create'                    => 'Definition hinzufügen',
-                'definitiontype'            => 'Verwendet für',
-                'attribute'                 => 'UnoPim-Attribut',
-                'ContentTypeName'           => 'Typ',
-                'attributes'                => 'Definitionsname',
-                'urlvalidation'             => 'Validierung',
-                'urlvalidationdata'         => 'Werte müssen mit „HTTPS“, „HTTP“, „mailto:“, „sms:“ oder „tel:“ beginnen',
-                'name_space_key'            => 'Namensraum und Schlüssel',
-                'description'               => 'Beschreibung',
-                'onevalue'                  => 'Einzelwert',
-                'listvalue'                 => 'Liste von Werten',
-                'validation'                => 'Validierungen',
-                'maxvalue'                  => 'Maximalwert',
-                'adminFilterable'           => 'Filterung für Produkte',
-                'smartCollectionCondition'  => 'Intelligente Sammlungen',
-                'storefronts'               => 'Storefront-Zugriff',
+            'index' => [
+                'title'                    => 'Metafeldd Definitionen',
+                'create'                   => 'Definition hinzufügen',
+                'definitiontype'           => 'Verwendet für',
+                'attribute'                => 'UnoPim-Attribut',
+                'ContentTypeName'          => 'Typ',
+                'attributes'               => 'Definitionsname',
+                'urlvalidation'            => 'Validierung',
+                'urlvalidationdata'        => 'Werte müssen mit „HTTPS“, „HTTP“, „mailto:“, „sms:“ oder „tel:“ beginnen',
+                'name_space_key'           => 'Namensraum und Schlüssel',
+                'description'              => 'Beschreibung',
+                'onevalue'                 => 'Einzelwert',
+                'listvalue'                => 'Liste von Werten',
+                'validation'               => 'Validierungen',
+                'maxvalue'                 => 'Maximalwert',
+                'adminFilterable'          => 'Filterung für Produkte',
+                'smartCollectionCondition' => 'Intelligente Sammlungen',
+                'storefronts'              => 'Storefront-Zugriff',
+                'unit'                     => [
+                    'minvalue' => '',
+                    'maxvalue' => '',
+                ],
             ],
-
             'type' => [
                 'single_line_text_field' => 'Einzeiliger Text',
                 'color'                  => 'Farbe',
@@ -223,12 +248,26 @@ return [
                 'weight'                 => 'Gewicht',
                 'volume'                 => 'Volumen',
             ],
-
-            'edit'     => [
-                'title'           => 'Metafeldd Definition bearbeiten',
-                'back-btn'        => 'Zurück',
-                'update'          => 'Aktualisieren',
-                'save'            => 'Speichern',
+            'edit' => [
+                'title'    => 'Metafeldd Definition bearbeiten',
+                'back-btn' => 'Zurück',
+                'update'   => 'Aktualisieren',
+                'save'     => 'Speichern',
+            ],
+            'validation' => [
+                'pin-limit'               => 'Pin limit reached, You can only have 20 pinned fields',
+                'definition-exists'       => 'Definition already created in :type',
+                'namespace-taken'         => 'Namespace and key are already taken for :type',
+                'namespace-format'        => 'You need to use one period (.) to separate the namespace and key',
+                'key-min-length'          => 'Key must be a minimum of 2 characters',
+                'key-max-length'          => 'Key must be a maximum of 64 characters',
+                'namespace-invalid-chars' => 'Namespace and key can only use letters, numbers, underscores, and dashes',
+                'name-too-long'           => 'Name is too long (maximum is 255 characters)',
+                'type-required'           => 'Type Field is required',
+                'description-max-length'  => 'Description must be a maximum of 100 characters',
+                'only-number'             => 'Only Number Allowed',
+                'min-less-than-max'       => 'Validations contains an invalid value: min must be less than max',
+                'rating-min-max-required' => 'Rating field must have both min and max values',
             ],
             'delete-success'      => 'Metafeldd Definition erfolgreich gelöscht',
             'update-success'      => 'Metafeldd Definition erfolgreich aktualisiert',

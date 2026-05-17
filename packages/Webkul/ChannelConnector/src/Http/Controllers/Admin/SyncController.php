@@ -4,14 +4,14 @@ namespace Webkul\ChannelConnector\Http\Controllers\Admin;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Webkul\Admin\Http\Controllers\Controller;
 use Illuminate\Validation\Rule;
+use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\ChannelConnector\Repositories\ChannelConnectorRepository;
 use Webkul\ChannelConnector\Repositories\ChannelFieldMappingRepository;
 use Webkul\ChannelConnector\Repositories\ChannelSyncJobRepository;
 use Webkul\ChannelConnector\Services\SyncEngine;
 use Webkul\ChannelConnector\Services\SyncJobManager;
-use Webkul\Product\Models\Product;
+use Webkul\Product\Models\ProductProxy as Product;
 
 class SyncController extends Controller
 {

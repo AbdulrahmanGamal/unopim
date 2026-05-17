@@ -27,10 +27,7 @@
     @pushOnce('scripts')
         <script type="text/x-template" id="v-mapping-editor-template">
             <div>
-                <form :action="saveUrl" method="POST">
-                    @csrf
-                    @method('PUT')
-
+                <x-admin::form :action="saveUrl" method="PUT">
                     <div class="box-shadow rounded bg-white p-4 dark:bg-gray-900">
                         <div class="mb-4 flex items-center justify-between">
                             <p class="text-base font-semibold text-gray-800 dark:text-white">
@@ -72,7 +69,7 @@
                             <button type="submit" class="primary-button">@lang('channel_connector::app.general.save')</button>
                         </div>
                     </div>
-                </form>
+                </x-admin::form>
             </div>
         </script>
 
@@ -95,6 +92,10 @@
                     applySuggestions() {
                         this.mappings = this.suggestions.map(s => ({ ...s }));
                     },
+                    // Required by <x-admin::form> which is built on VeeValidate <v-form>
+                    // and emits @invalid-submit when client-side validation fails. The
+                    // component shows its own per-field errors so we no-op here.
+                    onInvalidSubmit() {},
                 },
             });
         </script>

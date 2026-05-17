@@ -3,8 +3,9 @@
 return [
     'exporters' => [
         'shopify' => [
-            'product'  => 'Producto de Shopify',
-            'category' => 'Categoría de Shopify',
+            'product'    => 'Producto de Shopify',
+            'category'   => 'Categoría de Shopify',
+            'metafields' => 'Shopify Metafields Definition',
         ],
     ],
     'importers' => [
@@ -16,19 +17,19 @@ return [
             'metafield' => 'Definiciones de metacampos de Shopify',
         ],
     ],
-
     'components' => [
         'layouts' => [
             'sidebar' => [
-                'shopify'         => 'Shopify',
-                'credentials'     => 'Credenciales',
-                'export-mappings' => 'Mapeos de Exportación',
-                'import-mappings' => 'Mapas de importación',
-                'settings'        => 'Configuraciones',
+                'settings'              => 'Configuraciones',
+                'shopify'               => 'Shopify',
+                'credentials'           => 'Credenciales',
+                'export-mappings'       => 'Mapeos de Exportación',
+                'import-mappings'       => 'Mapas de importación',
+                'meta-fields'           => 'Metafield Definitions',
+                'metafield-definitions' => 'Metafield Definitions',
             ],
         ],
     ],
-
     'shopify' => [
         'acl' => [
             'credential' => [
@@ -36,7 +37,6 @@ return [
                 'edit'   => 'Editar',
                 'delete' => 'Eliminar',
             ],
-
             'metafield' => [
                 'create'      => 'Crear Metafield',
                 'edit'        => 'Editar Metafield',
@@ -44,9 +44,7 @@ return [
                 'mass_delete' => 'Eliminar Metafield en masa',
             ],
         ],
-
-        'version' => 'Versión: 1.0.0',
-
+        'version'    => 'Versión: 1.0.0',
         'credential' => [
             'export' => [
                 'locales' => 'Mapeo de Locales',
@@ -95,10 +93,27 @@ return [
                 'save'          => 'Guardar',
                 'created'       => 'Mapeo de Exportación Creado',
                 'image'         => 'Atributo usado como imagen',
+                'gallery'       => 'Attribute to used as gallery',
                 'metafields'    => 'Atributos usados como Metafields',
                 'filed-shopify' => 'Campo en Shopify',
                 'attribute'     => 'Atributo',
                 'fixed-value'   => 'Valor Fijo',
+                'images'        => [
+                    'title' => 'Shopify Media Mapping',
+                    'label' => [
+                        'type'      => 'Media Type',
+                        'attribute' => 'Media Attributes',
+                    ],
+                ],
+                'unit' => [
+                    'title'     => 'Shopify unit Mapping',
+                    'weight'    => 'Unit Weight',
+                    'volume'    => 'Unit Volume',
+                    'dimension' => 'Unit Dimension',
+                ],
+            ],
+            'settings' => [
+                'created' => 'Export Settings saved successfully',
             ],
             'setting' => [
                 'title'                        => 'Configuración',
@@ -110,12 +125,12 @@ return [
                 'metafields'                   => 'Configuración de Exportación de Meta Fields',
                 'metaFieldsKey'                => 'Usar Clave para Meta Field como Código/Label del Atributo',
                 'metaFieldsNameSpace'          => 'Usar Namespace para Meta Field como Código de Grupo de Atributo/global',
-                'crednetials'                  => 'Select Credentials',
+                'credentials'                  => 'Credentials Export',
                 'other-settings'               => 'Otras Configuraciones',
                 'roundof-attribute-value'      => 'Eliminar Decimales Extras de los Valores Métricos (ej. 201.2000 como 201.2)',
                 'option_name_label'            => 'Valor para el Nombre de Opción como Label del Atributo (Por Defecto Código de Atributo)',
+                'crednetials'                  => 'Select Credentials',
             ],
-
             'errors' => [
                 'invalid-credential' => 'Credencial no válida. La credencial está deshabilitada o es incorrecta.',
                 'invalid-locale'     => 'Localización no válida. Por favor, mapea la localización en la sección de edición de credenciales',
@@ -128,12 +143,21 @@ return [
                 'save'                 => 'Guardar',
                 'created'              => 'El mapeo de importación se guardó correctamente',
                 'image'                => 'Atributo utilizado como imagen',
+                'gallery'              => 'Attribute to used as gallery',
                 'filed-shopify'        => 'Campo en Shopify',
                 'attribute'            => 'Atributo de UnoPim',
                 'variantimage'         => 'Atributo utilizado como imagen de variante',
                 'other'                => 'Otros mapeos en Shopify',
                 'family'               => 'Mapeo de familia (para productos)',
+                'families'             => 'Choose Family',
                 'metafieldDefinitions' => 'Mapeo de definiciones de campos personalizados de Shopify',
+                'images'               => [
+                    'title' => 'Shopify Media Mapping',
+                    'label' => [
+                        'type'      => 'Media Type',
+                        'attribute' => 'Media Attributes',
+                    ],
+                ],
             ],
             'setting' => [
                 'credentialmapping' => 'Mapeo de credenciales',
@@ -151,7 +175,6 @@ return [
                 ],
             ],
         ],
-
         'fields' => [
             'name'                        => 'Nombre',
             'description'                 => 'Descripción',
@@ -180,34 +203,37 @@ return [
             'locale'           => 'Idioma',
             'attribute-groups' => 'Grupos de atributos',
         ],
-        'metafield'     => [
+        'metafield' => [
             'datagrid' => [
                 'definitiontype'  => 'Usado para',
-                'attribute-label'  => 'Atributo Unopim',
+                'attribute-label' => 'Atributo Unopim',
                 'definitionName'  => 'Nombre de la definición',
                 'contentTypeName' => 'Tipo',
                 'pin'             => 'Pin',
             ],
-            'index'    => [
-                'title'                     => 'Definiciones de Metacampo',
-                'create'                    => 'Agregar definición',
-                'definitiontype'            => 'Usado para',
-                'attribute'                 => 'Atributo UnoPim',
-                'ContentTypeName'           => 'Tipo',
-                'attributes'                => 'Nombre de la definición',
-                'urlvalidation'             => 'Validación',
-                'urlvalidationdata'         => 'Los valores deben estar precedidos por: "HTTPS", "HTTP", "mailto:", "sms:" o "tel:"',
-                'name_space_key'            => 'Espacio de nombres y clave',
-                'description'               => 'Descripción',
-                'onevalue'                  => 'Un valor',
-                'listvalue'                 => 'Lista de valores',
-                'validation'                => 'Validaciones',
-                'maxvalue'                  => 'Valor máximo',
-                'adminFilterable'           => 'Filtrado para productos',
-                'smartCollectionCondition'  => 'Colecciones inteligentes',
-                'storefronts'               => 'Acceso a escaparates',
+            'index' => [
+                'title'                    => 'Definiciones de Metacampo',
+                'create'                   => 'Agregar definición',
+                'definitiontype'           => 'Usado para',
+                'attribute'                => 'Atributo UnoPim',
+                'ContentTypeName'          => 'Tipo',
+                'attributes'               => 'Nombre de la definición',
+                'urlvalidation'            => 'Validación',
+                'urlvalidationdata'        => 'Los valores deben estar precedidos por: "HTTPS", "HTTP", "mailto:", "sms:" o "tel:"',
+                'name_space_key'           => 'Espacio de nombres y clave',
+                'description'              => 'Descripción',
+                'onevalue'                 => 'Un valor',
+                'listvalue'                => 'Lista de valores',
+                'validation'               => 'Validaciones',
+                'maxvalue'                 => 'Valor máximo',
+                'adminFilterable'          => 'Filtrado para productos',
+                'smartCollectionCondition' => 'Colecciones inteligentes',
+                'storefronts'              => 'Acceso a escaparates',
+                'unit'                     => [
+                    'minvalue' => '',
+                    'maxvalue' => '',
+                ],
             ],
-
             'type' => [
                 'single_line_text_field' => 'Texto de una línea',
                 'color'                  => 'Color',
@@ -223,12 +249,26 @@ return [
                 'weight'                 => 'Peso',
                 'volume'                 => 'Volumen',
             ],
-
-            'edit'     => [
-                'title'           => 'Editar definición de Metacampo',
-                'back-btn'        => 'Atrás',
-                'update'          => 'Actualizar',
-                'save'            => 'Guardar',
+            'edit' => [
+                'title'    => 'Editar definición de Metacampo',
+                'back-btn' => 'Atrás',
+                'update'   => 'Actualizar',
+                'save'     => 'Guardar',
+            ],
+            'validation' => [
+                'pin-limit'               => 'Pin limit reached, You can only have 20 pinned fields',
+                'definition-exists'       => 'Definition already created in :type',
+                'namespace-taken'         => 'Namespace and key are already taken for :type',
+                'namespace-format'        => 'You need to use one period (.) to separate the namespace and key',
+                'key-min-length'          => 'Key must be a minimum of 2 characters',
+                'key-max-length'          => 'Key must be a maximum of 64 characters',
+                'namespace-invalid-chars' => 'Namespace and key can only use letters, numbers, underscores, and dashes',
+                'name-too-long'           => 'Name is too long (maximum is 255 characters)',
+                'type-required'           => 'Type Field is required',
+                'description-max-length'  => 'Description must be a maximum of 100 characters',
+                'only-number'             => 'Only Number Allowed',
+                'min-less-than-max'       => 'Validations contains an invalid value: min must be less than max',
+                'rating-min-max-required' => 'Rating field must have both min and max values',
             ],
             'delete-success'      => 'Definición de Metacampo eliminada con éxito',
             'update-success'      => 'Definición de Metacampo actualizada con éxito',

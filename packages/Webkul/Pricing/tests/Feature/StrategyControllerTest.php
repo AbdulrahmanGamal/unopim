@@ -1,14 +1,13 @@
 <?php
 
+use Webkul\Core\Models\ChannelProxy as Channel;
 use Webkul\Pricing\Models\PricingStrategy;
-use Webkul\Core\Models\Channel;
-use Webkul\Category\Models\Category;
-use Webkul\Product\Models\Product;
+use Webkul\Product\Models\ProductProxy as Product;
 
+use function Pest\Laravel\deleteJson;
 use function Pest\Laravel\get;
 use function Pest\Laravel\postJson;
 use function Pest\Laravel\putJson;
-use function Pest\Laravel\deleteJson;
 
 it('should return the strategies index page', function () {
     $this->loginAsAdmin();
@@ -23,22 +22,22 @@ it('should create a global pricing strategy', function () {
     $this->loginAsAdmin();
 
     $strategyData = [
-        'scope_type' => 'global',
-        'scope_id' => 0,
+        'scope_type'                => 'global',
+        'scope_id'                  => 0,
         'minimum_margin_percentage' => 20.00,
-        'target_margin_percentage' => 30.00,
+        'target_margin_percentage'  => 30.00,
         'premium_margin_percentage' => 40.00,
-        'psychological_pricing' => true,
-        'round_to' => '0.99',
-        'is_active' => true,
-        'priority' => 100,
+        'psychological_pricing'     => true,
+        'round_to'                  => '0.99',
+        'is_active'                 => true,
+        'priority'                  => 100,
     ];
 
     $response = postJson(route('admin.pricing.strategies.store'), $strategyData);
 
     $this->assertDatabaseHas($this->getFullTableName(PricingStrategy::class), [
-        'scope_type' => 'global',
-        'scope_id' => 0,
+        'scope_type'                => 'global',
+        'scope_id'                  => 0,
         'minimum_margin_percentage' => 20.00,
     ]);
 
@@ -50,22 +49,22 @@ it('should create a channel-specific pricing strategy', function () {
     $channel = Channel::factory()->create();
 
     $strategyData = [
-        'scope_type' => 'channel',
-        'scope_id' => $channel->id,
+        'scope_type'                => 'channel',
+        'scope_id'                  => $channel->id,
         'minimum_margin_percentage' => 15.00,
-        'target_margin_percentage' => 25.00,
+        'target_margin_percentage'  => 25.00,
         'premium_margin_percentage' => 35.00,
-        'psychological_pricing' => false,
-        'round_to' => 'none',
-        'is_active' => true,
-        'priority' => 50,
+        'psychological_pricing'     => false,
+        'round_to'                  => 'none',
+        'is_active'                 => true,
+        'priority'                  => 50,
     ];
 
     $response = postJson(route('admin.pricing.strategies.store'), $strategyData);
 
     $this->assertDatabaseHas($this->getFullTableName(PricingStrategy::class), [
         'scope_type' => 'channel',
-        'scope_id' => $channel->id,
+        'scope_id'   => $channel->id,
     ]);
 
     $response->assertStatus(302);
@@ -75,13 +74,13 @@ it('should validate margin percentage ordering', function () {
     $this->loginAsAdmin();
 
     $invalidData = [
-        'scope_type' => 'global',
-        'scope_id' => 0,
+        'scope_type'                => 'global',
+        'scope_id'                  => 0,
         'minimum_margin_percentage' => 40.00,
-        'target_margin_percentage' => 30.00,
+        'target_margin_percentage'  => 30.00,
         'premium_margin_percentage' => 20.00,
-        'is_active' => true,
-        'priority' => 100,
+        'is_active'                 => true,
+        'priority'                  => 100,
     ];
 
     $response = postJson(route('admin.pricing.strategies.store'), $invalidData);
@@ -98,15 +97,15 @@ it('should update a pricing strategy', function () {
 
     $updateData = [
         'minimum_margin_percentage' => 25.00,
-        'target_margin_percentage' => 35.00,
+        'target_margin_percentage'  => 35.00,
         'premium_margin_percentage' => 45.00,
-        'priority' => 200,
+        'priority'                  => 200,
     ];
 
     $response = putJson(route('admin.pricing.strategies.update', $strategy->id), $updateData);
 
     $this->assertDatabaseHas($this->getFullTableName(PricingStrategy::class), [
-        'id' => $strategy->id,
+        'id'                        => $strategy->id,
         'minimum_margin_percentage' => 25.00,
     ]);
 
@@ -132,14 +131,14 @@ it('should enforce unique constraint on scope_type + scope_id', function () {
 
     PricingStrategy::factory()->create([
         'scope_type' => 'global',
-        'scope_id' => 0,
+        'scope_id'   => 0,
     ]);
 
     $this->expectException(\Illuminate\Database\QueryException::class);
 
     PricingStrategy::factory()->create([
         'scope_type' => 'global',
-        'scope_id' => 0,
+        'scope_id'   => 0,
     ]);
 });
 
@@ -149,19 +148,19 @@ it('should retrieve strategies for a product with cascading priority', function 
     $channel = Channel::factory()->create();
 
     PricingStrategy::factory()->create([
-        'scope_type' => 'global',
-        'scope_id' => 0,
+        'scope_type'                => 'global',
+        'scope_id'                  => 0,
         'minimum_margin_percentage' => 20.00,
-        'is_active' => true,
-        'priority' => 100,
+        'is_active'                 => true,
+        'priority'                  => 100,
     ]);
 
     PricingStrategy::factory()->create([
-        'scope_type' => 'product',
-        'scope_id' => $product->id,
+        'scope_type'                => 'product',
+        'scope_id'                  => $product->id,
         'minimum_margin_percentage' => 15.00,
-        'is_active' => true,
-        'priority' => 10,
+        'is_active'                 => true,
+        'priority'                  => 10,
     ]);
 
     $repo = app(\Webkul\Pricing\Contracts\PricingStrategyRepository::class);

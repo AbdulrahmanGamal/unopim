@@ -550,6 +550,18 @@ class ShopifyAdapter extends AbstractChannelAdapter
         ];
     }
 
+    /**
+     * Maximum number of attempts when a request is rate-limited (HTTP 429).
+     * 2 means: try once, if 429 sleep + try again, then surface the 429.
+     */
+    protected const SHOPIFY_GRAPHQL_MAX_ATTEMPTS = 2;
+
+    /**
+     * Default backoff (seconds) when Shopify returns 429 without a Retry-After
+     * header. Conservative because Shopify's bucket refills predictably.
+     */
+    protected const SHOPIFY_GRAPHQL_DEFAULT_BACKOFF = 60;
+
     protected function graphqlRequest(string $shopUrl, string $accessToken, string $query): array
     {
         // Validate shop URL to prevent SSRF attacks
@@ -557,16 +569,60 @@ class ShopifyAdapter extends AbstractChannelAdapter
             throw new \InvalidArgumentException('Invalid shop URL provided.');
         }
 
-        // Ensure shopUrl doesn't contain protocol or path
+        // Ensure shopUrl doesn't contain protocol or trailing path/slash
         $shopUrl = preg_replace('/^https?:\/\//', '', $shopUrl);
-        $shopUrl = strtr($shopUrl, '/');
+        $shopUrl = rtrim($shopUrl, '/');
 
         $url = "https://{$shopUrl}/admin/api/2024-01/graphql.json";
 
+        for ($attempt = 1; $attempt <= self::SHOPIFY_GRAPHQL_MAX_ATTEMPTS; $attempt++) {
+            [$httpCode, $body, $retryAfter] = $this->executeShopifyGraphqlCurl($url, $accessToken, $query);
+
+            if ($httpCode !== 429) {
+                if ($httpCode !== 200 || $body === false) {
+                    throw new \RuntimeException("Shopify API request failed with HTTP {$httpCode}");
+                }
+
+                return json_decode($body, true) ?? [];
+            }
+
+            // HTTP 429: respect Retry-After, sleep, retry — unless this was the last allowed attempt.
+            $sleep = $this->cappedShopifyRetryAfter($retryAfter);
+
+            Log::warning('[Shopify] GraphQL rate-limited (429)', [
+                'connector_id'  => $this->connectorId,
+                'attempt'       => $attempt,
+                'max_attempts'  => self::SHOPIFY_GRAPHQL_MAX_ATTEMPTS,
+                'sleep_seconds' => $sleep,
+            ]);
+
+            if ($attempt >= self::SHOPIFY_GRAPHQL_MAX_ATTEMPTS) {
+                throw new \RuntimeException(
+                    "Shopify API rate limit (HTTP 429) — retries exhausted after {$attempt} attempts"
+                );
+            }
+
+            sleep($sleep);
+        }
+
+        // Defensive: the loop always returns or throws above, but PHP's flow
+        // analysis requires an explicit return/throw outside the loop.
+        throw new \RuntimeException('Shopify GraphQL request failed unexpectedly');
+    }
+
+    /**
+     * Performs the actual curl exec and splits the response into [httpCode, body, retryAfter].
+     * CURLOPT_HEADER is set so we can extract the Retry-After header on a 429.
+     *
+     * @return array{0: int, 1: string|false, 2: int|null}
+     */
+    protected function executeShopifyGraphqlCurl(string $url, string $accessToken, string $query): array
+    {
         $ch = curl_init($url);
         curl_setopt_array($ch, [
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_POST           => true,
+            CURLOPT_HEADER         => true,
             CURLOPT_HTTPHEADER     => [
                 'Content-Type: application/json',
                 "X-Shopify-Access-Token: {$accessToken}",
@@ -576,13 +632,60 @@ class ShopifyAdapter extends AbstractChannelAdapter
         ]);
 
         $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $httpCode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $headerSize = (int) curl_getinfo($ch, CURLINFO_HEADER_SIZE);
         curl_close($ch);
 
-        if ($httpCode !== 200 || $response === false) {
-            throw new \RuntimeException("Shopify API request failed with HTTP {$httpCode}");
+        if ($response === false) {
+            return [$httpCode, false, null];
         }
 
-        return json_decode($response, true) ?? [];
+        $rawHeaders = substr($response, 0, $headerSize);
+        $body = substr($response, $headerSize);
+        $retryAfter = $this->extractRetryAfterHeader($rawHeaders);
+
+        return [$httpCode, $body, $retryAfter];
+    }
+
+    /**
+     * Parses a Retry-After header (either delta-seconds or HTTP-date) from a
+     * raw CRLF-separated header block. Returns null when absent or unparseable.
+     */
+    protected function extractRetryAfterHeader(string $rawHeaders): ?int
+    {
+        foreach (explode("\r\n", $rawHeaders) as $line) {
+            if (stripos($line, 'Retry-After:') !== 0) {
+                continue;
+            }
+
+            $value = trim(substr($line, strlen('Retry-After:')));
+
+            if ($value === '') {
+                return null;
+            }
+
+            if (is_numeric($value)) {
+                return max(0, (int) $value);
+            }
+
+            $timestamp = strtotime($value);
+
+            return $timestamp !== false ? max(0, $timestamp - time()) : null;
+        }
+
+        return null;
+    }
+
+    /**
+     * Clamps the channel-reported Retry-After to a safe sleep window. Falls
+     * back to SHOPIFY_GRAPHQL_DEFAULT_BACKOFF when the channel didn't send one
+     * and caps everything at the base adapter's MAX_RATE_LIMIT_SLEEP_SECONDS
+     * to prevent runaway sleeps holding the queue worker.
+     */
+    protected function cappedShopifyRetryAfter(?int $retryAfter): int
+    {
+        $value = $retryAfter ?? self::SHOPIFY_GRAPHQL_DEFAULT_BACKOFF;
+
+        return max(1, min($value, static::MAX_RATE_LIMIT_SLEEP_SECONDS));
     }
 }

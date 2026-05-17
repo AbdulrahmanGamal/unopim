@@ -6,11 +6,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Webkul\ChannelConnector\Adapters\AbstractChannelAdapter;
+use Webkul\ChannelConnector\Models\ProductChannelMapping;
 use Webkul\ChannelConnector\ValueObjects\ConnectionResult;
 use Webkul\ChannelConnector\ValueObjects\RateLimitConfig;
 use Webkul\ChannelConnector\ValueObjects\SyncResult;
-use Webkul\Product\Models\Product;
-use Webkul\WooCommerce\Models\WooCommerceProductMapping;
+use Webkul\Product\Contracts\Product;
 
 class WooCommerceAdapter extends AbstractChannelAdapter
 {
@@ -34,9 +34,11 @@ class WooCommerceAdapter extends AbstractChannelAdapter
                 );
             }
 
-            $response = Http::withToken($accessToken)
-                ->timeout(30)
-                ->get($this->getApiBase().'/products', ['per_page' => 1]);
+            $response = $this->executeWithRateLimitRetry(
+                fn () => Http::withToken($accessToken)
+                    ->timeout(30)
+                    ->get($this->getApiBase().'/products', ['per_page' => 1])
+            );
 
             if ($response->failed()) {
                 return new ConnectionResult(
@@ -72,22 +74,27 @@ class WooCommerceAdapter extends AbstractChannelAdapter
 
             $accessToken = $this->credentials['access_token'] ?? '';
 
-            // Use adapter-specific product mapping table
-            $existingMapping = WooCommerceProductMapping::where('product_id', $product->id)
-                ->where('connector_id', $this->connectorId)
+            // Use unified ProductChannelMapping (wave 3d consolidation)
+            $existingMapping = ProductChannelMapping::where('channel_connector_id', $this->connectorId)
+                ->where('product_id', $product->id)
+                ->where('entity_type', 'product')
                 ->first();
 
             $existingExternalId = $existingMapping?->external_id;
             $body = $this->buildWooCommerceProductBody($localeMappedData);
 
             if ($existingExternalId) {
-                $response = Http::withToken($accessToken)
-                    ->timeout(30)
-                    ->put($this->getApiBase().'/products/'.$existingExternalId, $body);
+                $response = $this->executeWithRateLimitRetry(
+                    fn () => Http::withToken($accessToken)
+                        ->timeout(30)
+                        ->put($this->getApiBase().'/products/'.$existingExternalId, $body)
+                );
             } else {
-                $response = Http::withToken($accessToken)
-                    ->timeout(30)
-                    ->post($this->getApiBase().'/products', $body);
+                $response = $this->executeWithRateLimitRetry(
+                    fn () => Http::withToken($accessToken)
+                        ->timeout(30)
+                        ->post($this->getApiBase().'/products', $body)
+                );
             }
 
             if ($response->failed()) {
@@ -104,19 +111,22 @@ class WooCommerceAdapter extends AbstractChannelAdapter
             $data = $response->json();
             $woocommerceProductId = (string) ($data['data']['id'] ?? $existingExternalId ?? '');
 
-            // Update or create adapter-specific mapping
-            WooCommerceProductMapping::updateOrCreate(
+            // Update or create unified ProductChannelMapping. Per-channel extras
+            // (external_sku, variant_data) live in the meta JSON column.
+            ProductChannelMapping::updateOrCreate(
                 [
-                    'product_id'   => $product->id,
-                    'connector_id' => $this->connectorId,
+                    'channel_connector_id' => $this->connectorId,
+                    'product_id'           => $product->id,
+                    'entity_type'          => 'product',
                 ],
                 [
                     'external_id'    => $woocommerceProductId,
-                    'external_sku'   => $localeMappedData['sku'] ?? null,
-                    'variant_data'   => $localeMappedData['variants'] ?? [],
                     'sync_status'    => 'synced',
                     'last_synced_at' => now(),
-                    'error_message'  => null,
+                    'meta'           => array_filter([
+                        'external_sku' => $localeMappedData['sku'] ?? null,
+                        'variant_data' => $localeMappedData['variants'] ?? null,
+                    ], fn ($v) => $v !== null),
                 ]
             );
 
@@ -137,15 +147,16 @@ class WooCommerceAdapter extends AbstractChannelAdapter
                 'error'      => $e->getMessage(),
             ]);
 
-            // Update mapping with error
-            WooCommerceProductMapping::updateOrCreate(
+            // Update unified mapping with error (extras in meta JSON)
+            ProductChannelMapping::updateOrCreate(
                 [
-                    'product_id'   => $product->id,
-                    'connector_id' => $this->connectorId,
+                    'channel_connector_id' => $this->connectorId,
+                    'product_id'           => $product->id,
+                    'entity_type'          => 'product',
                 ],
                 [
-                    'sync_status'   => 'failed',
-                    'error_message' => $e->getMessage(),
+                    'sync_status' => 'failed',
+                    'meta'        => ['error_message' => $e->getMessage()],
                 ]
             );
 
@@ -162,9 +173,11 @@ class WooCommerceAdapter extends AbstractChannelAdapter
         try {
             $this->ensureValidToken();
 
-            $response = Http::withToken($this->credentials['access_token'] ?? '')
-                ->timeout(30)
-                ->get($this->getApiBase().'/products/'.$externalId);
+            $response = $this->executeWithRateLimitRetry(
+                fn () => Http::withToken($this->credentials['access_token'] ?? '')
+                    ->timeout(30)
+                    ->get($this->getApiBase().'/products/'.$externalId)
+            );
 
             if ($response->failed()) {
                 return null;
@@ -195,9 +208,11 @@ class WooCommerceAdapter extends AbstractChannelAdapter
         try {
             $this->ensureValidToken();
 
-            $response = Http::withToken($this->credentials['access_token'] ?? '')
-                ->timeout(30)
-                ->delete($this->getApiBase().'/products/'.$externalId);
+            $response = $this->executeWithRateLimitRetry(
+                fn () => Http::withToken($this->credentials['access_token'] ?? '')
+                    ->timeout(30)
+                    ->delete($this->getApiBase().'/products/'.$externalId)
+            );
 
             if ($response->successful()) {
                 Log::info('[WooCommerce] Product deleted', ['external_id' => $externalId]);
@@ -248,12 +263,14 @@ class WooCommerceAdapter extends AbstractChannelAdapter
             $allSuccess = true;
 
             foreach ($events as $event) {
-                $response = Http::withToken($accessToken)
-                    ->timeout(30)
-                    ->post($this->getApiBase().'/webhooks', [
-                        'event' => $event,
-                        'url'   => $callbackUrl,
-                    ]);
+                $response = $this->executeWithRateLimitRetry(
+                    fn () => Http::withToken($accessToken)
+                        ->timeout(30)
+                        ->post($this->getApiBase().'/webhooks', [
+                            'event' => $event,
+                            'url'   => $callbackUrl,
+                        ])
+                );
 
                 if ($response->failed()) {
                     Log::warning('[WooCommerce] Webhook registration failed', [

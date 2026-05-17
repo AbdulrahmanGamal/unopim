@@ -48,22 +48,22 @@
         <div class="mt-4">
             <div class="box-shadow rounded bg-white p-4 dark:bg-gray-900">
                 <p class="mb-3 text-base font-semibold text-gray-800 dark:text-white">@lang('channel_connector::app.sync.errors.title')</p>
-                <table class="w-full text-left text-sm">
-                    <thead class="border-b dark:border-gray-700">
-                        <tr>
-                            <th class="px-4 py-2">@lang('channel_connector::app.sync.errors.product')</th>
-                            <th class="px-4 py-2">@lang('channel_connector::app.sync.errors.message')</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                <x-admin::table>
+                    <x-admin::table.thead>
+                        <x-admin::table.thead.tr>
+                            <x-admin::table.th>@lang('channel_connector::app.sync.errors.product')</x-admin::table.th>
+                            <x-admin::table.th>@lang('channel_connector::app.sync.errors.message')</x-admin::table.th>
+                        </x-admin::table.thead.tr>
+                    </x-admin::table.thead>
+                    <x-admin::table.tbody>
                         @foreach($job->error_summary as $error)
-                            <tr class="border-b dark:border-gray-700">
-                                <td class="px-4 py-2 text-gray-800 dark:text-white">{{ $error['product_sku'] ?? 'N/A' }}</td>
-                                <td class="px-4 py-2 text-red-600 dark:text-red-400">{{ implode(', ', $error['errors'] ?? []) }}</td>
-                            </tr>
+                            <x-admin::table.tbody.tr>
+                                <x-admin::table.td>{{ $error['product_sku'] ?? 'N/A' }}</x-admin::table.td>
+                                <x-admin::table.td class="text-red-600 dark:text-red-400">{{ implode(', ', $error['errors'] ?? []) }}</x-admin::table.td>
+                            </x-admin::table.tbody.tr>
                         @endforeach
-                    </tbody>
-                </table>
+                    </x-admin::table.tbody>
+                </x-admin::table>
             </div>
         </div>
     @endif

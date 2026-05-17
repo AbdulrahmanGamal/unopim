@@ -10,7 +10,7 @@ use Webkul\ChannelConnector\Events\ConflictResolved;
 use Webkul\ChannelConnector\Models\ChannelSyncConflict;
 use Webkul\ChannelConnector\Models\ProductChannelMapping;
 use Webkul\ChannelConnector\Repositories\ChannelSyncConflictRepository;
-use Webkul\Product\Models\Product;
+use Webkul\Product\Contracts\Product;
 
 class ConflictResolver
 {

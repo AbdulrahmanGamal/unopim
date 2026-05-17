@@ -98,22 +98,22 @@
                         <p class="mb-3 text-sm text-gray-700 dark:text-gray-300 font-semibold">
                             @lang('pricing::app.break-even.show.cost-breakdown')
                         </p>
-                        <table class="w-full text-sm">
-                            <thead class="bg-violet-50 dark:bg-cherry-800">
-                                <tr>
-                                    <th class="p-2 text-left">@lang('pricing::app.break-even.show.cost-type')</th>
-                                    <th class="p-2 text-right">@lang('pricing::app.break-even.show.amount')</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="(amount, type) in result.costBreakdown" class="border-b dark:border-cherry-700">
-                                    <td class="p-2 text-gray-700 dark:text-gray-300">@{{ type }}</td>
-                                    <td class="p-2 text-right text-gray-700 dark:text-gray-300">
+                        <x-admin::table>
+                            <x-admin::table.thead>
+                                <x-admin::table.thead.tr>
+                                    <x-admin::table.th>@lang('pricing::app.break-even.show.cost-type')</x-admin::table.th>
+                                    <x-admin::table.th class="text-right">@lang('pricing::app.break-even.show.amount')</x-admin::table.th>
+                                </x-admin::table.thead.tr>
+                            </x-admin::table.thead>
+                            <x-admin::table.tbody>
+                                <x-admin::table.tbody.tr v-for="(amount, type) in result.costBreakdown">
+                                    <x-admin::table.td>@{{ type }}</x-admin::table.td>
+                                    <x-admin::table.td class="text-right">
                                         @{{ result.currency }} @{{ parseFloat(amount).toFixed(2) }}
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                                    </x-admin::table.td>
+                                </x-admin::table.tbody.tr>
+                            </x-admin::table.tbody>
+                        </x-admin::table>
                     </div>
                 </div>
 

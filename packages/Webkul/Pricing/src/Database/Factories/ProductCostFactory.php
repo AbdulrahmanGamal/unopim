@@ -4,8 +4,8 @@ namespace Webkul\Pricing\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Webkul\Pricing\Models\ProductCost;
-use Webkul\Product\Models\Product;
-use Webkul\User\Models\Admin;
+use Webkul\Product\Models\ProductProxy as Product;
+use Webkul\User\Models\AdminProxy as Admin;
 
 class ProductCostFactory extends Factory
 {
@@ -14,14 +14,14 @@ class ProductCostFactory extends Factory
     public function definition(): array
     {
         return [
-            'product_id' => Product::factory(),
-            'cost_type' => $this->faker->randomElement(['cogs', 'operational', 'shipping', 'overhead', 'marketing']),
-            'amount' => $this->faker->randomFloat(2, 10, 1000),
-            'currency_code' => $this->faker->randomElement(['USD', 'EUR', 'GBP', 'SAR', 'AED']),
+            'product_id'     => Product::factory(),
+            'cost_type'      => $this->faker->randomElement(['cogs', 'operational', 'shipping', 'overhead', 'marketing']),
+            'amount'         => $this->faker->randomFloat(2, 10, 1000),
+            'currency_code'  => $this->faker->randomElement(['USD', 'EUR', 'GBP', 'SAR', 'AED']),
             'effective_from' => now()->subDays(rand(1, 30)),
-            'effective_to' => null,
-            'notes' => $this->faker->optional()->sentence(),
-            'created_by' => Admin::factory(),
+            'effective_to'   => null,
+            'notes'          => $this->faker->optional()->sentence(),
+            'created_by'     => Admin::factory(),
         ];
     }
 
@@ -43,7 +43,7 @@ class ProductCostFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'effective_from' => now()->subDay(),
-            'effective_to' => now()->addMonth(),
+            'effective_to'   => now()->addMonth(),
         ]);
     }
 }
