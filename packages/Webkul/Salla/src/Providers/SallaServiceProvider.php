@@ -12,10 +12,15 @@ class SallaServiceProvider extends ServiceProvider
      */
     public function boot(Router $router): void
     {
-        $this->loadRoutesFrom(__DIR__.'/../Routes/salla-routes.php');
+        // TODO(channel-syndication): Re-enable when admin UI is scaffolded for this package.
+        // Routes/salla-routes.php imports controllers that do not exist yet; Resources/views
+        // and Resources/lang directories are also absent. The Salla package is currently
+        // consumed only as an Adapter (Adapters/SallaAdapter.php) via ChannelConnector, and
+        // OAuth flow is handled by ChannelConnector\Http\Controllers\Admin\SallaOAuthController.
+        // $this->loadRoutesFrom(__DIR__.'/../Routes/salla-routes.php');
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migration');
-        $this->loadViewsFrom(__DIR__.'/../Resources/views', 'salla');
-        $this->loadTranslationsFrom(__DIR__.'/../Resources/lang', 'salla');
+        // $this->loadViewsFrom(__DIR__.'/../Resources/views', 'salla');
+        // $this->loadTranslationsFrom(__DIR__.'/../Resources/lang', 'salla');
     }
 
     /**
@@ -31,10 +36,13 @@ class SallaServiceProvider extends ServiceProvider
      */
     protected function registerConfig(): void
     {
-        $this->mergeConfigFrom(
-            dirname(__DIR__).'/Config/menu.php',
-            'menu.admin'
-        );
+        // TODO(channel-syndication): Re-enable when admin routes for this package exist.
+        // Menu entries would point to routes whose controllers don't exist, producing
+        // broken links in the admin sidebar.
+        // $this->mergeConfigFrom(
+        //     dirname(__DIR__).'/Config/menu.php',
+        //     'menu.admin'
+        // );
         $this->mergeConfigFrom(
             dirname(__DIR__).'/Config/acl.php',
             'acl'

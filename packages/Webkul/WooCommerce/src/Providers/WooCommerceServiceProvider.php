@@ -12,10 +12,14 @@ class WooCommerceServiceProvider extends ServiceProvider
      */
     public function boot(Router $router): void
     {
-        $this->loadRoutesFrom(__DIR__.'/../Routes/woocommerce-routes.php');
+        // TODO(channel-syndication): Re-enable when admin UI is scaffolded for this package.
+        // Routes/woocommerce-routes.php imports controllers that do not exist yet; Resources/views
+        // and Resources/lang directories are also absent. The WooCommerce package is currently
+        // consumed only as an Adapter (Adapters/WooCommerceAdapter.php) via ChannelConnector.
+        // $this->loadRoutesFrom(__DIR__.'/../Routes/woocommerce-routes.php');
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
-        $this->loadViewsFrom(__DIR__.'/../Resources/views', 'woocommerce');
-        $this->loadTranslationsFrom(__DIR__.'/../Resources/lang', 'woocommerce');
+        // $this->loadViewsFrom(__DIR__.'/../Resources/views', 'woocommerce');
+        // $this->loadTranslationsFrom(__DIR__.'/../Resources/lang', 'woocommerce');
     }
 
     /**
@@ -31,10 +35,13 @@ class WooCommerceServiceProvider extends ServiceProvider
      */
     protected function registerConfig(): void
     {
-        $this->mergeConfigFrom(
-            dirname(__DIR__).'/Config/menu.php',
-            'menu.admin'
-        );
+        // TODO(channel-syndication): Re-enable when admin routes for this package exist.
+        // Menu entries would point to routes whose controllers don't exist, producing
+        // broken links in the admin sidebar.
+        // $this->mergeConfigFrom(
+        //     dirname(__DIR__).'/Config/menu.php',
+        //     'menu.admin'
+        // );
         $this->mergeConfigFrom(
             dirname(__DIR__).'/Config/acl.php',
             'acl'

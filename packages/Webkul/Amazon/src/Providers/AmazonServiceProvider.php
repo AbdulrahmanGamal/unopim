@@ -12,10 +12,14 @@ class AmazonServiceProvider extends ServiceProvider
      */
     public function boot(Router $router): void
     {
-        $this->loadRoutesFrom(__DIR__.'/../Routes/amazon-routes.php');
+        // TODO(channel-syndication): Re-enable when admin UI is scaffolded for this package.
+        // Routes/amazon-routes.php imports controllers that do not exist yet; Resources/views
+        // and Resources/lang directories are also absent. The Amazon package is currently
+        // consumed only as an Adapter (Adapters/AmazonAdapter.php) via ChannelConnector.
+        // $this->loadRoutesFrom(__DIR__.'/../Routes/amazon-routes.php');
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migration');
-        $this->loadViewsFrom(__DIR__.'/../Resources/views', 'amazon');
-        $this->loadTranslationsFrom(__DIR__.'/../Resources/lang', 'amazon');
+        // $this->loadViewsFrom(__DIR__.'/../Resources/views', 'amazon');
+        // $this->loadTranslationsFrom(__DIR__.'/../Resources/lang', 'amazon');
     }
 
     /**
@@ -31,10 +35,13 @@ class AmazonServiceProvider extends ServiceProvider
      */
     protected function registerConfig(): void
     {
-        $this->mergeConfigFrom(
-            dirname(__DIR__).'/Config/menu.php',
-            'menu.admin'
-        );
+        // TODO(channel-syndication): Re-enable when admin routes for this package exist.
+        // Menu entries would point to routes whose controllers don't exist, producing
+        // broken links in the admin sidebar.
+        // $this->mergeConfigFrom(
+        //     dirname(__DIR__).'/Config/menu.php',
+        //     'menu.admin'
+        // );
         $this->mergeConfigFrom(
             dirname(__DIR__).'/Config/acl.php',
             'acl'

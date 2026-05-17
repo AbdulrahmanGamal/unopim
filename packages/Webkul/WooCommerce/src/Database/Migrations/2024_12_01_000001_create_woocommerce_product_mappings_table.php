@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('woocommerce_product_mappings', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('tenant_id')->nullable();
+            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
             $table->foreignId('connector_id')->constrained('channel_connectors')->onDelete('cascade');
             $table->string('external_id')->nullable();
@@ -27,6 +27,7 @@ return new class extends Migration
 
             $table->unique(['product_id', 'connector_id'], 'woocommerce_product_connector_unique');
             $table->index('external_id');
+            $table->index(['tenant_id', 'product_id'], 'woocommerce_pm_tenant_product_idx');
         });
     }
 

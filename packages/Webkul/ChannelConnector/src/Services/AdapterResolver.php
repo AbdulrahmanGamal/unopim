@@ -37,6 +37,7 @@ class AdapterResolver
         $credentials = $connector->credentials ?? [];
 
         $adapter->setCredentials($credentials);
+        $adapter->setConnectorId($connector->id);
 
         return $adapter;
     }
