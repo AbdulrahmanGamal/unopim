@@ -54,9 +54,9 @@ function createOrderWithProfitability(float $revenue, float $cost): \Webkul\Orde
 
     \Webkul\Order\Models\UnifiedOrderItem::factory()->create([
         'unified_order_id' => $order->id,
-        'price' => $revenue,
-        'quantity' => 1,
-        'cost_basis' => $cost,
+        'price'            => $revenue,
+        'quantity'         => 1,
+        'cost_basis'       => $cost,
     ]);
 
     return $order->fresh('orderItems');

@@ -20,12 +20,12 @@ return new class extends Migration
      * Tables to migrate: [table => column].
      */
     private array $tables = [
-        'categories'     => 'code',
-        'locales'        => 'code',
-        'attributes'     => 'code',
+        'categories'      => 'code',
+        'locales'         => 'code',
+        'attributes'      => 'code',
         'category_fields' => 'code',
-        'admins'         => 'email',
-        'job_instances'  => 'code',
+        'admins'          => 'email',
+        'job_instances'   => 'code',
     ];
 
     public function up(): void
@@ -55,7 +55,7 @@ return new class extends Migration
                     $blueprint->dropUnique([$column]);
                 });
 
-                Schema::table($table, function (Blueprint $blueprint) use ($table, $column, $compositeIndex) {
+                Schema::table($table, function (Blueprint $blueprint) use ($column, $compositeIndex) {
                     $blueprint->unique(['tenant_id', $column], $compositeIndex);
                 });
             }

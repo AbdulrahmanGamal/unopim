@@ -35,8 +35,8 @@ class RecommendedPriceEngine
      * Returns an array of PriceRecommendation value objects keyed by channel ID.
      * Each recommendation contains minimum, target, and premium price/margin pairs.
      *
-     * @param  int             $productId   Product to generate recommendations for.
-     * @param  array<int>|null $channelIds  Specific channels, or null for all active channels.
+     * @param  int  $productId  Product to generate recommendations for.
+     * @param  array<int>|null  $channelIds  Specific channels, or null for all active channels.
      * @return array<int, PriceRecommendation> Recommendations keyed by channel_id.
      *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException If product not found.
@@ -108,11 +108,11 @@ class RecommendedPriceEngine
      * Updates the product's price attribute value for the given channel
      * and fires the RecommendationApplied event.
      *
-     * @param  int          $productId      Product to update.
-     * @param  int          $channelId      Channel to apply the price for.
-     * @param  string       $tier           Price tier to apply: 'minimum', 'target', or 'premium'.
-     * @param  float|null   $overridePrice  Optional manual price override (ignores tier calculation).
-     * @return bool         True if the price was successfully applied.
+     * @param  int  $productId  Product to update.
+     * @param  int  $channelId  Channel to apply the price for.
+     * @param  string  $tier  Price tier to apply: 'minimum', 'target', or 'premium'.
+     * @param  float|null  $overridePrice  Optional manual price override (ignores tier calculation).
+     * @return bool True if the price was successfully applied.
      *
      * @throws \InvalidArgumentException If the tier is not recognized.
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException If product not found.
@@ -187,9 +187,9 @@ class RecommendedPriceEngine
      * Psychological pricing adjusts the price to end in a specific digit pattern
      * (e.g. $12.99 instead of $13.02) to increase perceived value.
      *
-     * @param  float   $price    The raw calculated price.
+     * @param  float  $price  The raw calculated price.
      * @param  string  $roundTo  Rounding target: '0.99', '0.95', '0.00', or 'none'.
-     * @return float   The psychologically-rounded price.
+     * @return float The psychologically-rounded price.
      */
     public function applyPsychologicalPricing(float $price, string $roundTo = '0.99'): float
     {
@@ -201,9 +201,9 @@ class RecommendedPriceEngine
         $fractionalPart = (float) bcsub((string) $price, (string) $wholePart, 4);
 
         return match ($roundTo) {
-            '0.99' => $this->roundToNinetyNine($price, $wholePart, $fractionalPart),
-            '0.95' => $this->roundToNinetyFive($price, $wholePart, $fractionalPart),
-            '0.00' => $this->roundToWholeNumber($price),
+            '0.99'  => $this->roundToNinetyNine($price, $wholePart, $fractionalPart),
+            '0.95'  => $this->roundToNinetyFive($price, $wholePart, $fractionalPart),
+            '0.00'  => $this->roundToWholeNumber($price),
             default => round($price, 2),
         };
     }

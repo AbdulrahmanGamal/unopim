@@ -6,7 +6,6 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
-use PHPStan\Type\ObjectType;
 
 /**
  * PHPStan rule that flags calls to withoutGlobalScope(TenantScope::class)

@@ -32,7 +32,7 @@ it('can get single order via API', function () {
     $response->assertStatus(200)
         ->assertJson([
             'data' => [
-                'id' => $order->id,
+                'id'           => $order->id,
                 'order_number' => $order->order_number,
             ],
         ]);

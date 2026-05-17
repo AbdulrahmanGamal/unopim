@@ -15,13 +15,13 @@ use Webkul\Admin\Mail\Admin\ResetPasswordNotification;
 use Webkul\AdminApi\Models\Apikey;
 use Webkul\Core\Models\LocaleProxy;
 use Webkul\Notification\Models\UserNotification;
-use Webkul\User\Contracts\Admin as AdminContract;
 use Webkul\Tenant\Models\Concerns\BelongsToTenant;
+use Webkul\User\Contracts\Admin as AdminContract;
 use Webkul\User\Database\Factories\AdminFactory;
 
 class Admin extends Authenticatable implements AdminContract, AuditableContract
 {
-    use BelongsToTenant, Auditable, HasApiTokens, HasFactory, Notifiable;
+    use Auditable, BelongsToTenant, HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.

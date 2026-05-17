@@ -14,16 +14,11 @@ use Webkul\Pricing\Models\ProductCost;
  *
  * Calculates profit margins, revenue, and cost basis for orders and order items.
  * Integrates with ProductCost from the Pricing package for accurate cost tracking.
- *
- * @package Webkul\Order\Services
  */
 class ProfitabilityCalculator
 {
     /**
      * Calculate profitability for a single order.
-     *
-     * @param  int  $orderId
-     * @return ProfitabilityResult
      */
     public function calculateOrderProfitability(int $orderId): ProfitabilityResult
     {
@@ -58,9 +53,6 @@ class ProfitabilityCalculator
 
     /**
      * Calculate profitability for an order item.
-     *
-     * @param  UnifiedOrderItem  $item
-     * @return ItemProfitability
      */
     protected function calculateItemProfitability(UnifiedOrderItem $item): ItemProfitability
     {
@@ -98,15 +90,13 @@ class ProfitabilityCalculator
     /**
      * Aggregate profitability by channel.
      *
-     * @param  int  $channelId
      * @param  array  $dateRange  ['start' => Carbon, 'end' => Carbon]
-     * @return ChannelProfitability
      */
     public function aggregateByChannel(int $channelId, array $dateRange = []): ChannelProfitability
     {
         $query = UnifiedOrder::where('channel_id', $channelId);
 
-        if (!empty($dateRange)) {
+        if (! empty($dateRange)) {
             $query->whereBetween('order_date', [
                 $dateRange['start'] ?? now()->subMonth(),
                 $dateRange['end'] ?? now(),
@@ -144,9 +134,6 @@ class ProfitabilityCalculator
 
     /**
      * Calculate profitability for multiple orders in batch.
-     *
-     * @param  array  $orderIds
-     * @return array
      */
     public function calculateBatchProfitability(array $orderIds): array
     {
@@ -168,7 +155,6 @@ class ProfitabilityCalculator
      * Get top profitable products from orders.
      *
      * @param  array  $filters  ['channel_id' => int, 'date_range' => array, 'limit' => int]
-     * @return array
      */
     public function getTopProfitableProducts(array $filters = []): array
     {
@@ -196,15 +182,15 @@ class ProfitabilityCalculator
             $profitability = $this->calculateItemProfitability($item);
             $productId = $item->product_id;
 
-            if (!isset($productProfits[$productId])) {
+            if (! isset($productProfits[$productId])) {
                 $productProfits[$productId] = [
-                    'product_id' => $productId,
-                    'product_name' => $profitability->productName,
-                    'product_sku' => $profitability->productSku,
+                    'product_id'    => $productId,
+                    'product_name'  => $profitability->productName,
+                    'product_sku'   => $profitability->productSku,
                     'total_revenue' => 0,
-                    'total_cost' => 0,
-                    'total_profit' => 0,
-                    'units_sold' => 0,
+                    'total_cost'    => 0,
+                    'total_profit'  => 0,
+                    'units_sold'    => 0,
                 ];
             }
 
@@ -234,9 +220,6 @@ class ProfitabilityCalculator
 
     /**
      * Calculate overall profitability summary.
-     *
-     * @param  array  $filters
-     * @return array
      */
     public function getOverallSummary(array $filters = []): array
     {
@@ -266,11 +249,11 @@ class ProfitabilityCalculator
         }
 
         return [
-            'order_count' => $orders->count(),
-            'total_revenue' => $totalRevenue,
-            'total_cost' => $totalCost,
-            'total_profit' => $totalProfit,
-            'average_order_value' => $orders->count() > 0 ? $totalRevenue / $orders->count() : 0,
+            'order_count'              => $orders->count(),
+            'total_revenue'            => $totalRevenue,
+            'total_cost'               => $totalCost,
+            'total_profit'             => $totalProfit,
+            'average_order_value'      => $orders->count() > 0 ? $totalRevenue / $orders->count() : 0,
             'profit_margin_percentage' => $totalRevenue > 0 ? ($totalProfit / $totalRevenue) * 100 : 0,
             'average_profit_per_order' => $orders->count() > 0 ? $totalProfit / $orders->count() : 0,
         ];

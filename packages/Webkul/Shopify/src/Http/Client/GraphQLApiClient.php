@@ -133,12 +133,14 @@ class GraphQLApiClient
 
                 if ($this->rateLimitRetryCount > 5) {
                     $this->rateLimitRetryCount = 0;
+
                     return $response;
                 }
 
                 usleep(min(1_000_000 * (2 ** $this->rateLimitRetryCount), 30_000_000)); // Exponential backoff, max 30s
                 $result = $this->request($endpoint, $parameters, $payload, $logger);
                 $this->rateLimitRetryCount = 0;
+
                 return $result;
             }
         }

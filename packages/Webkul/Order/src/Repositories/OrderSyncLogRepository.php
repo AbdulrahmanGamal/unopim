@@ -42,7 +42,7 @@ class OrderSyncLogRepository extends Repository
     /**
      * Get sync statistics.
      */
-    public function getSyncStats(int $channelId = null, string $period = '30days'): array
+    public function getSyncStats(?int $channelId = null, string $period = '30days'): array
     {
         $query = $this->model->newQuery();
 

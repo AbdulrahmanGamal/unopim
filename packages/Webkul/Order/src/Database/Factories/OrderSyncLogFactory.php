@@ -16,20 +16,20 @@ class OrderSyncLogFactory extends Factory
         $startedAt = $this->faker->dateTimeBetween('-7 days', 'now');
 
         return [
-            'tenant_id' => 1,
-            'channel_id' => Channel::factory(),
-            'status' => $status,
-            'resource_type' => $this->faker->randomElement(['order', 'product', 'customer']),
-            'resource_id' => $this->faker->optional()->numberBetween(1, 1000),
-            'direction' => $this->faker->randomElement(['import', 'export']),
-            'started_at' => $startedAt,
-            'completed_at' => $status === 'completed' ? $this->faker->dateTimeBetween($startedAt, 'now') : null,
-            'failed_at' => $status === 'failed' ? $this->faker->dateTimeBetween($startedAt, 'now') : null,
-            'error_message' => $status === 'failed' ? $this->faker->sentence() : null,
+            'tenant_id'       => 1,
+            'channel_id'      => Channel::factory(),
+            'status'          => $status,
+            'resource_type'   => $this->faker->randomElement(['order', 'product', 'customer']),
+            'resource_id'     => $this->faker->optional()->numberBetween(1, 1000),
+            'direction'       => $this->faker->randomElement(['import', 'export']),
+            'started_at'      => $startedAt,
+            'completed_at'    => $status === 'completed' ? $this->faker->dateTimeBetween($startedAt, 'now') : null,
+            'failed_at'       => $status === 'failed' ? $this->faker->dateTimeBetween($startedAt, 'now') : null,
+            'error_message'   => $status === 'failed' ? $this->faker->sentence() : null,
             'items_processed' => $status === 'completed' ? $this->faker->numberBetween(0, 1000) : 0,
-            'items_failed' => $status === 'failed' ? $this->faker->numberBetween(1, 100) : 0,
-            'metadata' => [
-                'synced_count' => $this->faker->numberBetween(0, 100),
+            'items_failed'    => $status === 'failed' ? $this->faker->numberBetween(1, 100) : 0,
+            'metadata'        => [
+                'synced_count'  => $this->faker->numberBetween(0, 100),
                 'created_count' => $this->faker->numberBetween(0, 50),
                 'updated_count' => $this->faker->numberBetween(0, 50),
                 'skipped_count' => $this->faker->numberBetween(0, 10),
@@ -45,10 +45,10 @@ class OrderSyncLogFactory extends Factory
     public function pending(): static
     {
         return $this->state(fn (array $attributes) => [
-            'status' => 'pending',
-            'started_at' => null,
+            'status'       => 'pending',
+            'started_at'   => null,
             'completed_at' => null,
-            'failed_at' => null,
+            'failed_at'    => null,
         ]);
     }
 
@@ -58,10 +58,10 @@ class OrderSyncLogFactory extends Factory
     public function running(): static
     {
         return $this->state(fn (array $attributes) => [
-            'status' => 'running',
-            'started_at' => now(),
+            'status'       => 'running',
+            'started_at'   => now(),
             'completed_at' => null,
-            'failed_at' => null,
+            'failed_at'    => null,
         ]);
     }
 
@@ -74,11 +74,11 @@ class OrderSyncLogFactory extends Factory
             $startedAt = now()->subMinutes($this->faker->numberBetween(1, 30));
 
             return [
-                'status' => 'completed',
-                'started_at' => $startedAt,
-                'completed_at' => $startedAt->copy()->addMinutes($this->faker->numberBetween(1, 20)),
-                'failed_at' => null,
-                'error_message' => null,
+                'status'          => 'completed',
+                'started_at'      => $startedAt,
+                'completed_at'    => $startedAt->copy()->addMinutes($this->faker->numberBetween(1, 20)),
+                'failed_at'       => null,
+                'error_message'   => null,
                 'items_processed' => $this->faker->numberBetween(10, 1000),
             ];
         });
@@ -93,10 +93,10 @@ class OrderSyncLogFactory extends Factory
             $startedAt = now()->subMinutes($this->faker->numberBetween(1, 30));
 
             return [
-                'status' => 'failed',
-                'started_at' => $startedAt,
-                'completed_at' => null,
-                'failed_at' => $startedAt->copy()->addMinutes($this->faker->numberBetween(1, 10)),
+                'status'        => 'failed',
+                'started_at'    => $startedAt,
+                'completed_at'  => null,
+                'failed_at'     => $startedAt->copy()->addMinutes($this->faker->numberBetween(1, 10)),
                 'error_message' => $this->faker->randomElement([
                     'Connection timeout',
                     'Authentication failed',

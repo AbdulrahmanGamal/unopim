@@ -34,8 +34,8 @@ class NotifyMarginViolation
                     'type'    => 'margin_violation',
                     'message' => $message,
                     'data'    => json_encode([
-                        'product_id'      => $marginEvent->product_id,
-                        'channel_id'      => $marginEvent->channel_id,
+                        'product_id'       => $marginEvent->product_id,
+                        'channel_id'       => $marginEvent->channel_id,
                         'proposed_price'   => $marginEvent->proposed_price,
                         'break_even_price' => $marginEvent->break_even_price,
                         'margin_event_id'  => $marginEvent->id,

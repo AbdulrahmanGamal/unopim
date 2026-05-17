@@ -32,10 +32,10 @@ class TenantWelcomeMail extends Mailable
     private function buildHtml(): string
     {
         return "<h1>Welcome to {$this->tenant->name}</h1>"
-            ."<p>Your account has been created on UnoPim.</p>"
+            .'<p>Your account has been created on UnoPim.</p>'
             ."<p><strong>Email:</strong> {$this->email}</p>"
             ."<p><strong>Password:</strong> {$this->password}</p>"
             ."<p><strong>Domain:</strong> {$this->tenant->domain}</p>"
-            ."<p>Please change your password after first login.</p>";
+            .'<p>Please change your password after first login.</p>';
     }
 }

@@ -9,6 +9,7 @@ use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 class OrderSyncLog extends Model implements OrderSyncLogContract
 {
     use BelongsToTenant;
+
     /**
      * The table associated with the model.
      *

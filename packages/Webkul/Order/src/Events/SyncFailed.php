@@ -41,9 +41,6 @@ class SyncFailed
     /**
      * Create a new event instance.
      *
-     * @param  Channel  $channel
-     * @param  OrderSyncLog  $syncLog
-     * @param  \Exception  $exception
      * @return void
      */
     public function __construct(Channel $channel, OrderSyncLog $syncLog, \Exception $exception)

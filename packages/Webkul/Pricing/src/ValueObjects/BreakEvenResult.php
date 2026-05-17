@@ -15,13 +15,13 @@ use JsonSerializable;
 final class BreakEvenResult implements Arrayable, JsonSerializable
 {
     /**
-     * @param  int         $productId      The product this calculation applies to.
-     * @param  int|null    $channelId      The channel context (null = product-level only).
-     * @param  float       $fixedCosts     Sum of per-unit fixed costs (COGS + operational + shipping + overhead).
-     * @param  float       $variableRate   Combined variable rate as a decimal (e.g. 0.18 = 18%).
-     * @param  float       $breakEvenPrice Computed minimum selling price to cover all costs.
-     * @param  string      $currency       ISO 4217 currency code.
-     * @param  CarbonImmutable $calculatedAt Timestamp of the calculation.
+     * @param  int  $productId  The product this calculation applies to.
+     * @param  int|null  $channelId  The channel context (null = product-level only).
+     * @param  float  $fixedCosts  Sum of per-unit fixed costs (COGS + operational + shipping + overhead).
+     * @param  float  $variableRate  Combined variable rate as a decimal (e.g. 0.18 = 18%).
+     * @param  float  $breakEvenPrice  Computed minimum selling price to cover all costs.
+     * @param  string  $currency  ISO 4217 currency code.
+     * @param  CarbonImmutable  $calculatedAt  Timestamp of the calculation.
      */
     public function __construct(
         public readonly int $productId,

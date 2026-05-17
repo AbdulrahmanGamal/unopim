@@ -37,11 +37,11 @@ return [
         ],
 
         'support-agent' => [
-            'name'            => 'Support Agent',
-            'code'            => 'support-agent',
-            'permission_type' => 'custom',
-            'scope'           => 'platform',
-            'description'     => 'Read-only cross-tenant access for support purposes.',
+            'name'                => 'Support Agent',
+            'code'                => 'support-agent',
+            'permission_type'     => 'custom',
+            'scope'               => 'platform',
+            'description'         => 'Read-only cross-tenant access for support purposes.',
             'default_permissions' => [
                 'dashboard',
                 'catalog',

@@ -39,7 +39,7 @@ class CostRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'currency_code.size' => trans('pricing::app.costs.validation.currency-code-size'),
+            'currency_code.size'          => trans('pricing::app.costs.validation.currency-code-size'),
             'effective_to.after_or_equal' => trans('pricing::app.costs.validation.effective-to-after'),
         ];
     }

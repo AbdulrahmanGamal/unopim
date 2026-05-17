@@ -23,23 +23,16 @@ class ProfitabilityController extends Controller
     /**
      * Create a new controller instance.
      *
-     * @param  OrderRepository  $orderRepository
-     * @param  ChannelRepository  $channelRepository
-     * @param  ProductRepository  $productRepository
      * @return void
      */
     public function __construct(
         protected OrderRepository $orderRepository,
         protected ChannelRepository $channelRepository,
         protected ProductRepository $productRepository
-    ) {
-    }
+    ) {}
 
     /**
      * Display profitability overview dashboard.
-     *
-     * @param  Request  $request
-     * @return View|JsonResponse
      */
     public function index(Request $request): View|JsonResponse
     {
@@ -65,19 +58,16 @@ class ProfitabilityController extends Controller
         $topProducts = $this->getTopProductsByProfit($startDate, $endDate, 10);
 
         return view('order::admin.profitability.index', [
-            'overall' => $overall,
+            'overall'     => $overall,
             'topChannels' => $topChannels,
             'topProducts' => $topProducts,
-            'startDate' => $startDate,
-            'endDate' => $endDate,
+            'startDate'   => $startDate,
+            'endDate'     => $endDate,
         ]);
     }
 
     /**
      * Get channel-wise profitability analysis.
-     *
-     * @param  Request  $request
-     * @return JsonResponse
      */
     public function byChannel(Request $request): JsonResponse
     {
@@ -99,9 +89,6 @@ class ProfitabilityController extends Controller
 
     /**
      * Get product-wise profitability analysis.
-     *
-     * @param  Request  $request
-     * @return JsonResponse
      */
     public function byProduct(Request $request): JsonResponse
     {
@@ -123,9 +110,6 @@ class ProfitabilityController extends Controller
 
     /**
      * Get time-series profitability data.
-     *
-     * @param  Request  $request
-     * @return JsonResponse
      */
     public function byDateRange(Request $request): JsonResponse
     {
@@ -147,7 +131,6 @@ class ProfitabilityController extends Controller
     /**
      * Export profitability report.
      *
-     * @param  Request  $request
      * @return \Symfony\Component\HttpFoundation\StreamedResponse
      */
     public function export(Request $request)
@@ -161,10 +144,6 @@ class ProfitabilityController extends Controller
 
     /**
      * Calculate overall profitability for date range.
-     *
-     * @param  string  $startDate
-     * @param  string  $endDate
-     * @return array
      */
     protected function calculateOverallProfitability(string $startDate, string $endDate): array
     {
@@ -193,21 +172,16 @@ class ProfitabilityController extends Controller
         $marginPercentage = $totalRevenue > 0 ? ($totalProfit / $totalRevenue) * 100 : 0;
 
         return [
-            'total_orders' => $orders->count(),
-            'total_revenue' => round($totalRevenue, 2),
-            'total_cost' => round($totalCost, 2),
-            'total_profit' => round($totalProfit, 2),
+            'total_orders'      => $orders->count(),
+            'total_revenue'     => round($totalRevenue, 2),
+            'total_cost'        => round($totalCost, 2),
+            'total_profit'      => round($totalProfit, 2),
             'margin_percentage' => round($marginPercentage, 2),
         ];
     }
 
     /**
      * Get top channels by profit.
-     *
-     * @param  string  $startDate
-     * @param  string  $endDate
-     * @param  int  $limit
-     * @return array
      */
     protected function getTopChannelsByProfit(string $startDate, string $endDate, int $limit = 5): array
     {
@@ -217,11 +191,6 @@ class ProfitabilityController extends Controller
 
     /**
      * Get top products by profit.
-     *
-     * @param  string  $startDate
-     * @param  string  $endDate
-     * @param  int  $limit
-     * @return array
      */
     protected function getTopProductsByProfit(string $startDate, string $endDate, int $limit = 10): array
     {
@@ -231,11 +200,6 @@ class ProfitabilityController extends Controller
 
     /**
      * Get channel profitability data.
-     *
-     * @param  string  $startDate
-     * @param  string  $endDate
-     * @param  int|null  $channelId
-     * @return array
      */
     protected function getChannelProfitability(string $startDate, string $endDate, ?int $channelId = null): array
     {
@@ -245,11 +209,6 @@ class ProfitabilityController extends Controller
 
     /**
      * Get product profitability data.
-     *
-     * @param  string  $startDate
-     * @param  string  $endDate
-     * @param  int|null  $productId
-     * @return array
      */
     protected function getProductProfitability(string $startDate, string $endDate, ?int $productId = null): array
     {
@@ -259,11 +218,6 @@ class ProfitabilityController extends Controller
 
     /**
      * Get time-series profitability data.
-     *
-     * @param  string  $startDate
-     * @param  string  $endDate
-     * @param  string  $groupBy
-     * @return array
      */
     protected function getTimeSeriesProfitability(string $startDate, string $endDate, string $groupBy = 'day'): array
     {

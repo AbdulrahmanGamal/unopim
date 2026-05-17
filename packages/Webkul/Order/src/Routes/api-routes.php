@@ -13,7 +13,7 @@ use Webkul\Order\Http\Controllers\Api\V1\WebhookReceiverController;
  */
 Route::group([
     'middleware' => ['auth:api'],
-    'prefix' => 'api/v1',
+    'prefix'     => 'api/v1',
 ], function () {
     /**
      * Authenticated Order API Routes
@@ -40,7 +40,7 @@ Route::group([
  * Authentication is handled via HMAC signature verification.
  */
 Route::group([
-    'prefix' => 'api/v1/webhooks',
+    'prefix'     => 'api/v1/webhooks',
     'middleware' => ['throttle:60,1'], // Rate limit: 60 requests per minute
 ], function () {
     /**

@@ -16,16 +16,11 @@ use Webkul\Order\ValueObjects\OrderSyncResult;
  *
  * Handles synchronization of orders from external channels (Salla, Shopify, WooCommerce)
  * into the UnoPim unified order system.
- *
- * @package Webkul\Order\Services
  */
 class OrderSyncService
 {
     /**
      * Create a new OrderSyncService instance.
-     *
-     * @param  UnifiedOrder  $orderRepository
-     * @param  OrderSyncLog  $syncLogRepository
      */
     public function __construct(
         protected UnifiedOrder $orderRepository,
@@ -35,9 +30,7 @@ class OrderSyncService
     /**
      * Sync orders from a specific channel.
      *
-     * @param  int  $channelId
      * @param  array  $options  Options for sync (date_from, date_to, status_filter, etc.)
-     * @return OrderSyncResult
      *
      * @throws Exception
      */
@@ -62,7 +55,7 @@ class OrderSyncService
                     $failed++;
                     $errors[] = [
                         'order_id' => $orderData['id'] ?? 'unknown',
-                        'error' => $e->getMessage(),
+                        'error'    => $e->getMessage(),
                     ];
                     Log::error("Order sync failed: {$e->getMessage()}", [
                         'channel_id' => $channelId,
@@ -94,62 +87,47 @@ class OrderSyncService
 
     /**
      * Sync a single order from channel data.
-     *
-     * @param  Channel  $channel
-     * @param  array  $orderData
-     * @return mixed
      */
     protected function syncOrder(Channel $channel, array $orderData): mixed
     {
         return $this->orderRepository->updateOrCreate(
             [
-                'tenant_id' => tenant()->id,
-                'channel_id' => $channel->id,
+                'tenant_id'        => tenant()->id,
+                'channel_id'       => $channel->id,
                 'channel_order_id' => $orderData['id'],
             ],
             [
-                'order_number' => $orderData['order_number'],
-                'customer_name' => $orderData['customer']['name'],
-                'customer_email' => $orderData['customer']['email'],
-                'customer_phone' => $orderData['customer']['phone'] ?? null,
-                'status' => $this->mapStatus($orderData['status']),
-                'payment_status' => $this->mapPaymentStatus($orderData['payment_status']),
-                'total_amount' => $orderData['total'],
-                'currency_code' => $orderData['currency'],
+                'order_number'     => $orderData['order_number'],
+                'customer_name'    => $orderData['customer']['name'],
+                'customer_email'   => $orderData['customer']['email'],
+                'customer_phone'   => $orderData['customer']['phone'] ?? null,
+                'status'           => $this->mapStatus($orderData['status']),
+                'payment_status'   => $this->mapPaymentStatus($orderData['payment_status']),
+                'total_amount'     => $orderData['total'],
+                'currency_code'    => $orderData['currency'],
                 'shipping_address' => $orderData['shipping_address'],
-                'billing_address' => $orderData['billing_address'],
-                'order_date' => $orderData['created_at'],
-                'synced_at' => now(),
+                'billing_address'  => $orderData['billing_address'],
+                'order_date'       => $orderData['created_at'],
+                'synced_at'        => now(),
             ]
         );
     }
 
     /**
      * Create a new sync log entry.
-     *
-     * @param  int  $channelId
-     * @return mixed
      */
     protected function createSyncLog(int $channelId): mixed
     {
         return $this->syncLogRepository->create([
-            'tenant_id' => tenant()->id,
+            'tenant_id'  => tenant()->id,
             'channel_id' => $channelId,
-            'status' => 'in_progress',
+            'status'     => 'in_progress',
             'started_at' => now(),
         ]);
     }
 
     /**
      * Complete a sync log entry.
-     *
-     * @param  mixed  $log
-     * @param  string  $status
-     * @param  int  $synced
-     * @param  int  $failed
-     * @param  string|null  $errorMessage
-     * @param  array  $errors
-     * @return void
      */
     protected function completeSyncLog(
         mixed $log,
@@ -160,38 +138,33 @@ class OrderSyncService
         array $errors = []
     ): void {
         $log->update([
-            'status' => $status,
+            'status'        => $status,
             'orders_synced' => $synced,
             'orders_failed' => $failed,
             'error_message' => $errorMessage,
-            'error_details' => !empty($errors) ? json_encode($errors) : null,
-            'completed_at' => now(),
+            'error_details' => ! empty($errors) ? json_encode($errors) : null,
+            'completed_at'  => now(),
         ]);
     }
 
     /**
      * Get appropriate channel adapter based on channel type.
      *
-     * @param  Channel  $channel
-     * @return mixed
      *
      * @throws Exception
      */
     protected function getChannelAdapter(Channel $channel): mixed
     {
         return match ($channel->type) {
-            'salla' => app(\Webkul\Order\Adapters\SallaOrderAdapter::class),
-            'shopify' => app(\Webkul\Order\Adapters\ShopifyOrderAdapter::class),
+            'salla'       => app(\Webkul\Order\Adapters\SallaOrderAdapter::class),
+            'shopify'     => app(\Webkul\Order\Adapters\ShopifyOrderAdapter::class),
             'woocommerce' => app(\Webkul\Order\Adapters\WooCommerceOrderAdapter::class),
-            default => throw new Exception("Unsupported channel type: {$channel->type}")
+            default       => throw new Exception("Unsupported channel type: {$channel->type}")
         };
     }
 
     /**
      * Map channel-specific status to unified status.
-     *
-     * @param  string  $channelStatus
-     * @return string
      */
     protected function mapStatus(string $channelStatus): string
     {
@@ -202,15 +175,12 @@ class OrderSyncService
             'delivered', 'completed' => 'completed',
             'cancelled', 'canceled' => 'cancelled',
             'refunded' => 'refunded',
-            default => 'pending',
+            default    => 'pending',
         };
     }
 
     /**
      * Map channel-specific payment status to unified payment status.
-     *
-     * @param  string  $channelPaymentStatus
-     * @return string
      */
     protected function mapPaymentStatus(string $channelPaymentStatus): string
     {
@@ -218,7 +188,7 @@ class OrderSyncService
             'pending', 'awaiting', 'unpaid' => 'pending',
             'paid', 'authorized' => 'paid',
             'partially_refunded' => 'partially_refunded',
-            'refunded' => 'refunded',
+            'refunded'           => 'refunded',
             'failed', 'declined' => 'failed',
             default => 'pending',
         };
@@ -226,10 +196,6 @@ class OrderSyncService
 
     /**
      * Sync multiple channels in batch.
-     *
-     * @param  array  $channelIds
-     * @param  array  $options
-     * @return array
      */
     public function syncMultipleChannels(array $channelIds, array $options = []): array
     {
@@ -258,28 +224,24 @@ class OrderSyncService
 
     /**
      * Get sync statistics for a channel.
-     *
-     * @param  int  $channelId
-     * @param  array  $dateRange
-     * @return array
      */
     public function getSyncStatistics(int $channelId, array $dateRange = []): array
     {
         $query = $this->syncLogRepository->where('channel_id', $channelId);
 
-        if (!empty($dateRange)) {
+        if (! empty($dateRange)) {
             $query->whereBetween('started_at', $dateRange);
         }
 
         $logs = $query->get();
 
         return [
-            'total_syncs' => $logs->count(),
-            'successful_syncs' => $logs->where('status', 'completed')->count(),
-            'failed_syncs' => $logs->where('status', 'failed')->count(),
-            'total_orders_synced' => $logs->sum('orders_synced'),
-            'total_orders_failed' => $logs->sum('orders_failed'),
-            'last_sync_at' => $logs->max('completed_at'),
+            'total_syncs'           => $logs->count(),
+            'successful_syncs'      => $logs->where('status', 'completed')->count(),
+            'failed_syncs'          => $logs->where('status', 'failed')->count(),
+            'total_orders_synced'   => $logs->sum('orders_synced'),
+            'total_orders_failed'   => $logs->sum('orders_failed'),
+            'last_sync_at'          => $logs->max('completed_at'),
             'average_sync_duration' => $logs->avg(function ($log) {
                 return $log->completed_at?->diffInSeconds($log->started_at) ?? 0;
             }),

@@ -4,7 +4,6 @@ namespace Webkul\Order\Http\Controllers\Api\V1;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
 use Webkul\AdminApi\Http\Controllers\V1\Controller;
 use Webkul\Order\Http\Resources\V1\OrderResource;
 use Webkul\Order\Repositories\OrderRepository;
@@ -20,29 +19,23 @@ class OrderController extends Controller
     /**
      * Create a new controller instance.
      *
-     * @param  OrderRepository  $orderRepository
      * @return void
      */
-    public function __construct(protected OrderRepository $orderRepository)
-    {
-    }
+    public function __construct(protected OrderRepository $orderRepository) {}
 
     /**
      * Display a listing of orders.
-     *
-     * @param  Request  $request
-     * @return JsonResponse
      */
     public function index(Request $request): JsonResponse
     {
         $request->validate([
-            'page' => 'integer|min:1',
-            'limit' => 'integer|min:1|max:100',
+            'page'       => 'integer|min:1',
+            'limit'      => 'integer|min:1|max:100',
             'channel_id' => 'integer|exists:channels,id',
-            'status' => 'string|in:pending,processing,completed,cancelled,refunded',
+            'status'     => 'string|in:pending,processing,completed,cancelled,refunded',
             'start_date' => 'date',
-            'end_date' => 'date|after_or_equal:start_date',
-            'sort_by' => 'string|in:order_date,total_amount,status',
+            'end_date'   => 'date|after_or_equal:start_date',
+            'sort_by'    => 'string|in:order_date,total_amount,status',
             'sort_order' => 'string|in:asc,desc',
         ]);
 
@@ -78,24 +71,21 @@ class OrderController extends Controller
             'data' => OrderResource::collection($orders->items()),
             'meta' => [
                 'current_page' => $orders->currentPage(),
-                'per_page' => $orders->perPage(),
-                'total' => $orders->total(),
-                'last_page' => $orders->lastPage(),
+                'per_page'     => $orders->perPage(),
+                'total'        => $orders->total(),
+                'last_page'    => $orders->lastPage(),
             ],
             'links' => [
                 'first' => $orders->url(1),
-                'last' => $orders->url($orders->lastPage()),
-                'prev' => $orders->previousPageUrl(),
-                'next' => $orders->nextPageUrl(),
+                'last'  => $orders->url($orders->lastPage()),
+                'prev'  => $orders->previousPageUrl(),
+                'next'  => $orders->nextPageUrl(),
             ],
         ]);
     }
 
     /**
      * Display the specified order.
-     *
-     * @param  int  $id
-     * @return JsonResponse
      */
     public function show(int $id): JsonResponse
     {
@@ -114,15 +104,11 @@ class OrderController extends Controller
 
     /**
      * Update order status.
-     *
-     * @param  Request  $request
-     * @param  int  $id
-     * @return JsonResponse
      */
     public function updateStatus(Request $request, int $id): JsonResponse
     {
         $request->validate([
-            'status' => 'required|string|in:pending,processing,completed,cancelled,refunded',
+            'status'      => 'required|string|in:pending,processing,completed,cancelled,refunded',
             'admin_notes' => 'nullable|string|max:1000',
         ]);
 
@@ -130,18 +116,18 @@ class OrderController extends Controller
             $order = $this->orderRepository->findOrFail($id);
 
             $this->orderRepository->update([
-                'status' => $request->status,
+                'status'      => $request->status,
                 'admin_notes' => $request->admin_notes,
             ], $id);
 
             return response()->json([
                 'message' => trans('order::app.api.status-updated'),
-                'data' => new OrderResource($order->fresh()),
+                'data'    => new OrderResource($order->fresh()),
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => trans('order::app.api.update-failed'),
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }

@@ -30,9 +30,6 @@ class UpdateProductSalesMetrics implements ShouldQueue
 
     /**
      * Handle the event.
-     *
-     * @param  OrderSynced  $event
-     * @return void
      */
     public function handle(OrderSynced $event): void
     {
@@ -62,8 +59,8 @@ class UpdateProductSalesMetrics implements ShouldQueue
             if (! isset($values['common']['sales_metrics'])) {
                 $values['common']['sales_metrics'] = [
                     'total_quantity_sold' => 0,
-                    'total_revenue' => 0,
-                    'last_sale_date' => null,
+                    'total_revenue'       => 0,
+                    'last_sale_date'      => null,
                 ];
             }
 
@@ -80,7 +77,7 @@ class UpdateProductSalesMetrics implements ShouldQueue
             DB::table('products')
                 ->where('id', $item->product_id)
                 ->update([
-                    'values' => json_encode($values),
+                    'values'     => json_encode($values),
                     'updated_at' => now(),
                 ]);
         }
@@ -88,9 +85,6 @@ class UpdateProductSalesMetrics implements ShouldQueue
 
     /**
      * Determine whether the listener should be queued.
-     *
-     * @param  OrderSynced  $event
-     * @return bool
      */
     public function shouldQueue(OrderSynced $event): bool
     {

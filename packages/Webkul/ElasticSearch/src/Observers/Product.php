@@ -13,6 +13,7 @@ use Webkul\Product\Models\Product as Products;
 class Product
 {
     use ResolveTenantIndex;
+
     /**
      * bool flag to manage observer functionality
      */

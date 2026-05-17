@@ -33,7 +33,7 @@ class TenantAwareBuilder extends Builder
      *
      * @return $this
      */
-    public function withoutGlobalScopes(array $scopes = null)
+    public function withoutGlobalScopes(?array $scopes = null)
     {
         $removingAll = is_null($scopes);
         $removingTenant = $removingAll || in_array(\Webkul\Tenant\Models\Scopes\TenantScope::class, $scopes ?? []);

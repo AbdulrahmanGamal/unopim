@@ -9,8 +9,6 @@ use Carbon\Carbon;
  *
  * Value object representing aggregated statistics for order synchronization operations.
  * Contains metrics about sync frequency, success rates, and performance.
- *
- * @package Webkul\Order\ValueObjects
  */
 readonly class SyncStatistics
 {
@@ -43,8 +41,6 @@ readonly class SyncStatistics
 
     /**
      * Get sync success rate as percentage.
-     *
-     * @return float
      */
     public function getSyncSuccessRate(): float
     {
@@ -55,8 +51,6 @@ readonly class SyncStatistics
 
     /**
      * Get order success rate as percentage.
-     *
-     * @return float
      */
     public function getOrderSuccessRate(): float
     {
@@ -69,8 +63,6 @@ readonly class SyncStatistics
 
     /**
      * Get average orders per sync.
-     *
-     * @return float
      */
     public function getAverageOrdersPerSync(): float
     {
@@ -81,8 +73,6 @@ readonly class SyncStatistics
 
     /**
      * Get average failed orders per sync.
-     *
-     * @return float
      */
     public function getAverageFailedOrdersPerSync(): float
     {
@@ -93,8 +83,6 @@ readonly class SyncStatistics
 
     /**
      * Get time since last sync in hours.
-     *
-     * @return float|null
      */
     public function getHoursSinceLastSync(): ?float
     {
@@ -107,8 +95,6 @@ readonly class SyncStatistics
 
     /**
      * Check if sync is healthy (success rate >= 95%).
-     *
-     * @return bool
      */
     public function isHealthy(): bool
     {
@@ -117,8 +103,6 @@ readonly class SyncStatistics
 
     /**
      * Check if sync needs attention (success rate < 80%).
-     *
-     * @return bool
      */
     public function needsAttention(): bool
     {
@@ -127,39 +111,35 @@ readonly class SyncStatistics
 
     /**
      * Get health status.
-     *
-     * @return string
      */
     public function getHealthStatus(): string
     {
         return match (true) {
-            $this->isHealthy() => 'healthy',
+            $this->isHealthy()      => 'healthy',
             $this->needsAttention() => 'critical',
-            default => 'warning'
+            default                 => 'warning'
         };
     }
 
     /**
      * Convert to array representation.
-     *
-     * @return array
      */
     public function toArray(): array
     {
         return [
-            'channel_id' => $this->channelId,
-            'date_range' => $this->dateRange,
+            'channel_id'      => $this->channelId,
+            'date_range'      => $this->dateRange,
             'sync_operations' => [
-                'total' => $this->totalSyncs,
-                'successful' => $this->successfulSyncs,
-                'failed' => $this->failedSyncs,
+                'total'        => $this->totalSyncs,
+                'successful'   => $this->successfulSyncs,
+                'failed'       => $this->failedSyncs,
                 'success_rate' => $this->getSyncSuccessRate(),
             ],
             'orders' => [
-                'total_synced' => $this->totalOrdersSynced,
-                'total_failed' => $this->totalOrdersFailed,
-                'success_rate' => $this->getOrderSuccessRate(),
-                'average_per_sync' => $this->getAverageOrdersPerSync(),
+                'total_synced'            => $this->totalOrdersSynced,
+                'total_failed'            => $this->totalOrdersFailed,
+                'success_rate'            => $this->getOrderSuccessRate(),
+                'average_per_sync'        => $this->getAverageOrdersPerSync(),
                 'average_failed_per_sync' => $this->getAverageFailedOrdersPerSync(),
             ],
             'performance' => [
@@ -167,13 +147,13 @@ readonly class SyncStatistics
                 'average_duration_minutes' => round($this->averageSyncDuration / 60, 2),
             ],
             'timestamps' => [
-                'first_sync' => $this->firstSyncAt?->toIso8601String(),
-                'last_sync' => $this->lastSyncAt?->toIso8601String(),
+                'first_sync'       => $this->firstSyncAt?->toIso8601String(),
+                'last_sync'        => $this->lastSyncAt?->toIso8601String(),
                 'hours_since_last' => $this->getHoursSinceLastSync(),
             ],
             'health' => [
-                'status' => $this->getHealthStatus(),
-                'is_healthy' => $this->isHealthy(),
+                'status'          => $this->getHealthStatus(),
+                'is_healthy'      => $this->isHealthy(),
                 'needs_attention' => $this->needsAttention(),
             ],
         ];
@@ -181,8 +161,6 @@ readonly class SyncStatistics
 
     /**
      * Convert to JSON representation.
-     *
-     * @return string
      */
     public function toJson(): string
     {
@@ -191,17 +169,15 @@ readonly class SyncStatistics
 
     /**
      * Get summary for dashboard display.
-     *
-     * @return array
      */
     public function getSummary(): array
     {
         return [
-            'health_status' => $this->getHealthStatus(),
-            'sync_success_rate' => $this->getSyncSuccessRate().'%',
+            'health_status'       => $this->getHealthStatus(),
+            'sync_success_rate'   => $this->getSyncSuccessRate().'%',
             'total_orders_synced' => $this->totalOrdersSynced,
-            'last_sync' => $this->lastSyncAt?->diffForHumans() ?? 'Never',
-            'average_duration' => round($this->averageSyncDuration / 60, 1).' min',
+            'last_sync'           => $this->lastSyncAt?->diffForHumans() ?? 'Never',
+            'average_duration'    => round($this->averageSyncDuration / 60, 1).' min',
         ];
     }
 }

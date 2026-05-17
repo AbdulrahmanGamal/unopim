@@ -18,7 +18,7 @@ class OrderWebhookRepository extends Repository
     /**
      * Get active webhooks.
      */
-    public function getActiveWebhooks(int $channelId = null, string $eventType = null): Collection
+    public function getActiveWebhooks(?int $channelId = null, ?string $eventType = null): Collection
     {
         $query = $this->model
             ->active()

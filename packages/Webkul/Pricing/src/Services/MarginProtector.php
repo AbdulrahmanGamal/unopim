@@ -54,11 +54,11 @@ class MarginProtector
      * Compares the proposed price to break-even, minimum margin, and target margin
      * thresholds derived from the applicable PricingStrategy.
      *
-     * @param  int          $productId      Product to validate the price for.
-     * @param  float        $proposedPrice  The selling price to validate.
-     * @param  int|null     $channelId      Optional channel context for strategy resolution.
-     * @param  string|null  $currency       Currency code override.
-     * @return MarginValidationResult       Validation outcome with status, prices, and event details.
+     * @param  int  $productId  Product to validate the price for.
+     * @param  float  $proposedPrice  The selling price to validate.
+     * @param  int|null  $channelId  Optional channel context for strategy resolution.
+     * @param  string|null  $currency  Currency code override.
+     * @return MarginValidationResult Validation outcome with status, prices, and event details.
      */
     public function validate(int $productId, float $proposedPrice, ?int $channelId = null, ?string $currency = null): MarginValidationResult
     {
@@ -181,10 +181,10 @@ class MarginProtector
      * Only users with the 'catalog.pricing.margins.approve' permission should
      * call this method. Permission checking is enforced at the controller/policy level.
      *
-     * @param  int          $eventId     The MarginProtectionEvent ID to approve.
-     * @param  int          $approverId  The admin user ID granting approval.
-     * @param  string|null  $reason      Optional justification for the approval.
-     * @return MarginProtectionEvent      The updated event record.
+     * @param  int  $eventId  The MarginProtectionEvent ID to approve.
+     * @param  int  $approverId  The admin user ID granting approval.
+     * @param  string|null  $reason  Optional justification for the approval.
+     * @return MarginProtectionEvent The updated event record.
      *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException If event not found.
      * @throws \LogicException If event is not in a state that can be approved.
@@ -230,9 +230,9 @@ class MarginProtector
      *
      * Sets the event to 'rejected' state with the rejection rationale.
      *
-     * @param  int     $eventId     The MarginProtectionEvent ID to reject.
-     * @param  int     $approverId  The admin user ID rejecting the request.
-     * @param  string  $reason      Mandatory reason for rejection.
+     * @param  int  $eventId  The MarginProtectionEvent ID to reject.
+     * @param  int  $approverId  The admin user ID rejecting the request.
+     * @param  string  $reason  Mandatory reason for rejection.
      * @return MarginProtectionEvent The updated event record.
      *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException If event not found.
@@ -303,9 +303,8 @@ class MarginProtector
     /**
      * Check if a product currently has an active (approved, non-expired) margin exception.
      *
-     * @param  int       $productId  Product to check.
+     * @param  int  $productId  Product to check.
      * @param  int|null  $channelId  Optional channel scope.
-     * @return bool
      */
     public function hasActiveApproval(int $productId, ?int $channelId = null): bool
     {
@@ -443,17 +442,17 @@ class MarginProtector
         string $reason,
     ): MarginProtectionEvent {
         return $this->marginProtectionEventRepository->create([
-            'product_id'               => $productId,
-            'channel_id'               => $channelId,
-            'event_type'               => $eventType,
-            'proposed_price'           => $proposedPrice,
-            'break_even_price'         => $breakEvenPrice,
-            'minimum_margin_price'     => $minimumMarginPrice,
-            'target_margin_price'      => $targetMarginPrice,
-            'currency_code'            => $currency,
-            'margin_percentage'        => $actualMargin,
+            'product_id'                => $productId,
+            'channel_id'                => $channelId,
+            'event_type'                => $eventType,
+            'proposed_price'            => $proposedPrice,
+            'break_even_price'          => $breakEvenPrice,
+            'minimum_margin_price'      => $minimumMarginPrice,
+            'target_margin_price'       => $targetMarginPrice,
+            'currency_code'             => $currency,
+            'margin_percentage'         => $actualMargin,
             'minimum_margin_percentage' => $minimumMarginPercentage,
-            'reason'                   => $reason,
+            'reason'                    => $reason,
         ]);
     }
 
@@ -493,9 +492,9 @@ class MarginProtector
      *
      * Formula: price = breakEven / (1 - margin% / 100)
      *
-     * @param  float  $breakEvenPrice     The break-even price.
-     * @param  float  $marginPercentage   Desired margin as a percentage (e.g. 25.0 = 25%).
-     * @return float  The selling price that yields the specified margin.
+     * @param  float  $breakEvenPrice  The break-even price.
+     * @param  float  $marginPercentage  Desired margin as a percentage (e.g. 25.0 = 25%).
+     * @return float The selling price that yields the specified margin.
      */
     protected function priceForMargin(float $breakEvenPrice, float $marginPercentage): float
     {
@@ -520,9 +519,9 @@ class MarginProtector
      *
      * Formula: margin% = ((price - breakEven) / price) * 100
      *
-     * @param  float  $price         The proposed selling price.
-     * @param  float  $breakEvenPrice The break-even cost.
-     * @return float  The margin percentage (can be negative if price < breakEven).
+     * @param  float  $price  The proposed selling price.
+     * @param  float  $breakEvenPrice  The break-even cost.
+     * @return float The margin percentage (can be negative if price < breakEven).
      */
     protected function computeMarginPercentage(float $price, float $breakEvenPrice): float
     {

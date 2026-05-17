@@ -14,7 +14,7 @@ use Webkul\Order\Http\Controllers\Admin\WebhookController;
  */
 Route::group([
     'middleware' => ['web', 'admin_locale'],
-    'prefix' => config('app.admin_path'),
+    'prefix'     => config('app.admin_path'),
 ], function () {
     Route::prefix('orders')->name('admin.orders.')->group(function () {
         /**

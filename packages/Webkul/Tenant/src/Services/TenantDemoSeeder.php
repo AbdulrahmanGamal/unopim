@@ -69,6 +69,7 @@ class TenantDemoSeeder
 
             if ($existing) {
                 $categoryIds[$catDef['code']] = $existing->id;
+
                 continue;
             }
 
@@ -109,18 +110,19 @@ class TenantDemoSeeder
         foreach ($productData as $prod) {
             // Skip if product SKU already exists for this tenant
             if (DB::table('products')->where('tenant_id', $tenant->id)->where('sku', $prod['sku'])->exists()) {
-                $result['products'][] = $prod['sku'] . ' (exists)';
+                $result['products'][] = $prod['sku'].' (exists)';
+
                 continue;
             }
 
             $values = [
                 'common' => [
-                    'sku'            => $prod['sku'],
-                    'name'           => $prod['name'],
-                    'url_key'        => Str::slug($prod['name']),
+                    'sku'               => $prod['sku'],
+                    'name'              => $prod['name'],
+                    'url_key'           => Str::slug($prod['name']),
                     'short_description' => $prod['short_description'],
-                    'weight'         => $prod['weight'],
-                    'status'         => true,
+                    'weight'            => $prod['weight'],
+                    'status'            => true,
                 ],
                 'locale_specific' => [
                     $localeCode => [
@@ -159,7 +161,8 @@ class TenantDemoSeeder
         foreach ($userData as $user) {
             // Skip if user email already exists for this tenant
             if (DB::table('admins')->where('tenant_id', $tenant->id)->where('email', $user['email'])->exists()) {
-                $result['users'][] = ['email' => $user['email'], 'password' => $user['password'] . ' (exists)'];
+                $result['users'][] = ['email' => $user['email'], 'password' => $user['password'].' (exists)'];
+
                 continue;
             }
 

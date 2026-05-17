@@ -13,15 +13,11 @@ use Webkul\Order\ValueObjects\WebhookProcessResult;
  *
  * Processes incoming webhook events from external channels (Salla, Shopify, WooCommerce).
  * Verifies HMAC signatures, dispatches events, and triggers appropriate sync operations.
- *
- * @package Webkul\Order\Services
  */
 class WebhookProcessor
 {
     /**
      * Create a new WebhookProcessor instance.
-     *
-     * @param  OrderSyncService  $syncService
      */
     public function __construct(
         protected OrderSyncService $syncService
@@ -30,10 +26,6 @@ class WebhookProcessor
     /**
      * Process incoming webhook event.
      *
-     * @param  string  $channelCode
-     * @param  array  $payload
-     * @param  array  $headers
-     * @return WebhookProcessResult
      *
      * @throws Exception
      */
@@ -80,11 +72,6 @@ class WebhookProcessor
 
     /**
      * Verify HMAC signature.
-     *
-     * @param  OrderWebhook  $webhook
-     * @param  array  $payload
-     * @param  array  $headers
-     * @return bool
      */
     protected function verifySignature(OrderWebhook $webhook, array $payload, array $headers): bool
     {
@@ -109,10 +96,6 @@ class WebhookProcessor
 
     /**
      * Extract event type from payload/headers.
-     *
-     * @param  array  $payload
-     * @param  array  $headers
-     * @return string
      */
     protected function extractEventType(array $payload, array $headers): string
     {
@@ -127,11 +110,6 @@ class WebhookProcessor
 
     /**
      * Process specific event type.
-     *
-     * @param  OrderWebhook  $webhook
-     * @param  string  $eventType
-     * @param  array  $payload
-     * @return array
      */
     protected function processEvent(OrderWebhook $webhook, string $eventType, array $payload): array
     {
@@ -157,10 +135,6 @@ class WebhookProcessor
 
     /**
      * Handle order created event.
-     *
-     * @param  OrderWebhook  $webhook
-     * @param  array  $payload
-     * @return array
      */
     protected function handleOrderCreated(OrderWebhook $webhook, array $payload): array
     {
@@ -171,27 +145,27 @@ class WebhookProcessor
             $order = $this->syncService->syncOrder($channel, $orderData);
 
             Log::info('Order created via webhook', [
-                'webhook_id' => $webhook->id,
-                'order_id' => $order->id,
+                'webhook_id'       => $webhook->id,
+                'order_id'         => $order->id,
                 'channel_order_id' => $orderData['id'],
             ]);
 
             return [
-                'success' => true,
-                'message' => 'Order created successfully',
+                'success'          => true,
+                'message'          => 'Order created successfully',
                 'processed_orders' => 1,
-                'order_id' => $order->id,
+                'order_id'         => $order->id,
             ];
         } catch (Exception $e) {
             Log::error('Failed to process order.created webhook', [
                 'webhook_id' => $webhook->id,
-                'error' => $e->getMessage(),
-                'payload' => $payload,
+                'error'      => $e->getMessage(),
+                'payload'    => $payload,
             ]);
 
             return [
-                'success' => false,
-                'message' => $e->getMessage(),
+                'success'          => false,
+                'message'          => $e->getMessage(),
                 'processed_orders' => 0,
             ];
         }
@@ -199,10 +173,6 @@ class WebhookProcessor
 
     /**
      * Handle order updated event.
-     *
-     * @param  OrderWebhook  $webhook
-     * @param  array  $payload
-     * @return array
      */
     protected function handleOrderUpdated(OrderWebhook $webhook, array $payload): array
     {
@@ -214,24 +184,24 @@ class WebhookProcessor
 
             Log::info('Order updated via webhook', [
                 'webhook_id' => $webhook->id,
-                'order_id' => $order->id,
+                'order_id'   => $order->id,
             ]);
 
             return [
-                'success' => true,
-                'message' => 'Order updated successfully',
+                'success'          => true,
+                'message'          => 'Order updated successfully',
                 'processed_orders' => 1,
-                'order_id' => $order->id,
+                'order_id'         => $order->id,
             ];
         } catch (Exception $e) {
             Log::error('Failed to process order.updated webhook', [
                 'webhook_id' => $webhook->id,
-                'error' => $e->getMessage(),
+                'error'      => $e->getMessage(),
             ]);
 
             return [
-                'success' => false,
-                'message' => $e->getMessage(),
+                'success'          => false,
+                'message'          => $e->getMessage(),
                 'processed_orders' => 0,
             ];
         }
@@ -239,10 +209,6 @@ class WebhookProcessor
 
     /**
      * Handle order cancelled event.
-     *
-     * @param  OrderWebhook  $webhook
-     * @param  array  $payload
-     * @return array
      */
     protected function handleOrderCancelled(OrderWebhook $webhook, array $payload): array
     {
@@ -255,24 +221,24 @@ class WebhookProcessor
 
             Log::info('Order cancelled via webhook', [
                 'webhook_id' => $webhook->id,
-                'order_id' => $order->id,
+                'order_id'   => $order->id,
             ]);
 
             return [
-                'success' => true,
-                'message' => 'Order cancelled successfully',
+                'success'          => true,
+                'message'          => 'Order cancelled successfully',
                 'processed_orders' => 1,
-                'order_id' => $order->id,
+                'order_id'         => $order->id,
             ];
         } catch (Exception $e) {
             Log::error('Failed to process order.cancelled webhook', [
                 'webhook_id' => $webhook->id,
-                'error' => $e->getMessage(),
+                'error'      => $e->getMessage(),
             ]);
 
             return [
-                'success' => false,
-                'message' => $e->getMessage(),
+                'success'          => false,
+                'message'          => $e->getMessage(),
                 'processed_orders' => 0,
             ];
         }
@@ -280,10 +246,6 @@ class WebhookProcessor
 
     /**
      * Handle order fulfilled event.
-     *
-     * @param  OrderWebhook  $webhook
-     * @param  array  $payload
-     * @return array
      */
     protected function handleOrderFulfilled(OrderWebhook $webhook, array $payload): array
     {
@@ -296,24 +258,24 @@ class WebhookProcessor
 
             Log::info('Order fulfilled via webhook', [
                 'webhook_id' => $webhook->id,
-                'order_id' => $order->id,
+                'order_id'   => $order->id,
             ]);
 
             return [
-                'success' => true,
-                'message' => 'Order fulfilled successfully',
+                'success'          => true,
+                'message'          => 'Order fulfilled successfully',
                 'processed_orders' => 1,
-                'order_id' => $order->id,
+                'order_id'         => $order->id,
             ];
         } catch (Exception $e) {
             Log::error('Failed to process order.fulfilled webhook', [
                 'webhook_id' => $webhook->id,
-                'error' => $e->getMessage(),
+                'error'      => $e->getMessage(),
             ]);
 
             return [
-                'success' => false,
-                'message' => $e->getMessage(),
+                'success'          => false,
+                'message'          => $e->getMessage(),
                 'processed_orders' => 0,
             ];
         }
@@ -321,10 +283,6 @@ class WebhookProcessor
 
     /**
      * Handle order paid event.
-     *
-     * @param  OrderWebhook  $webhook
-     * @param  array  $payload
-     * @return array
      */
     protected function handleOrderPaid(OrderWebhook $webhook, array $payload): array
     {
@@ -337,24 +295,24 @@ class WebhookProcessor
 
             Log::info('Order paid via webhook', [
                 'webhook_id' => $webhook->id,
-                'order_id' => $order->id,
+                'order_id'   => $order->id,
             ]);
 
             return [
-                'success' => true,
-                'message' => 'Order payment updated successfully',
+                'success'          => true,
+                'message'          => 'Order payment updated successfully',
                 'processed_orders' => 1,
-                'order_id' => $order->id,
+                'order_id'         => $order->id,
             ];
         } catch (Exception $e) {
             Log::error('Failed to process order.paid webhook', [
                 'webhook_id' => $webhook->id,
-                'error' => $e->getMessage(),
+                'error'      => $e->getMessage(),
             ]);
 
             return [
-                'success' => false,
-                'message' => $e->getMessage(),
+                'success'          => false,
+                'message'          => $e->getMessage(),
                 'processed_orders' => 0,
             ];
         }
@@ -362,9 +320,6 @@ class WebhookProcessor
 
     /**
      * Normalize order data from different channel formats.
-     *
-     * @param  array  $payload
-     * @return array
      */
     protected function normalizeOrderData(array $payload): array
     {
@@ -372,20 +327,20 @@ class WebhookProcessor
         $order = $payload['data'] ?? $payload['order'] ?? $payload;
 
         return [
-            'id' => $order['id'] ?? $order['order_id'] ?? null,
+            'id'           => $order['id'] ?? $order['order_id'] ?? null,
             'order_number' => $order['order_number'] ?? $order['name'] ?? $order['number'] ?? null,
-            'customer' => [
-                'name' => $order['customer']['name'] ?? $order['billing_address']['name'] ?? 'Guest',
+            'customer'     => [
+                'name'  => $order['customer']['name'] ?? $order['billing_address']['name'] ?? 'Guest',
                 'email' => $order['customer']['email'] ?? $order['email'] ?? null,
                 'phone' => $order['customer']['phone'] ?? $order['billing_address']['phone'] ?? null,
             ],
-            'status' => $order['status'] ?? $order['financial_status'] ?? 'pending',
-            'payment_status' => $order['payment_status'] ?? $order['financial_status'] ?? 'pending',
-            'total' => $order['total'] ?? $order['total_price'] ?? 0,
-            'currency' => $order['currency'] ?? $order['currency_code'] ?? 'USD',
+            'status'           => $order['status'] ?? $order['financial_status'] ?? 'pending',
+            'payment_status'   => $order['payment_status'] ?? $order['financial_status'] ?? 'pending',
+            'total'            => $order['total'] ?? $order['total_price'] ?? 0,
+            'currency'         => $order['currency'] ?? $order['currency_code'] ?? 'USD',
             'shipping_address' => $order['shipping_address'] ?? [],
-            'billing_address' => $order['billing_address'] ?? [],
-            'created_at' => $order['created_at'] ?? now(),
+            'billing_address'  => $order['billing_address'] ?? [],
+            'created_at'       => $order['created_at'] ?? now(),
         ];
     }
 }

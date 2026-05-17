@@ -37,7 +37,7 @@ it('allows order creation with create permission', function () {
 
     $response = $this->post(route('admin.order.orders.store'), [
         'order_number' => 'TEST-001',
-        'status' => 'pending',
+        'status'       => 'pending',
         'total_amount' => 100.00,
     ]);
 
@@ -113,7 +113,7 @@ it('allows mass update with mass-update permission', function () {
 
     $response = $this->post(route('admin.order.orders.mass-update'), [
         'indices' => $orders->pluck('id')->toArray(),
-        'status' => 'processing',
+        'status'  => 'processing',
     ]);
 
     $response->assertStatus([200, 302]);

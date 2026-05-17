@@ -38,8 +38,8 @@ class UnifiedOrderItem extends Model implements UnifiedOrderItemContract
      */
     protected $casts = [
         'item_data' => 'array',
-        'price' => 'decimal:2',
-        'total' => 'decimal:2',
+        'price'     => 'decimal:2',
+        'total'     => 'decimal:2',
     ];
 
     /**

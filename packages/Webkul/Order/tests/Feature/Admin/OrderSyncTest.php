@@ -42,8 +42,8 @@ it('can sync with date range', function () {
 
     $response = $this->post(route('admin.order.sync.manual'), [
         'channel_id' => $this->channel->id,
-        'date_from' => now()->subDays(7)->format('Y-m-d'),
-        'date_to' => now()->format('Y-m-d'),
+        'date_from'  => now()->subDays(7)->format('Y-m-d'),
+        'date_to'    => now()->format('Y-m-d'),
     ]);
 
     $response->assertRedirect()
@@ -92,7 +92,7 @@ it('can retry failed sync', function () {
     $this->actingAs($this->admin, 'admin');
 
     $log = OrderSyncLog::factory()->create([
-        'status' => 'failed',
+        'status'     => 'failed',
         'channel_id' => $this->channel->id,
     ]);
 
@@ -123,8 +123,8 @@ it('can save sync schedule settings', function () {
 
     $response = $this->post(route('admin.order.sync.schedule.save'), [
         'channel_id' => $this->channel->id,
-        'frequency' => 'hourly',
-        'enabled' => true,
+        'frequency'  => 'hourly',
+        'enabled'    => true,
     ]);
 
     $response->assertRedirect()
@@ -134,11 +134,11 @@ it('can save sync schedule settings', function () {
 it('displays sync statistics', function () {
     OrderSyncLog::factory()->count(10)->create([
         'channel_id' => $this->channel->id,
-        'status' => 'completed',
+        'status'     => 'completed',
     ]);
     OrderSyncLog::factory()->count(2)->create([
         'channel_id' => $this->channel->id,
-        'status' => 'failed',
+        'status'     => 'failed',
     ]);
 
     $response = $this->get(route('admin.order.sync.index'));
@@ -159,8 +159,8 @@ it('validates channel selection for sync', function () {
 it('validates date range for sync', function () {
     $response = $this->post(route('admin.order.sync.manual'), [
         'channel_id' => $this->channel->id,
-        'date_from' => now()->format('Y-m-d'),
-        'date_to' => now()->subDays(7)->format('Y-m-d'), // Invalid range
+        'date_from'  => now()->format('Y-m-d'),
+        'date_to'    => now()->subDays(7)->format('Y-m-d'), // Invalid range
     ]);
 
     $response->assertSessionHasErrors();
@@ -168,7 +168,7 @@ it('validates date range for sync', function () {
 
 it('shows sync progress indicator', function () {
     $log = OrderSyncLog::factory()->create([
-        'status' => 'running',
+        'status'     => 'running',
         'channel_id' => $this->channel->id,
     ]);
 

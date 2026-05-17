@@ -23,17 +23,12 @@ class OrderController extends Controller
     /**
      * Create a new controller instance.
      *
-     * @param  OrderRepository  $orderRepository
      * @return void
      */
-    public function __construct(protected OrderRepository $orderRepository)
-    {
-    }
+    public function __construct(protected OrderRepository $orderRepository) {}
 
     /**
      * Display a listing of orders.
-     *
-     * @return View|JsonResponse
      */
     public function index(): View|JsonResponse
     {
@@ -47,8 +42,6 @@ class OrderController extends Controller
     /**
      * Show the form for creating a new order.
      * Not applicable as orders are synced from channels.
-     *
-     * @return RedirectResponse
      */
     public function create(): RedirectResponse
     {
@@ -58,9 +51,6 @@ class OrderController extends Controller
 
     /**
      * Display the specified order.
-     *
-     * @param  int  $id
-     * @return View
      */
     public function show(int $id): View
     {
@@ -74,7 +64,7 @@ class OrderController extends Controller
         $profitability = $this->calculateOrderProfitability($order);
 
         return view('order::admin.orders.show', [
-            'order' => $order,
+            'order'         => $order,
             'profitability' => $profitability,
         ]);
     }
@@ -82,9 +72,6 @@ class OrderController extends Controller
     /**
      * Show the form for editing the specified order.
      * Limited editing allowed (status, notes only).
-     *
-     * @param  int  $id
-     * @return View
      */
     public function edit(int $id): View
     {
@@ -99,7 +86,7 @@ class OrderController extends Controller
         ]);
 
         return view('order::admin.orders.edit', [
-            'order' => $order,
+            'order'           => $order,
             'allowedStatuses' => $allowedStatuses,
         ]);
     }
@@ -107,10 +94,6 @@ class OrderController extends Controller
     /**
      * Update the specified order in storage.
      * Only status and notes can be updated.
-     *
-     * @param  Request  $request
-     * @param  int  $id
-     * @return RedirectResponse
      */
     public function update(Request $request, int $id): RedirectResponse
     {
@@ -119,7 +102,7 @@ class OrderController extends Controller
         }
 
         $request->validate([
-            'status' => 'sometimes|string|in:pending,processing,completed,cancelled,refunded',
+            'status'      => 'sometimes|string|in:pending,processing,completed,cancelled,refunded',
             'admin_notes' => 'nullable|string|max:1000',
         ]);
 
@@ -141,9 +124,6 @@ class OrderController extends Controller
 
     /**
      * Remove the specified order from storage (soft delete).
-     *
-     * @param  int  $id
-     * @return JsonResponse
      */
     public function destroy(int $id): JsonResponse
     {
@@ -168,9 +148,6 @@ class OrderController extends Controller
 
     /**
      * Mass update orders (bulk status update).
-     *
-     * @param  Request  $request
-     * @return JsonResponse
      */
     public function massUpdate(Request $request): JsonResponse
     {
@@ -181,9 +158,9 @@ class OrderController extends Controller
         }
 
         $request->validate([
-            'indices' => 'required|array',
+            'indices'   => 'required|array',
             'indices.*' => 'integer',
-            'status' => 'required|string|in:pending,processing,completed,cancelled,refunded',
+            'status'    => 'required|string|in:pending,processing,completed,cancelled,refunded',
         ]);
 
         $updated = 0;
@@ -231,7 +208,6 @@ class OrderController extends Controller
      * Calculate order profitability.
      *
      * @param  \Webkul\Order\Models\Order  $order
-     * @return array
      */
     protected function calculateOrderProfitability($order): array
     {
@@ -250,9 +226,9 @@ class OrderController extends Controller
         $marginPercentage = $revenue > 0 ? ($profit / $revenue) * 100 : 0;
 
         return [
-            'revenue' => $revenue,
-            'cost' => $cost,
-            'profit' => $profit,
+            'revenue'           => $revenue,
+            'cost'              => $cost,
+            'profit'            => $profit,
             'margin_percentage' => round($marginPercentage, 2),
         ];
     }

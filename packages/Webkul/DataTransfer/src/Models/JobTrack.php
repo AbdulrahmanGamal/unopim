@@ -9,6 +9,7 @@ use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 class JobTrack extends Model implements JobTrackContract
 {
     use BelongsToTenant;
+
     protected $table = 'job_track';
 
     /**

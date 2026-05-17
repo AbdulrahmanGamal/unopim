@@ -17,11 +17,11 @@ use Webkul\Order\Models\UnifiedOrder;
 final readonly class SyncResult implements Arrayable, JsonSerializable
 {
     /**
-     * @param  bool  $success            Whether the sync operation succeeded.
+     * @param  bool  $success  Whether the sync operation succeeded.
      * @param  UnifiedOrder|null  $order  The synchronized order (null if failed).
      * @param  OrderSyncLog|null  $syncLog  The sync log entry for this operation.
      * @param  array<string, mixed>  $errors  Array of error messages/details.
-     * @param  Carbon  $syncedAt          Timestamp when sync was attempted.
+     * @param  Carbon  $syncedAt  Timestamp when sync was attempted.
      */
     public function __construct(
         public bool $success,
@@ -34,9 +34,9 @@ final readonly class SyncResult implements Arrayable, JsonSerializable
     /**
      * Create a successful SyncResult.
      *
-     * @param  UnifiedOrder  $order      The successfully synchronized order.
+     * @param  UnifiedOrder  $order  The successfully synchronized order.
      * @param  OrderSyncLog|null  $syncLog  Optional sync log entry.
-     * @return self                      New SyncResult instance.
+     * @return self New SyncResult instance.
      */
     public static function success(UnifiedOrder $order, ?OrderSyncLog $syncLog = null): self
     {
@@ -53,8 +53,8 @@ final readonly class SyncResult implements Arrayable, JsonSerializable
      * Create a failed SyncResult.
      *
      * @param  array<string, mixed>  $errors  Error messages/details.
-     * @param  OrderSyncLog|null  $syncLog    Optional sync log entry.
-     * @return self                           New SyncResult instance.
+     * @param  OrderSyncLog|null  $syncLog  Optional sync log entry.
+     * @return self New SyncResult instance.
      */
     public static function failure(array $errors, ?OrderSyncLog $syncLog = null): self
     {
@@ -70,7 +70,7 @@ final readonly class SyncResult implements Arrayable, JsonSerializable
     /**
      * Check if the sync result has any errors.
      *
-     * @return bool  True if errors exist.
+     * @return bool True if errors exist.
      */
     public function hasErrors(): bool
     {
@@ -80,7 +80,7 @@ final readonly class SyncResult implements Arrayable, JsonSerializable
     /**
      * Get the first error message.
      *
-     * @return string|null  First error message or null if no errors.
+     * @return string|null First error message or null if no errors.
      */
     public function getFirstError(): ?string
     {
@@ -96,7 +96,7 @@ final readonly class SyncResult implements Arrayable, JsonSerializable
     /**
      * Get all error messages as a flat array.
      *
-     * @return array<string>  Array of error message strings.
+     * @return array<string> Array of error message strings.
      */
     public function getErrorMessages(): array
     {
@@ -108,7 +108,7 @@ final readonly class SyncResult implements Arrayable, JsonSerializable
     /**
      * Get the synchronized order ID (if successful).
      *
-     * @return int|null  Order ID or null if failed.
+     * @return int|null Order ID or null if failed.
      */
     public function getOrderId(): ?int
     {
@@ -118,7 +118,7 @@ final readonly class SyncResult implements Arrayable, JsonSerializable
     /**
      * Get the channel order ID from the synchronized order.
      *
-     * @return string|null  Channel order ID or null if failed.
+     * @return string|null Channel order ID or null if failed.
      */
     public function getChannelOrderId(): ?string
     {
@@ -128,7 +128,7 @@ final readonly class SyncResult implements Arrayable, JsonSerializable
     /**
      * Get the sync log ID.
      *
-     * @return int|null  Sync log ID or null if no log.
+     * @return int|null Sync log ID or null if no log.
      */
     public function getSyncLogId(): ?int
     {
@@ -138,7 +138,7 @@ final readonly class SyncResult implements Arrayable, JsonSerializable
     /**
      * Check if this was a create operation (new order).
      *
-     * @return bool  True if order was created (not updated).
+     * @return bool True if order was created (not updated).
      */
     public function wasCreated(): bool
     {
@@ -152,7 +152,7 @@ final readonly class SyncResult implements Arrayable, JsonSerializable
     /**
      * Check if this was an update operation (existing order).
      *
-     * @return bool  True if order was updated (not created).
+     * @return bool True if order was updated (not created).
      */
     public function wasUpdated(): bool
     {
@@ -166,7 +166,7 @@ final readonly class SyncResult implements Arrayable, JsonSerializable
     /**
      * Get a human-readable status message.
      *
-     * @return string  Status message.
+     * @return string Status message.
      */
     public function getStatusMessage(): string
     {
@@ -215,7 +215,7 @@ final readonly class SyncResult implements Arrayable, JsonSerializable
     /**
      * Get a compact representation for logging.
      *
-     * @return array<string, mixed>  Compact log data.
+     * @return array<string, mixed> Compact log data.
      */
     public function toLogArray(): array
     {

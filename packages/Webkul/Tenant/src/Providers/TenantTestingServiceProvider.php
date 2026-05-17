@@ -15,8 +15,6 @@ class TenantTestingServiceProvider extends ServiceProvider
 {
     /**
      * Register services.
-     *
-     * @return void
      */
     public function register(): void
     {
@@ -26,8 +24,6 @@ class TenantTestingServiceProvider extends ServiceProvider
 
     /**
      * Bootstrap services.
-     *
-     * @return void
      */
     public function boot(): void
     {
@@ -50,8 +46,6 @@ class TenantTestingServiceProvider extends ServiceProvider
 
     /**
      * Register the TenantTesting trait.
-     *
-     * @return void
      */
     protected function registerTenantTestingTrait(): void
     {

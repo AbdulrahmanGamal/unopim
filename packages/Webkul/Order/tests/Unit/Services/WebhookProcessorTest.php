@@ -10,17 +10,17 @@ beforeEach(function () {
 
 it('processes order created event', function () {
     $webhook = OrderWebhook::factory()->create([
-        'event_types' => ['order.created'],
+        'event_types'  => ['order.created'],
         'channel_code' => 'salla',
     ]);
 
     $payload = [
         'event' => 'order.created',
-        'data' => [
-            'id' => '123',
-            'order_number' => 'ORD-001',
-            'status' => 'pending',
-            'total_amount' => 100.00,
+        'data'  => [
+            'id'             => '123',
+            'order_number'   => 'ORD-001',
+            'status'         => 'pending',
+            'total_amount'   => 100.00,
             'customer_email' => 'test@example.com',
         ],
     ];
@@ -34,19 +34,19 @@ it('processes order created event', function () {
 
 it('processes order updated event', function () {
     $webhook = OrderWebhook::factory()->create([
-        'event_types' => ['order.updated'],
+        'event_types'  => ['order.updated'],
         'channel_code' => 'salla',
     ]);
 
     $order = UnifiedOrder::factory()->create([
         'external_id' => '123',
-        'status' => 'pending',
+        'status'      => 'pending',
     ]);
 
     $payload = [
         'event' => 'order.updated',
-        'data' => [
-            'id' => '123',
+        'data'  => [
+            'id'     => '123',
             'status' => 'completed',
         ],
     ];
@@ -60,18 +60,18 @@ it('processes order updated event', function () {
 
 it('processes order cancelled event', function () {
     $webhook = OrderWebhook::factory()->create([
-        'event_types' => ['order.cancelled'],
+        'event_types'  => ['order.cancelled'],
         'channel_code' => 'salla',
     ]);
 
     $order = UnifiedOrder::factory()->create([
         'external_id' => '123',
-        'status' => 'pending',
+        'status'      => 'pending',
     ]);
 
     $payload = [
         'event' => 'order.cancelled',
-        'data' => [
+        'data'  => [
             'id' => '123',
         ],
     ];
@@ -85,7 +85,7 @@ it('processes order cancelled event', function () {
 
 it('validates webhook signature before processing', function () {
     $webhook = OrderWebhook::factory()->create([
-        'secret_key' => 'test-secret',
+        'secret_key'  => 'test-secret',
         'event_types' => ['order.created'],
     ]);
 
@@ -106,7 +106,7 @@ it('handles unknown event types gracefully', function () {
 
     $payload = [
         'event' => 'order.unknown_event',
-        'data' => [],
+        'data'  => [],
     ];
 
     $result = $this->processor->processWebhook($webhook->id, $payload);
@@ -118,13 +118,13 @@ it('handles unknown event types gracefully', function () {
 
 it('increments delivery attempts on failure', function () {
     $webhook = OrderWebhook::factory()->create([
-        'event_types' => ['order.created'],
+        'event_types'       => ['order.created'],
         'delivery_attempts' => 0,
     ]);
 
     $payload = [
         'event' => 'order.created',
-        'data' => [], // Missing required fields
+        'data'  => [], // Missing required fields
     ];
 
     $this->processor->processWebhook($webhook->id, $payload);
@@ -134,16 +134,16 @@ it('increments delivery attempts on failure', function () {
 
 it('records last delivery timestamp', function () {
     $webhook = OrderWebhook::factory()->create([
-        'event_types' => ['order.created'],
+        'event_types'      => ['order.created'],
         'last_delivery_at' => null,
     ]);
 
     $payload = [
         'event' => 'order.created',
-        'data' => [
-            'id' => '123',
+        'data'  => [
+            'id'           => '123',
             'order_number' => 'ORD-001',
-            'status' => 'pending',
+            'status'       => 'pending',
             'total_amount' => 100.00,
         ],
     ];
@@ -155,14 +155,14 @@ it('records last delivery timestamp', function () {
 
 it('deactivates webhook after max failed attempts', function () {
     $webhook = OrderWebhook::factory()->create([
-        'event_types' => ['order.created'],
+        'event_types'       => ['order.created'],
         'delivery_attempts' => 4,
-        'is_active' => true,
+        'is_active'         => true,
     ]);
 
     $payload = [
         'event' => 'order.created',
-        'data' => [], // Will fail
+        'data'  => [], // Will fail
     ];
 
     $this->processor->processWebhook($webhook->id, $payload);

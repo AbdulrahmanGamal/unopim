@@ -30,7 +30,7 @@ it('belongs to product', function () {
 
 it('calculates line total correctly', function () {
     $item = UnifiedOrderItem::factory()->create([
-        'price' => 25.50,
+        'price'    => 25.50,
         'quantity' => 3,
     ]);
 
@@ -39,8 +39,8 @@ it('calculates line total correctly', function () {
 
 it('calculates profit correctly', function () {
     $item = UnifiedOrderItem::factory()->create([
-        'price' => 100.00,
-        'quantity' => 2,
+        'price'      => 100.00,
+        'quantity'   => 2,
         'cost_basis' => 60.00,
     ]);
 
@@ -49,8 +49,8 @@ it('calculates profit correctly', function () {
 
 it('calculates margin percentage correctly', function () {
     $item = UnifiedOrderItem::factory()->create([
-        'price' => 100.00,
-        'quantity' => 1,
+        'price'      => 100.00,
+        'quantity'   => 1,
         'cost_basis' => 60.00,
     ]);
 
@@ -59,8 +59,8 @@ it('calculates margin percentage correctly', function () {
 
 it('returns zero margin for zero price', function () {
     $item = UnifiedOrderItem::factory()->create([
-        'price' => 0.00,
-        'quantity' => 1,
+        'price'      => 0.00,
+        'quantity'   => 1,
         'cost_basis' => 0.00,
     ]);
 
@@ -68,7 +68,7 @@ it('returns zero margin for zero price', function () {
 });
 
 it('has fillable attributes', function () {
-    $item = new UnifiedOrderItem();
+    $item = new UnifiedOrderItem;
 
     expect($item->getFillable())->toBeArray()
         ->and($item->getFillable())->toContain('product_id', 'sku', 'name', 'price', 'quantity', 'cost_basis');
@@ -76,8 +76,8 @@ it('has fillable attributes', function () {
 
 it('casts attributes correctly', function () {
     $item = UnifiedOrderItem::factory()->create([
-        'price' => '99.99',
-        'quantity' => '5',
+        'price'      => '99.99',
+        'quantity'   => '5',
         'cost_basis' => '50.00',
     ]);
 

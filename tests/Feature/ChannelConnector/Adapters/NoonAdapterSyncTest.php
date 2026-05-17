@@ -205,14 +205,14 @@ it('returns null when refresh token is missing', function () {
 
 it('normalizes Noon product data correctly', function () {
     $data = [
-        'name'       => 'Normalized Noon Product',
+        'name'        => 'Normalized Noon Product',
         'description' => 'Noon description',
-        'price'      => ['amount' => 89.99],
-        'sale_price' => ['amount' => 69.99],
-        'sku'        => 'NOON-NORM',
-        'quantity'   => 30,
-        'weight'     => 0.8,
-        'status'     => 'sale',
+        'price'       => ['amount' => 89.99],
+        'sale_price'  => ['amount' => 69.99],
+        'sku'         => 'NOON-NORM',
+        'quantity'    => 30,
+        'weight'      => 0.8,
+        'status'      => 'sale',
     ];
 
     $reflection = new ReflectionClass($this->adapter);

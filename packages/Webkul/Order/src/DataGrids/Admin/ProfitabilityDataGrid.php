@@ -55,91 +55,92 @@ class ProfitabilityDataGrid extends DataGrid
     public function prepareColumns()
     {
         $this->addColumn([
-            'index' => 'order_number',
-            'label' => trans('order::app.admin.profitability.datagrid.order-number'),
-            'type' => 'string',
+            'index'      => 'order_number',
+            'label'      => trans('order::app.admin.profitability.datagrid.order-number'),
+            'type'       => 'string',
             'searchable' => true,
             'filterable' => true,
-            'sortable' => true,
+            'sortable'   => true,
         ]);
 
         $this->addColumn([
-            'index' => 'channel_name',
-            'label' => trans('order::app.admin.profitability.datagrid.channel'),
-            'type' => 'string',
+            'index'      => 'channel_name',
+            'label'      => trans('order::app.admin.profitability.datagrid.channel'),
+            'type'       => 'string',
             'searchable' => true,
             'filterable' => true,
-            'sortable' => true,
+            'sortable'   => true,
         ]);
 
         $this->addColumn([
-            'index' => 'revenue',
-            'label' => trans('order::app.admin.profitability.datagrid.revenue'),
-            'type' => 'number',
+            'index'      => 'revenue',
+            'label'      => trans('order::app.admin.profitability.datagrid.revenue'),
+            'type'       => 'number',
             'searchable' => false,
             'filterable' => true,
-            'sortable' => true,
-            'closure' => function ($row) {
-                return ($row->currency_code ?? 'USD') . ' ' . number_format($row->revenue, 2);
+            'sortable'   => true,
+            'closure'    => function ($row) {
+                return ($row->currency_code ?? 'USD').' '.number_format($row->revenue, 2);
             },
         ]);
 
         $this->addColumn([
-            'index' => 'cost',
-            'label' => trans('order::app.admin.profitability.datagrid.cost'),
-            'type' => 'number',
+            'index'      => 'cost',
+            'label'      => trans('order::app.admin.profitability.datagrid.cost'),
+            'type'       => 'number',
             'searchable' => false,
             'filterable' => true,
-            'sortable' => true,
-            'closure' => function ($row) {
+            'sortable'   => true,
+            'closure'    => function ($row) {
                 $cost = $this->calculateOrderCost($row->order_id);
-                return ($row->currency_code ?? 'USD') . ' ' . number_format($cost, 2);
+
+                return ($row->currency_code ?? 'USD').' '.number_format($cost, 2);
             },
         ]);
 
         $this->addColumn([
-            'index' => 'profit',
-            'label' => trans('order::app.admin.profitability.datagrid.profit'),
-            'type' => 'number',
+            'index'      => 'profit',
+            'label'      => trans('order::app.admin.profitability.datagrid.profit'),
+            'type'       => 'number',
             'searchable' => false,
             'filterable' => true,
-            'sortable' => true,
-            'closure' => function ($row) {
+            'sortable'   => true,
+            'closure'    => function ($row) {
                 $cost = $this->calculateOrderCost($row->order_id);
                 $profit = $row->revenue - $cost;
                 $class = $profit >= 0 ? 'text-success' : 'text-danger';
 
-                return '<span class="' . $class . '">' .
-                       ($row->currency_code ?? 'USD') . ' ' . number_format($profit, 2) .
+                return '<span class="'.$class.'">'.
+                       ($row->currency_code ?? 'USD').' '.number_format($profit, 2).
                        '</span>';
             },
         ]);
 
         $this->addColumn([
-            'index' => 'margin_percentage',
-            'label' => trans('order::app.admin.profitability.datagrid.margin'),
-            'type' => 'number',
+            'index'      => 'margin_percentage',
+            'label'      => trans('order::app.admin.profitability.datagrid.margin'),
+            'type'       => 'number',
             'searchable' => false,
             'filterable' => true,
-            'sortable' => true,
-            'closure' => function ($row) {
+            'sortable'   => true,
+            'closure'    => function ($row) {
                 $cost = $this->calculateOrderCost($row->order_id);
                 $profit = $row->revenue - $cost;
                 $margin = $row->revenue > 0 ? ($profit / $row->revenue) * 100 : 0;
                 $class = $margin >= 0 ? 'text-success' : 'text-danger';
 
-                return '<span class="' . $class . '">' . number_format($margin, 2) . '%</span>';
+                return '<span class="'.$class.'">'.number_format($margin, 2).'%</span>';
             },
         ]);
 
         $this->addColumn([
-            'index' => 'order_date',
-            'label' => trans('order::app.admin.profitability.datagrid.order-date'),
-            'type' => 'datetime',
+            'index'      => 'order_date',
+            'label'      => trans('order::app.admin.profitability.datagrid.order-date'),
+            'type'       => 'datetime',
             'searchable' => false,
             'filterable' => true,
-            'sortable' => true,
-            'closure' => function ($row) {
+            'sortable'   => true,
+            'closure'    => function ($row) {
                 return core()->formatDate($row->order_date);
             },
         ]);
@@ -154,11 +155,11 @@ class ProfitabilityDataGrid extends DataGrid
     {
         if (bouncer()->allows('orders.view')) {
             $this->addAction([
-                'index' => 'view',
-                'icon' => 'icon-eye',
-                'title' => trans('order::app.admin.profitability.datagrid.view-order'),
+                'index'  => 'view',
+                'icon'   => 'icon-eye',
+                'title'  => trans('order::app.admin.profitability.datagrid.view-order'),
                 'method' => 'GET',
-                'url' => function ($row) {
+                'url'    => function ($row) {
                     return route('admin.orders.show', $row->order_id);
                 },
             ]);
@@ -167,9 +168,6 @@ class ProfitabilityDataGrid extends DataGrid
 
     /**
      * Calculate order cost from order items.
-     *
-     * @param  int  $orderId
-     * @return float
      */
     protected function calculateOrderCost(int $orderId): float
     {

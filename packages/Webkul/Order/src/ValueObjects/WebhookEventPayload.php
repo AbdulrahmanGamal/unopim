@@ -17,12 +17,12 @@ use JsonSerializable;
 final readonly class WebhookEventPayload implements Arrayable, JsonSerializable
 {
     /**
-     * @param  string  $eventType        The webhook event type (e.g., order.created).
-     * @param  string  $channelOrderId   The order ID from the external channel.
-     * @param  int     $channelId        The internal channel ID.
+     * @param  string  $eventType  The webhook event type (e.g., order.created).
+     * @param  string  $channelOrderId  The order ID from the external channel.
+     * @param  int  $channelId  The internal channel ID.
      * @param  array<string, mixed>  $orderData  The complete order data from channel.
-     * @param  string|null  $signature   Optional webhook signature for verification.
-     * @param  Carbon  $timestamp        When the webhook event occurred.
+     * @param  string|null  $signature  Optional webhook signature for verification.
+     * @param  Carbon  $timestamp  When the webhook event occurred.
      */
     public function __construct(
         public string $eventType,
@@ -40,9 +40,9 @@ final readonly class WebhookEventPayload implements Arrayable, JsonSerializable
      * webhook conventions (Shopify, Salla, etc.).
      *
      * @param  Request  $request  The incoming HTTP request.
-     * @return self               New WebhookEventPayload instance.
+     * @return self New WebhookEventPayload instance.
      *
-     * @throws \InvalidArgumentException  If required fields are missing.
+     * @throws \InvalidArgumentException If required fields are missing.
      */
     public static function fromRequest(Request $request): self
     {
@@ -97,9 +97,9 @@ final readonly class WebhookEventPayload implements Arrayable, JsonSerializable
      * Useful for testing or manual webhook processing.
      *
      * @param  array<string, mixed>  $data  The webhook data.
-     * @return self                         New WebhookEventPayload instance.
+     * @return self New WebhookEventPayload instance.
      *
-     * @throws \InvalidArgumentException    If required fields are missing.
+     * @throws \InvalidArgumentException If required fields are missing.
      */
     public static function fromArray(array $data): self
     {
@@ -120,7 +120,7 @@ final readonly class WebhookEventPayload implements Arrayable, JsonSerializable
     /**
      * Check if the payload has a signature for verification.
      *
-     * @return bool  True if signature is present.
+     * @return bool True if signature is present.
      */
     public function hasSignature(): bool
     {
@@ -132,7 +132,7 @@ final readonly class WebhookEventPayload implements Arrayable, JsonSerializable
      *
      * For example, "order.created" returns "order".
      *
-     * @return string  Event category.
+     * @return string Event category.
      */
     public function getEventCategory(): string
     {
@@ -146,7 +146,7 @@ final readonly class WebhookEventPayload implements Arrayable, JsonSerializable
      *
      * For example, "order.created" returns "created".
      *
-     * @return string  Event action.
+     * @return string Event action.
      */
     public function getEventAction(): string
     {
@@ -158,7 +158,7 @@ final readonly class WebhookEventPayload implements Arrayable, JsonSerializable
     /**
      * Check if this is an order-related event.
      *
-     * @return bool  True if event category is "order".
+     * @return bool True if event category is "order".
      */
     public function isOrderEvent(): bool
     {
@@ -168,7 +168,7 @@ final readonly class WebhookEventPayload implements Arrayable, JsonSerializable
     /**
      * Get the raw JSON payload for signature verification.
      *
-     * @return string  JSON-encoded order data.
+     * @return string JSON-encoded order data.
      */
     public function getRawJsonPayload(): string
     {
@@ -178,7 +178,7 @@ final readonly class WebhookEventPayload implements Arrayable, JsonSerializable
     /**
      * Get customer email from order data.
      *
-     * @return string|null  Customer email or null if not present.
+     * @return string|null Customer email or null if not present.
      */
     public function getCustomerEmail(): ?string
     {
@@ -190,7 +190,7 @@ final readonly class WebhookEventPayload implements Arrayable, JsonSerializable
     /**
      * Get order total from order data.
      *
-     * @return float|null  Order total or null if not present.
+     * @return float|null Order total or null if not present.
      */
     public function getOrderTotal(): ?float
     {
@@ -205,7 +205,7 @@ final readonly class WebhookEventPayload implements Arrayable, JsonSerializable
     /**
      * Get order currency from order data.
      *
-     * @return string|null  Currency code or null if not present.
+     * @return string|null Currency code or null if not present.
      */
     public function getCurrencyCode(): ?string
     {
@@ -250,7 +250,7 @@ final readonly class WebhookEventPayload implements Arrayable, JsonSerializable
     /**
      * Get a compact representation for logging.
      *
-     * @return array<string, mixed>  Compact log data.
+     * @return array<string, mixed> Compact log data.
      */
     public function toLogArray(): array
     {

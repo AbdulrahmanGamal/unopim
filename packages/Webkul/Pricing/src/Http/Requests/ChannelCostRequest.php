@@ -14,7 +14,7 @@ class ChannelCostRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'channel_id'                    => ['required', 'exists:channels,id'],
+            'channel_id'                     => ['required', 'exists:channels,id'],
             'commission_percentage'          => ['required', 'numeric', 'min:0', 'max:100'],
             'fixed_fee_per_order'            => ['required', 'numeric', 'min:0'],
             'payment_processing_percentage'  => ['required', 'numeric', 'min:0', 'max:100'],
@@ -43,8 +43,8 @@ class ChannelCostRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'commission_percentage.max'          => trans('pricing::app.channel-costs.validation.percentage-max'),
-            'payment_processing_percentage.max'  => trans('pricing::app.channel-costs.validation.percentage-max'),
+            'commission_percentage.max'           => trans('pricing::app.channel-costs.validation.percentage-max'),
+            'payment_processing_percentage.max'   => trans('pricing::app.channel-costs.validation.percentage-max'),
             'effective_to.after_or_equal'         => trans('pricing::app.channel-costs.validation.effective-to-after'),
         ];
     }

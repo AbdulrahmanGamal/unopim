@@ -118,13 +118,13 @@ it('isolates locales between tenants', function () {
 it('isolates currencies between tenants', function () {
     core()->setCurrentTenantId($this->tenantA->id);
     DB::table('currencies')->insert([
-        'code'      => 'TA'.rand(10,99),
+        'code'      => 'TA'.rand(10, 99),
         'tenant_id' => $this->tenantA->id,
     ]);
 
     core()->setCurrentTenantId($this->tenantB->id);
     DB::table('currencies')->insert([
-        'code'      => 'TB'.rand(10,99),
+        'code'      => 'TB'.rand(10, 99),
         'tenant_id' => $this->tenantB->id,
     ]);
 
@@ -138,18 +138,18 @@ it('isolates currencies between tenants', function () {
 it('isolates core_config between tenants', function () {
     core()->setCurrentTenantId($this->tenantA->id);
     DB::table('core_config')->insert([
-        'code'      => 'test.config.a',
-        'value'     => 'valueA',
-        'tenant_id' => $this->tenantA->id,
+        'code'       => 'test.config.a',
+        'value'      => 'valueA',
+        'tenant_id'  => $this->tenantA->id,
         'created_at' => now(),
         'updated_at' => now(),
     ]);
 
     core()->setCurrentTenantId($this->tenantB->id);
     DB::table('core_config')->insert([
-        'code'      => 'test.config.b',
-        'value'     => 'valueB',
-        'tenant_id' => $this->tenantB->id,
+        'code'       => 'test.config.b',
+        'value'      => 'valueB',
+        'tenant_id'  => $this->tenantB->id,
         'created_at' => now(),
         'updated_at' => now(),
     ]);

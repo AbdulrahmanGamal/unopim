@@ -14,14 +14,14 @@ use JsonSerializable;
 final class PriceRecommendation implements Arrayable, JsonSerializable
 {
     /**
-     * @param  int         $channelId       The channel these recommendations apply to.
-     * @param  string      $channelName     Human-readable channel name.
-     * @param  array{price: float, margin: float} $minimum  Price/margin at minimum margin tier.
-     * @param  array{price: float, margin: float} $target   Price/margin at target margin tier.
-     * @param  array{price: float, margin: float} $premium  Price/margin at premium margin tier.
-     * @param  float       $breakEvenPrice  The break-even price used as the calculation basis.
-     * @param  string      $currency        ISO 4217 currency code.
-     * @param  string      $strategy        Name or identifier of the PricingStrategy used.
+     * @param  int  $channelId  The channel these recommendations apply to.
+     * @param  string  $channelName  Human-readable channel name.
+     * @param  array{price: float, margin: float}  $minimum  Price/margin at minimum margin tier.
+     * @param  array{price: float, margin: float}  $target  Price/margin at target margin tier.
+     * @param  array{price: float, margin: float}  $premium  Price/margin at premium margin tier.
+     * @param  float  $breakEvenPrice  The break-even price used as the calculation basis.
+     * @param  string  $currency  ISO 4217 currency code.
+     * @param  string  $strategy  Name or identifier of the PricingStrategy used.
      */
     public function __construct(
         public readonly int $channelId,

@@ -51,7 +51,7 @@ class EventServiceProvider extends ServiceProvider
             $model instanceof \Webkul\Product\Models\Product   => 'product',
             $model instanceof \Webkul\Core\Models\Channel      => 'channel',
             $model instanceof \Webkul\Category\Models\Category => 'category',
-            default => null,
+            default                                            => null,
         };
 
         if ($scopeType === null) {

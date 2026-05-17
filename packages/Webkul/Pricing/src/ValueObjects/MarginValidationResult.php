@@ -13,22 +13,22 @@ use JsonSerializable;
  */
 final class MarginValidationResult implements Arrayable, JsonSerializable
 {
-    public const STATUS_OK      = 'ok';
+    public const STATUS_OK = 'ok';
 
     public const STATUS_WARNING = 'warning';
 
     public const STATUS_BLOCKED = 'blocked';
 
     /**
-     * @param  string     $status                  One of: ok, warning, blocked.
-     * @param  float      $proposedPrice           The price being validated.
-     * @param  float      $breakEvenPrice          The computed break-even price.
-     * @param  float      $minimumMarginPrice      The price needed to achieve minimum margin.
-     * @param  float      $targetMarginPrice       The price needed to achieve target margin.
-     * @param  float      $actualMarginPercentage  The margin% the proposed price would yield.
-     * @param  float      $minimumMarginPercentage The configured minimum margin threshold.
-     * @param  int|null   $eventId                 The ID of any MarginProtectionEvent created.
-     * @param  string     $message                 Human-readable explanation.
+     * @param  string  $status  One of: ok, warning, blocked.
+     * @param  float  $proposedPrice  The price being validated.
+     * @param  float  $breakEvenPrice  The computed break-even price.
+     * @param  float  $minimumMarginPrice  The price needed to achieve minimum margin.
+     * @param  float  $targetMarginPrice  The price needed to achieve target margin.
+     * @param  float  $actualMarginPercentage  The margin% the proposed price would yield.
+     * @param  float  $minimumMarginPercentage  The configured minimum margin threshold.
+     * @param  int|null  $eventId  The ID of any MarginProtectionEvent created.
+     * @param  string  $message  Human-readable explanation.
      */
     public function __construct(
         public readonly string $status,

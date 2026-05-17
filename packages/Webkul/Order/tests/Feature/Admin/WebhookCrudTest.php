@@ -29,9 +29,9 @@ it('can view create webhook form', function () {
 
 it('can create new webhook', function () {
     $response = $this->post(route('admin.order.webhooks.store'), [
-        'channel_id' => $this->channel->id,
+        'channel_id'  => $this->channel->id,
         'event_types' => ['order.created', 'order.updated'],
-        'is_active' => true,
+        'is_active'   => true,
     ]);
 
     $response->assertRedirect()
@@ -47,9 +47,9 @@ it('can create new webhook', function () {
 
 it('auto-generates secret key when creating webhook', function () {
     $response = $this->post(route('admin.order.webhooks.store'), [
-        'channel_id' => $this->channel->id,
+        'channel_id'  => $this->channel->id,
         'event_types' => ['order.created'],
-        'is_active' => true,
+        'is_active'   => true,
     ]);
 
     $webhook = OrderWebhook::first();
@@ -70,12 +70,12 @@ it('can view edit webhook form', function () {
 it('can update webhook', function () {
     $webhook = OrderWebhook::factory()->create([
         'event_types' => ['order.created'],
-        'is_active' => true,
+        'is_active'   => true,
     ]);
 
     $response = $this->put(route('admin.order.webhooks.update', $webhook->id), [
         'event_types' => ['order.created', 'order.updated', 'order.cancelled'],
-        'is_active' => false,
+        'is_active'   => false,
     ]);
 
     $response->assertRedirect()
@@ -156,7 +156,7 @@ it('can view webhook delivery logs', function () {
 
 it('validates required fields when creating', function () {
     $response = $this->post(route('admin.order.webhooks.store'), [
-        'channel_id' => null,
+        'channel_id'  => null,
         'event_types' => [],
     ]);
 
@@ -165,7 +165,7 @@ it('validates required fields when creating', function () {
 
 it('validates channel exists', function () {
     $response = $this->post(route('admin.order.webhooks.store'), [
-        'channel_id' => 99999,
+        'channel_id'  => 99999,
         'event_types' => ['order.created'],
     ]);
 
@@ -174,7 +174,7 @@ it('validates channel exists', function () {
 
 it('validates event types are valid', function () {
     $response = $this->post(route('admin.order.webhooks.store'), [
-        'channel_id' => $this->channel->id,
+        'channel_id'  => $this->channel->id,
         'event_types' => ['invalid.event'],
     ]);
 
@@ -184,7 +184,7 @@ it('validates event types are valid', function () {
 it('displays webhook statistics', function () {
     $webhook = OrderWebhook::factory()->create([
         'delivery_attempts' => 10,
-        'last_delivery_at' => now()->subHours(2),
+        'last_delivery_at'  => now()->subHours(2),
     ]);
 
     $response = $this->get(route('admin.order.webhooks.index'));

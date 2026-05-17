@@ -5,19 +5,19 @@ use Webkul\Order\Models\UnifiedOrder;
 
 it('receives and verifies HMAC signature', function () {
     $webhook = OrderWebhook::factory()->create([
-        'secret_key' => 'test-secret-key',
+        'secret_key'   => 'test-secret-key',
         'channel_code' => 'salla',
-        'event_types' => ['order.created'],
-        'is_active' => true,
+        'event_types'  => ['order.created'],
+        'is_active'    => true,
     ]);
 
     $payload = [
         'event' => 'order.created',
-        'data' => [
-            'id' => '123',
-            'order_number' => 'ORD-001',
-            'status' => 'pending',
-            'total_amount' => 100.00,
+        'data'  => [
+            'id'             => '123',
+            'order_number'   => 'ORD-001',
+            'status'         => 'pending',
+            'total_amount'   => 100.00,
             'customer_email' => 'test@example.com',
         ],
     ];
@@ -34,15 +34,15 @@ it('receives and verifies HMAC signature', function () {
 
 it('rejects invalid HMAC signature', function () {
     $webhook = OrderWebhook::factory()->create([
-        'secret_key' => 'test-secret-key',
+        'secret_key'   => 'test-secret-key',
         'channel_code' => 'salla',
-        'event_types' => ['order.created'],
-        'is_active' => true,
+        'event_types'  => ['order.created'],
+        'is_active'    => true,
     ]);
 
     $payload = [
         'event' => 'order.created',
-        'data' => ['id' => '123'],
+        'data'  => ['id' => '123'],
     ];
 
     $response = $this->postJson('/api/v1/order/webhooks/receive/salla', $payload, [
@@ -56,19 +56,19 @@ it('rejects invalid HMAC signature', function () {
 it('processes order created event', function () {
     $webhook = OrderWebhook::factory()->create([
         'channel_code' => 'salla',
-        'event_types' => ['order.created'],
-        'is_active' => true,
+        'event_types'  => ['order.created'],
+        'is_active'    => true,
     ]);
 
     $payload = [
         'event' => 'order.created',
-        'data' => [
-            'id' => '123',
-            'order_number' => 'ORD-001',
-            'status' => 'pending',
-            'total_amount' => 100.00,
+        'data'  => [
+            'id'             => '123',
+            'order_number'   => 'ORD-001',
+            'status'         => 'pending',
+            'total_amount'   => 100.00,
             'customer_email' => 'test@example.com',
-            'customer_name' => 'Test Customer',
+            'customer_name'  => 'Test Customer',
         ],
     ];
 
@@ -91,21 +91,21 @@ it('processes order created event', function () {
 it('processes order updated event', function () {
     $webhook = OrderWebhook::factory()->create([
         'channel_code' => 'salla',
-        'event_types' => ['order.updated'],
-        'is_active' => true,
+        'event_types'  => ['order.updated'],
+        'is_active'    => true,
     ]);
 
     $order = UnifiedOrder::factory()->create([
-        'external_id' => '123',
-        'status' => 'pending',
+        'external_id'  => '123',
+        'status'       => 'pending',
         'total_amount' => 100.00,
     ]);
 
     $payload = [
         'event' => 'order.updated',
-        'data' => [
-            'id' => '123',
-            'status' => 'completed',
+        'data'  => [
+            'id'           => '123',
+            'status'       => 'completed',
             'total_amount' => 150.00,
         ],
     ];
@@ -125,19 +125,19 @@ it('processes order updated event', function () {
 it('processes order cancelled event', function () {
     $webhook = OrderWebhook::factory()->create([
         'channel_code' => 'salla',
-        'event_types' => ['order.cancelled'],
-        'is_active' => true,
+        'event_types'  => ['order.cancelled'],
+        'is_active'    => true,
     ]);
 
     $order = UnifiedOrder::factory()->create([
         'external_id' => '123',
-        'status' => 'pending',
+        'status'      => 'pending',
     ]);
 
     $payload = [
         'event' => 'order.cancelled',
-        'data' => [
-            'id' => '123',
+        'data'  => [
+            'id'                  => '123',
             'cancellation_reason' => 'Customer request',
         ],
     ];
@@ -156,8 +156,8 @@ it('processes order cancelled event', function () {
 it('rejects webhook for inactive webhook config', function () {
     $webhook = OrderWebhook::factory()->create([
         'channel_code' => 'salla',
-        'event_types' => ['order.created'],
-        'is_active' => false,
+        'event_types'  => ['order.created'],
+        'is_active'    => false,
     ]);
 
     $payload = ['event' => 'order.created', 'data' => []];
@@ -174,13 +174,13 @@ it('rejects webhook for inactive webhook config', function () {
 it('rejects unsupported event types', function () {
     $webhook = OrderWebhook::factory()->create([
         'channel_code' => 'salla',
-        'event_types' => ['order.created'],
-        'is_active' => true,
+        'event_types'  => ['order.created'],
+        'is_active'    => true,
     ]);
 
     $payload = [
         'event' => 'order.unsupported_event',
-        'data' => [],
+        'data'  => [],
     ];
 
     $signature = $this->generateWebhookSignature($payload, $webhook->secret_key);
@@ -196,13 +196,13 @@ it('rejects unsupported event types', function () {
 it('handles webhook processing errors gracefully', function () {
     $webhook = OrderWebhook::factory()->create([
         'channel_code' => 'salla',
-        'event_types' => ['order.created'],
-        'is_active' => true,
+        'event_types'  => ['order.created'],
+        'is_active'    => true,
     ]);
 
     $payload = [
         'event' => 'order.created',
-        'data' => [
+        'data'  => [
             // Missing required fields
         ],
     ];
@@ -218,18 +218,18 @@ it('handles webhook processing errors gracefully', function () {
 
 it('increments delivery attempts on webhook receipt', function () {
     $webhook = OrderWebhook::factory()->create([
-        'channel_code' => 'salla',
-        'event_types' => ['order.created'],
-        'is_active' => true,
+        'channel_code'      => 'salla',
+        'event_types'       => ['order.created'],
+        'is_active'         => true,
         'delivery_attempts' => 0,
     ]);
 
     $payload = [
         'event' => 'order.created',
-        'data' => [
-            'id' => '123',
+        'data'  => [
+            'id'           => '123',
             'order_number' => 'ORD-001',
-            'status' => 'pending',
+            'status'       => 'pending',
             'total_amount' => 100.00,
         ],
     ];
@@ -246,14 +246,14 @@ it('increments delivery attempts on webhook receipt', function () {
 it('supports Shopify webhook format', function () {
     $webhook = OrderWebhook::factory()->create([
         'channel_code' => 'shopify',
-        'event_types' => ['orders/create'],
-        'is_active' => true,
+        'event_types'  => ['orders/create'],
+        'is_active'    => true,
     ]);
 
     $payload = [
-        'id' => 12345,
-        'email' => 'customer@example.com',
-        'total_price' => '100.00',
+        'id'               => 12345,
+        'email'            => 'customer@example.com',
+        'total_price'      => '100.00',
         'financial_status' => 'pending',
     ];
 

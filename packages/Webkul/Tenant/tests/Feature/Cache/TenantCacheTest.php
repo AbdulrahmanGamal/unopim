@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Cache;
 use Webkul\Tenant\Cache\TenantCache;
 use Webkul\Tenant\Models\Tenant;
 

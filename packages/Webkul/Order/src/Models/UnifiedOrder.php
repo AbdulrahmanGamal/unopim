@@ -42,7 +42,7 @@ class UnifiedOrder extends Model implements UnifiedOrderContract
      * @var array
      */
     protected $casts = [
-        'order_data' => 'array',
+        'order_data'   => 'array',
         'total_amount' => 'decimal:2',
     ];
 

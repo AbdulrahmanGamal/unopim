@@ -22,19 +22,12 @@ class WebhookReceiverController extends Controller
     /**
      * Create a new controller instance.
      *
-     * @param  WebhookVerifier  $webhookVerifier
      * @return void
      */
-    public function __construct(protected WebhookVerifier $webhookVerifier)
-    {
-    }
+    public function __construct(protected WebhookVerifier $webhookVerifier) {}
 
     /**
      * Generic webhook receiver.
-     *
-     * @param  WebhookReceiveRequest  $request
-     * @param  string  $channelCode
-     * @return JsonResponse
      */
     public function receive(WebhookReceiveRequest $request, string $channelCode): JsonResponse
     {
@@ -43,7 +36,7 @@ class WebhookReceiverController extends Controller
             if (! $this->webhookVerifier->verify($request, $channelCode)) {
                 Log::warning('Webhook signature verification failed', [
                     'channel' => $channelCode,
-                    'ip' => $request->ip(),
+                    'ip'      => $request->ip(),
                 ]);
 
                 return response()->json([
@@ -64,8 +57,8 @@ class WebhookReceiverController extends Controller
         } catch (\Exception $e) {
             Log::error('Webhook processing failed', [
                 'channel' => $channelCode,
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
+                'error'   => $e->getMessage(),
+                'trace'   => $e->getTraceAsString(),
             ]);
 
             return response()->json([
@@ -76,9 +69,6 @@ class WebhookReceiverController extends Controller
 
     /**
      * Salla-specific webhook endpoint.
-     *
-     * @param  Request  $request
-     * @return JsonResponse
      */
     public function salla(Request $request): JsonResponse
     {
@@ -90,7 +80,7 @@ class WebhookReceiverController extends Controller
             if (! $this->webhookVerifier->verifySalla($request->getContent(), $signature)) {
                 Log::warning('Salla webhook signature verification failed', [
                     'event' => $eventType,
-                    'ip' => $request->ip(),
+                    'ip'    => $request->ip(),
                 ]);
 
                 return response()->json([
@@ -116,9 +106,6 @@ class WebhookReceiverController extends Controller
 
     /**
      * Shopify-specific webhook endpoint.
-     *
-     * @param  Request  $request
-     * @return JsonResponse
      */
     public function shopify(Request $request): JsonResponse
     {
@@ -130,7 +117,7 @@ class WebhookReceiverController extends Controller
             if (! $this->webhookVerifier->verifyShopify($request->getContent(), $hmac)) {
                 Log::warning('Shopify webhook HMAC verification failed', [
                     'topic' => $topic,
-                    'shop' => $request->header('X-Shopify-Shop-Domain'),
+                    'shop'  => $request->header('X-Shopify-Shop-Domain'),
                 ]);
 
                 return response()->json([
@@ -156,9 +143,6 @@ class WebhookReceiverController extends Controller
 
     /**
      * WooCommerce-specific webhook endpoint.
-     *
-     * @param  Request  $request
-     * @return JsonResponse
      */
     public function woocommerce(Request $request): JsonResponse
     {
@@ -169,7 +153,7 @@ class WebhookReceiverController extends Controller
 
             if (! $this->webhookVerifier->verifyWooCommerce($request->getContent(), $signature)) {
                 Log::warning('WooCommerce webhook signature verification failed', [
-                    'topic' => $topic,
+                    'topic'  => $topic,
                     'source' => $request->header('X-WC-Webhook-Source'),
                 ]);
 

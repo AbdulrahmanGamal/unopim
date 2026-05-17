@@ -1,10 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\DB;
-use Webkul\Notification\Models\Notification;
-use Webkul\Webhook\Models\WebhookSetting;
 use Webkul\DataTransfer\Models\JobInstances;
+use Webkul\Notification\Models\Notification;
 use Webkul\Tenant\Models\TenantOAuthClient;
+use Webkul\Webhook\Models\WebhookSetting;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,17 +22,17 @@ use Webkul\Tenant\Models\TenantOAuthClient;
 function seedAttribute(int $tenantId): int
 {
     return DB::table('attributes')->insertGetId([
-        'code'           => 'attr-t'.$tenantId.'-'.uniqid(),
-        'type'           => 'text',
-        'validation'     => null,
-        'position'       => 1,
-        'is_required'    => 0,
-        'is_unique'      => 0,
-        'value_per_locale' => 0,
+        'code'              => 'attr-t'.$tenantId.'-'.uniqid(),
+        'type'              => 'text',
+        'validation'        => null,
+        'position'          => 1,
+        'is_required'       => 0,
+        'is_unique'         => 0,
+        'value_per_locale'  => 0,
         'value_per_channel' => 0,
-        'tenant_id'      => $tenantId,
-        'created_at'     => now(),
-        'updated_at'     => now(),
+        'tenant_id'         => $tenantId,
+        'created_at'        => now(),
+        'updated_at'        => now(),
     ]);
 }
 
@@ -84,13 +84,13 @@ it('isolates JobInstances records between tenants', function () {
 
     DB::table('job_instances')->insert([
         [
-            'tenant_id' => $tA, 'code' => 'import-a', 'entity_type' => 'products',
-            'type' => 'import', 'action' => 'append', 'validation_strategy' => 'skip-errors',
+            'tenant_id'      => $tA, 'code' => 'import-a', 'entity_type' => 'products',
+            'type'           => 'import', 'action' => 'append', 'validation_strategy' => 'skip-errors',
             'allowed_errors' => 10, 'created_at' => now(), 'updated_at' => now(),
         ],
         [
-            'tenant_id' => $tB, 'code' => 'import-b', 'entity_type' => 'categories',
-            'type' => 'import', 'action' => 'append', 'validation_strategy' => 'skip-errors',
+            'tenant_id'      => $tB, 'code' => 'import-b', 'entity_type' => 'categories',
+            'type'           => 'import', 'action' => 'append', 'validation_strategy' => 'skip-errors',
             'allowed_errors' => 5, 'created_at' => now(), 'updated_at' => now(),
         ],
     ]);
@@ -133,16 +133,16 @@ it('isolates CategoryField records between tenants', function () {
 
     DB::table('category_fields')->insert([
         [
-            'tenant_id' => $tA, 'code' => 'field-a', 'type' => 'text',
+            'tenant_id'   => $tA, 'code' => 'field-a', 'type' => 'text',
             'is_required' => 0, 'is_unique' => 0, 'status' => 1,
-            'section' => 'left', 'value_per_locale' => 0, 'enable_wysiwyg' => 0,
-            'created_at' => now(), 'updated_at' => now(),
+            'section'     => 'left', 'value_per_locale' => 0, 'enable_wysiwyg' => 0,
+            'created_at'  => now(), 'updated_at' => now(),
         ],
         [
-            'tenant_id' => $tB, 'code' => 'field-b', 'type' => 'textarea',
+            'tenant_id'   => $tB, 'code' => 'field-b', 'type' => 'textarea',
             'is_required' => 0, 'is_unique' => 0, 'status' => 1,
-            'section' => 'left', 'value_per_locale' => 0, 'enable_wysiwyg' => 0,
-            'created_at' => now(), 'updated_at' => now(),
+            'section'     => 'left', 'value_per_locale' => 0, 'enable_wysiwyg' => 0,
+            'created_at'  => now(), 'updated_at' => now(),
         ],
     ]);
 
@@ -162,16 +162,16 @@ it('isolates TenantOAuthClient (Passport) records between tenants', function () 
     $tB = $this->tenantB->id;
 
     DB::table('oauth_clients')->insert([
-        'tenant_id' => $tA,
-        'name' => 'Client A', 'secret' => 'secret-a', 'redirect' => 'http://localhost',
+        'tenant_id'              => $tA,
+        'name'                   => 'Client A', 'secret' => 'secret-a', 'redirect' => 'http://localhost',
         'personal_access_client' => false, 'password_client' => true, 'revoked' => false,
-        'created_at' => now(), 'updated_at' => now(),
+        'created_at'             => now(), 'updated_at' => now(),
     ]);
     DB::table('oauth_clients')->insert([
-        'tenant_id' => $tB,
-        'name' => 'Client B', 'secret' => 'secret-b', 'redirect' => 'http://localhost',
+        'tenant_id'              => $tB,
+        'name'                   => 'Client B', 'secret' => 'secret-b', 'redirect' => 'http://localhost',
         'personal_access_client' => false, 'password_client' => true, 'revoked' => false,
-        'created_at' => now(), 'updated_at' => now(),
+        'created_at'             => now(), 'updated_at' => now(),
     ]);
 
     core()->setCurrentTenantId($tA);

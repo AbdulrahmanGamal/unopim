@@ -1,10 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Cache;
-use Webkul\ChannelConnector\Contracts\ChannelAdapterContract;
 use Webkul\ChannelConnector\Models\ChannelConnector;
 use Webkul\ChannelConnector\Models\ChannelFieldMapping;
-use Webkul\ChannelConnector\Services\AdapterResolver;
 use Webkul\ChannelConnector\Services\MappingService;
 use Webkul\Tenant\Cache\TenantCache;
 

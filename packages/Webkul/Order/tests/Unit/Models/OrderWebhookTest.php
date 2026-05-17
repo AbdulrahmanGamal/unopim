@@ -100,7 +100,7 @@ it('records last delivery', function () {
 });
 
 it('has fillable attributes', function () {
-    $webhook = new OrderWebhook();
+    $webhook = new OrderWebhook;
 
     expect($webhook->getFillable())->toBeArray()
         ->and($webhook->getFillable())->toContain('channel_id', 'event_types', 'secret_key', 'is_active');
@@ -108,10 +108,10 @@ it('has fillable attributes', function () {
 
 it('casts attributes correctly', function () {
     $webhook = OrderWebhook::factory()->create([
-        'event_types' => ['order.created', 'order.updated'],
-        'is_active' => 1,
+        'event_types'       => ['order.created', 'order.updated'],
+        'is_active'         => 1,
         'delivery_attempts' => '5',
-        'last_delivery_at' => '2024-01-15 10:00:00',
+        'last_delivery_at'  => '2024-01-15 10:00:00',
     ]);
 
     expect($webhook->event_types)->toBeArray()

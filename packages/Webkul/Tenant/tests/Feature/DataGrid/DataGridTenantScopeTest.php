@@ -23,9 +23,7 @@ it('injects tenant_id WHERE clause into DataGrid query builder', function () {
             return DB::table('products')->select('products.id', 'products.sku');
         }
 
-        public function prepareColumns()
-        {
-        }
+        public function prepareColumns() {}
     };
 
     $dataGrid->setQueryBuilder();
@@ -55,9 +53,7 @@ it('skips tenant scope when no tenant context', function () {
             return DB::table('products')->select('products.id', 'products.sku');
         }
 
-        public function prepareColumns()
-        {
-        }
+        public function prepareColumns() {}
     };
 
     $dataGrid->setQueryBuilder();
@@ -85,9 +81,7 @@ it('handles aliased table names correctly', function () {
             return DB::table('products as p')->select('p.id', 'p.sku');
         }
 
-        public function prepareColumns()
-        {
-        }
+        public function prepareColumns() {}
     };
 
     $dataGrid->setQueryBuilder();

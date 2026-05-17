@@ -1,8 +1,5 @@
 <?php
 
-use Webkul\Order\Models\UnifiedOrder;
-use Webkul\Order\Services\ProfitabilityCalculator;
-
 beforeEach(function () {
     $this->admin = $this->createAdminWithOrderPermissions([
         'order.profitability.view',
@@ -45,7 +42,7 @@ it('can view single order profitability', function () {
 it('can filter profitability by date range', function () {
     $response = $this->get(route('admin.order.profitability.index', [
         'date_from' => now()->subDays(30)->format('Y-m-d'),
-        'date_to' => now()->format('Y-m-d'),
+        'date_to'   => now()->format('Y-m-d'),
     ]));
 
     $response->assertStatus(200);

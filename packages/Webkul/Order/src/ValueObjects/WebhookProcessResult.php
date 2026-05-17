@@ -9,8 +9,6 @@ use Carbon\Carbon;
  *
  * Value object representing the result of a webhook processing operation.
  * Contains success status, event type, and processing details.
- *
- * @package Webkul\Order\ValueObjects
  */
 readonly class WebhookProcessResult
 {
@@ -37,8 +35,6 @@ readonly class WebhookProcessResult
 
     /**
      * Check if any orders were processed.
-     *
-     * @return bool
      */
     public function hasProcessedOrders(): bool
     {
@@ -47,8 +43,6 @@ readonly class WebhookProcessResult
 
     /**
      * Check if this is a creation event.
-     *
-     * @return bool
      */
     public function isCreationEvent(): bool
     {
@@ -57,8 +51,6 @@ readonly class WebhookProcessResult
 
     /**
      * Check if this is an update event.
-     *
-     * @return bool
      */
     public function isUpdateEvent(): bool
     {
@@ -67,8 +59,6 @@ readonly class WebhookProcessResult
 
     /**
      * Check if this is a cancellation event.
-     *
-     * @return bool
      */
     public function isCancellationEvent(): bool
     {
@@ -77,42 +67,36 @@ readonly class WebhookProcessResult
 
     /**
      * Convert to array representation.
-     *
-     * @return array
      */
     public function toArray(): array
     {
         return [
-            'success' => $this->success,
-            'event_type' => $this->eventType,
+            'success'          => $this->success,
+            'event_type'       => $this->eventType,
             'processed_orders' => $this->processedOrders,
-            'message' => $this->message,
-            'webhook_id' => $this->webhookId,
-            'channel_code' => $this->channelCode,
-            'processed_at' => $this->processedAt->toIso8601String(),
-            'event_category' => $this->getEventCategory(),
+            'message'          => $this->message,
+            'webhook_id'       => $this->webhookId,
+            'channel_code'     => $this->channelCode,
+            'processed_at'     => $this->processedAt->toIso8601String(),
+            'event_category'   => $this->getEventCategory(),
         ];
     }
 
     /**
      * Get event category.
-     *
-     * @return string
      */
     public function getEventCategory(): string
     {
         return match (true) {
-            $this->isCreationEvent() => 'creation',
-            $this->isUpdateEvent() => 'update',
+            $this->isCreationEvent()     => 'creation',
+            $this->isUpdateEvent()       => 'update',
             $this->isCancellationEvent() => 'cancellation',
-            default => 'other'
+            default                      => 'other'
         };
     }
 
     /**
      * Convert to JSON representation.
-     *
-     * @return string
      */
     public function toJson(): string
     {

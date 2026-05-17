@@ -4,7 +4,6 @@ namespace Webkul\Order\Http\Controllers\Api\V1;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Webkul\AdminApi\Http\Controllers\V1\Controller;
 use Webkul\Order\Repositories\OrderRepository;
 
@@ -19,18 +18,12 @@ class ProfitabilityController extends Controller
     /**
      * Create a new controller instance.
      *
-     * @param  OrderRepository  $orderRepository
      * @return void
      */
-    public function __construct(protected OrderRepository $orderRepository)
-    {
-    }
+    public function __construct(protected OrderRepository $orderRepository) {}
 
     /**
      * Calculate profitability for a specific order.
-     *
-     * @param  int  $orderId
-     * @return JsonResponse
      */
     public function calculate(int $orderId): JsonResponse
     {
@@ -54,13 +47,13 @@ class ProfitabilityController extends Controller
 
             return response()->json([
                 'data' => [
-                    'order_id' => $order->id,
-                    'order_number' => $order->order_number,
-                    'revenue' => round($revenue, 2),
-                    'cost' => round($cost, 2),
-                    'profit' => round($profit, 2),
+                    'order_id'          => $order->id,
+                    'order_number'      => $order->order_number,
+                    'revenue'           => round($revenue, 2),
+                    'cost'              => round($cost, 2),
+                    'profit'            => round($profit, 2),
                     'margin_percentage' => round($marginPercentage, 2),
-                    'currency' => $order->currency_code ?? 'USD',
+                    'currency'          => $order->currency_code ?? 'USD',
                 ],
             ]);
         } catch (\Exception $e) {
@@ -72,16 +65,12 @@ class ProfitabilityController extends Controller
 
     /**
      * Aggregate profitability by channel.
-     *
-     * @param  Request  $request
-     * @param  int  $channelId
-     * @return JsonResponse
      */
     public function aggregateByChannel(Request $request, int $channelId): JsonResponse
     {
         $request->validate([
             'start_date' => 'date',
-            'end_date' => 'date|after_or_equal:start_date',
+            'end_date'   => 'date|after_or_equal:start_date',
         ]);
 
         try {
@@ -118,22 +107,22 @@ class ProfitabilityController extends Controller
 
             return response()->json([
                 'data' => [
-                    'channel_id' => $channelId,
-                    'total_orders' => $orders->count(),
-                    'total_revenue' => round($totalRevenue, 2),
-                    'total_cost' => round($totalCost, 2),
-                    'total_profit' => round($totalProfit, 2),
+                    'channel_id'        => $channelId,
+                    'total_orders'      => $orders->count(),
+                    'total_revenue'     => round($totalRevenue, 2),
+                    'total_cost'        => round($totalCost, 2),
+                    'total_profit'      => round($totalProfit, 2),
                     'margin_percentage' => round($marginPercentage, 2),
-                    'date_range' => [
+                    'date_range'        => [
                         'start' => $request->start_date,
-                        'end' => $request->end_date,
+                        'end'   => $request->end_date,
                     ],
                 ],
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => trans('order::app.api.calculation-failed'),
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }

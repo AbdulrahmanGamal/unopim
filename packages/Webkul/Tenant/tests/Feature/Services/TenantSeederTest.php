@@ -114,7 +114,7 @@ it('rolls back all records on seeder failure', function () {
         {
             public function seed(\Webkul\Tenant\Models\Tenant $tenant, array $options = []): array
             {
-                return DB::transaction(function () use ($tenant, $options) {
+                return DB::transaction(function () use ($tenant) {
                     // Insert a role (will be rolled back)
                     DB::table('roles')->insert([
                         'name'            => 'Will be rolled back',

@@ -5,7 +5,6 @@ use Illuminate\Support\Str;
 use Webkul\ChannelConnector\Jobs\ProcessSyncJob;
 use Webkul\ChannelConnector\Models\ChannelConnector;
 use Webkul\ChannelConnector\Models\ChannelSyncJob;
-use Webkul\Product\Models\Product;
 
 beforeEach(function () {
     $this->loginAsAdmin();

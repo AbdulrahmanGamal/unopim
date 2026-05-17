@@ -72,10 +72,10 @@ it('can create order', function () {
     $channel = Channel::factory()->create();
 
     $data = [
-        'channel_id' => $channel->id,
-        'order_number' => 'TEST-001',
-        'status' => 'pending',
-        'total_amount' => 100.00,
+        'channel_id'     => $channel->id,
+        'order_number'   => 'TEST-001',
+        'status'         => 'pending',
+        'total_amount'   => 100.00,
         'customer_email' => 'test@example.com',
     ];
 

@@ -21,8 +21,8 @@ class GrammarQueryManager
         }
 
         static::$instances[$driver] = match ($driver) {
-            'pgsql' => new PostgresGrammar,
-            'mysql' => new MySQLGrammar,
+            'pgsql'  => new PostgresGrammar,
+            'mysql'  => new MySQLGrammar,
             'sqlite' => new SQLiteGrammar,
 
             default => throw new \RuntimeException("Unsupported DB driver: {$driver}")

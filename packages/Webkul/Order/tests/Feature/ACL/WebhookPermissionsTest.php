@@ -38,9 +38,9 @@ it('allows webhook creation with create permission', function () {
     $channel = $this->createTestChannel();
 
     $response = $this->post(route('admin.order.webhooks.store'), [
-        'channel_id' => $channel->id,
+        'channel_id'  => $channel->id,
         'event_types' => ['order.created'],
-        'is_active' => true,
+        'is_active'   => true,
     ]);
 
     $response->assertStatus([200, 302]);

@@ -13,19 +13,19 @@ class UnifiedOrderFactory extends Factory
     public function definition(): array
     {
         return [
-            'tenant_id' => 1,
-            'channel_id' => Channel::factory(),
-            'order_number' => 'ORD-' . $this->faker->unique()->numberBetween(10000, 99999),
-            'external_id' => $this->faker->optional()->uuid(),
-            'status' => $this->faker->randomElement(['pending', 'processing', 'completed', 'cancelled']),
-            'order_date' => $this->faker->dateTimeBetween('-30 days', 'now'),
-            'customer_name' => $this->faker->name(),
-            'customer_email' => $this->faker->safeEmail(),
-            'customer_phone' => $this->faker->optional()->phoneNumber(),
+            'tenant_id'        => 1,
+            'channel_id'       => Channel::factory(),
+            'order_number'     => 'ORD-'.$this->faker->unique()->numberBetween(10000, 99999),
+            'external_id'      => $this->faker->optional()->uuid(),
+            'status'           => $this->faker->randomElement(['pending', 'processing', 'completed', 'cancelled']),
+            'order_date'       => $this->faker->dateTimeBetween('-30 days', 'now'),
+            'customer_name'    => $this->faker->name(),
+            'customer_email'   => $this->faker->safeEmail(),
+            'customer_phone'   => $this->faker->optional()->phoneNumber(),
             'shipping_address' => $this->faker->optional()->address(),
-            'billing_address' => $this->faker->optional()->address(),
-            'total_amount' => $this->faker->randomFloat(2, 10, 5000),
-            'subtotal' => function (array $attributes) {
+            'billing_address'  => $this->faker->optional()->address(),
+            'total_amount'     => $this->faker->randomFloat(2, 10, 5000),
+            'subtotal'         => function (array $attributes) {
                 return $attributes['total_amount'] * 0.9;
             },
             'tax_amount' => function (array $attributes) {
@@ -33,15 +33,15 @@ class UnifiedOrderFactory extends Factory
             },
             'shipping_amount' => $this->faker->randomFloat(2, 0, 50),
             'discount_amount' => $this->faker->randomFloat(2, 0, 100),
-            'currency' => $this->faker->randomElement(['USD', 'EUR', 'GBP', 'SAR']),
-            'payment_method' => $this->faker->randomElement(['credit_card', 'paypal', 'cash_on_delivery']),
+            'currency'        => $this->faker->randomElement(['USD', 'EUR', 'GBP', 'SAR']),
+            'payment_method'  => $this->faker->randomElement(['credit_card', 'paypal', 'cash_on_delivery']),
             'shipping_method' => $this->faker->randomElement(['standard', 'express', 'overnight']),
-            'internal_notes' => $this->faker->optional()->paragraph(),
-            'customer_notes' => $this->faker->optional()->sentence(),
+            'internal_notes'  => $this->faker->optional()->paragraph(),
+            'customer_notes'  => $this->faker->optional()->sentence(),
             'additional_data' => [],
-            'synced_at' => $this->faker->optional()->dateTime(),
-            'created_at' => now(),
-            'updated_at' => now(),
+            'synced_at'       => $this->faker->optional()->dateTime(),
+            'created_at'      => now(),
+            'updated_at'      => now(),
         ];
     }
 
@@ -98,7 +98,7 @@ class UnifiedOrderFactory extends Factory
     /**
      * Indicate that the order has an external ID.
      */
-    public function withExternalId(string $externalId = null): static
+    public function withExternalId(?string $externalId = null): static
     {
         return $this->state(fn (array $attributes) => [
             'external_id' => $externalId ?? $this->faker->uuid(),

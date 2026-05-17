@@ -37,7 +37,7 @@ it('has sync logs relationship', function () {
     $order = UnifiedOrder::factory()->create();
     $logs = OrderSyncLog::factory()->count(2)->create([
         'resource_type' => 'order',
-        'resource_id' => $order->id,
+        'resource_id'   => $order->id,
     ]);
 
     $order->refresh();
@@ -51,9 +51,9 @@ it('calculates profitability correctly', function () {
 
     UnifiedOrderItem::factory()->create([
         'unified_order_id' => $order->id,
-        'price' => 500.00,
-        'quantity' => 2,
-        'cost_basis' => 300.00,
+        'price'            => 500.00,
+        'quantity'         => 2,
+        'cost_basis'       => 300.00,
     ]);
 
     $profitability = $order->calculateProfitability();
@@ -121,7 +121,7 @@ it('scopes orders by customer', function () {
 });
 
 it('has fillable attributes', function () {
-    $order = new UnifiedOrder();
+    $order = new UnifiedOrder;
 
     expect($order->getFillable())->toBeArray()
         ->and($order->getFillable())->toContain('order_number', 'channel_id', 'status', 'total_amount');
@@ -129,8 +129,8 @@ it('has fillable attributes', function () {
 
 it('casts attributes correctly', function () {
     $order = UnifiedOrder::factory()->create([
-        'order_date' => '2024-01-15 10:00:00',
-        'total_amount' => '1234.56',
+        'order_date'      => '2024-01-15 10:00:00',
+        'total_amount'    => '1234.56',
         'additional_data' => ['key' => 'value'],
     ]);
 

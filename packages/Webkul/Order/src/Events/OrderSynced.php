@@ -41,9 +41,6 @@ class OrderSynced
     /**
      * Create a new event instance.
      *
-     * @param  Order  $order
-     * @param  OrderSyncLog  $syncLog
-     * @param  bool  $isNew
      * @return void
      */
     public function __construct(Order $order, OrderSyncLog $syncLog, bool $isNew = true)

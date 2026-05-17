@@ -7,8 +7,6 @@ namespace Webkul\Order\ValueObjects;
  *
  * Value object representing profitability analysis for a single order item.
  * Contains unit-level revenue, cost, profit, and margin calculations.
- *
- * @package Webkul\Order\ValueObjects
  */
 readonly class ItemProfitability
 {
@@ -41,8 +39,6 @@ readonly class ItemProfitability
 
     /**
      * Check if this item is profitable.
-     *
-     * @return bool
      */
     public function isProfitable(): bool
     {
@@ -51,8 +47,6 @@ readonly class ItemProfitability
 
     /**
      * Get profit per unit.
-     *
-     * @return float
      */
     public function getProfitPerUnit(): float
     {
@@ -61,8 +55,6 @@ readonly class ItemProfitability
 
     /**
      * Get markup percentage (profit / cost * 100).
-     *
-     * @return float
      */
     public function getMarkupPercentage(): float
     {
@@ -71,32 +63,28 @@ readonly class ItemProfitability
 
     /**
      * Convert to array representation.
-     *
-     * @return array
      */
     public function toArray(): array
     {
         return [
-            'product_id' => $this->productId,
-            'product_name' => $this->productName,
-            'product_sku' => $this->productSku,
-            'quantity' => $this->quantity,
-            'unit_price' => $this->unitPrice,
-            'revenue' => $this->revenue,
-            'unit_cost' => $this->unitCost,
-            'cost_basis' => $this->costBasis,
-            'profit' => $this->profit,
+            'product_id'        => $this->productId,
+            'product_name'      => $this->productName,
+            'product_sku'       => $this->productSku,
+            'quantity'          => $this->quantity,
+            'unit_price'        => $this->unitPrice,
+            'revenue'           => $this->revenue,
+            'unit_cost'         => $this->unitCost,
+            'cost_basis'        => $this->costBasis,
+            'profit'            => $this->profit,
             'margin_percentage' => $this->marginPercentage,
-            'profit_per_unit' => $this->getProfitPerUnit(),
+            'profit_per_unit'   => $this->getProfitPerUnit(),
             'markup_percentage' => $this->getMarkupPercentage(),
-            'is_profitable' => $this->isProfitable(),
+            'is_profitable'     => $this->isProfitable(),
         ];
     }
 
     /**
      * Convert to JSON representation.
-     *
-     * @return string
      */
     public function toJson(): string
     {

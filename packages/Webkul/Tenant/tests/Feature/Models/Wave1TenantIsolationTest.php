@@ -46,22 +46,22 @@ it('isolates products between tenants', function () {
 
     core()->setCurrentTenantId($this->tenantA->id);
     DB::table('products')->insert([
-        'sku'                => 'prod-a-'.uniqid(),
-        'type'               => 'simple',
+        'sku'                 => 'prod-a-'.uniqid(),
+        'type'                => 'simple',
         'attribute_family_id' => $familyA,
-        'tenant_id'          => $this->tenantA->id,
-        'created_at'         => now(),
-        'updated_at'         => now(),
+        'tenant_id'           => $this->tenantA->id,
+        'created_at'          => now(),
+        'updated_at'          => now(),
     ]);
 
     core()->setCurrentTenantId($this->tenantB->id);
     DB::table('products')->insert([
-        'sku'                => 'prod-b-'.uniqid(),
-        'type'               => 'simple',
+        'sku'                 => 'prod-b-'.uniqid(),
+        'type'                => 'simple',
         'attribute_family_id' => $familyB,
-        'tenant_id'          => $this->tenantB->id,
-        'created_at'         => now(),
-        'updated_at'         => now(),
+        'tenant_id'           => $this->tenantB->id,
+        'created_at'          => now(),
+        'updated_at'          => now(),
     ]);
 
     // Tenant A sees only its product
@@ -84,20 +84,20 @@ it('isolates products between tenants', function () {
 it('isolates categories between tenants', function () {
     core()->setCurrentTenantId($this->tenantA->id);
     DB::table('categories')->insert([
-        'code'      => 'cat-a-'.uniqid(),
-        'tenant_id' => $this->tenantA->id,
-        '_lft'      => 1,
-        '_rgt'      => 2,
+        'code'       => 'cat-a-'.uniqid(),
+        'tenant_id'  => $this->tenantA->id,
+        '_lft'       => 1,
+        '_rgt'       => 2,
         'created_at' => now(),
         'updated_at' => now(),
     ]);
 
     core()->setCurrentTenantId($this->tenantB->id);
     DB::table('categories')->insert([
-        'code'      => 'cat-b-'.uniqid(),
-        'tenant_id' => $this->tenantB->id,
-        '_lft'      => 1,
-        '_rgt'      => 2,
+        'code'       => 'cat-b-'.uniqid(),
+        'tenant_id'  => $this->tenantB->id,
+        '_lft'       => 1,
+        '_rgt'       => 2,
         'created_at' => now(),
         'updated_at' => now(),
     ]);
@@ -125,18 +125,18 @@ it('returns getScopeAttributes with tenant_id for nested set', function () {
 it('isolates attributes between tenants', function () {
     core()->setCurrentTenantId($this->tenantA->id);
     DB::table('attributes')->insert([
-        'code'      => 'attr-a-'.uniqid(),
-        'type'      => 'text',
-        'tenant_id' => $this->tenantA->id,
+        'code'       => 'attr-a-'.uniqid(),
+        'type'       => 'text',
+        'tenant_id'  => $this->tenantA->id,
         'created_at' => now(),
         'updated_at' => now(),
     ]);
 
     core()->setCurrentTenantId($this->tenantB->id);
     DB::table('attributes')->insert([
-        'code'      => 'attr-b-'.uniqid(),
-        'type'      => 'text',
-        'tenant_id' => $this->tenantB->id,
+        'code'       => 'attr-b-'.uniqid(),
+        'type'       => 'text',
+        'tenant_id'  => $this->tenantB->id,
         'created_at' => now(),
         'updated_at' => now(),
     ]);
@@ -156,16 +156,16 @@ it('isolates attributes between tenants', function () {
 it('isolates channels between tenants', function () {
     core()->setCurrentTenantId($this->tenantA->id);
     DB::table('channels')->insert([
-        'code'      => 'ch-a-'.uniqid(),
-        'tenant_id' => $this->tenantA->id,
+        'code'       => 'ch-a-'.uniqid(),
+        'tenant_id'  => $this->tenantA->id,
         'created_at' => now(),
         'updated_at' => now(),
     ]);
 
     core()->setCurrentTenantId($this->tenantB->id);
     DB::table('channels')->insert([
-        'code'      => 'ch-b-'.uniqid(),
-        'tenant_id' => $this->tenantB->id,
+        'code'       => 'ch-b-'.uniqid(),
+        'tenant_id'  => $this->tenantB->id,
         'created_at' => now(),
         'updated_at' => now(),
     ]);
@@ -188,24 +188,24 @@ it('isolates admins between tenants', function () {
 
     core()->setCurrentTenantId($this->tenantA->id);
     DB::table('admins')->insert([
-        'name'      => 'Admin A',
-        'email'     => 'admin-a-'.uniqid().'@test.com',
-        'password'  => bcrypt('password'),
-        'role_id'   => $roleA,
-        'status'    => 1,
-        'tenant_id' => $this->tenantA->id,
+        'name'       => 'Admin A',
+        'email'      => 'admin-a-'.uniqid().'@test.com',
+        'password'   => bcrypt('password'),
+        'role_id'    => $roleA,
+        'status'     => 1,
+        'tenant_id'  => $this->tenantA->id,
         'created_at' => now(),
         'updated_at' => now(),
     ]);
 
     core()->setCurrentTenantId($this->tenantB->id);
     DB::table('admins')->insert([
-        'name'      => 'Admin B',
-        'email'     => 'admin-b-'.uniqid().'@test.com',
-        'password'  => bcrypt('password'),
-        'role_id'   => $roleB,
-        'status'    => 1,
-        'tenant_id' => $this->tenantB->id,
+        'name'       => 'Admin B',
+        'email'      => 'admin-b-'.uniqid().'@test.com',
+        'password'   => bcrypt('password'),
+        'role_id'    => $roleB,
+        'status'     => 1,
+        'tenant_id'  => $this->tenantB->id,
         'created_at' => now(),
         'updated_at' => now(),
     ]);
@@ -225,12 +225,12 @@ it('treats NULL tenant_id admin as Platform Operator visible to all tenants', fu
 
     // Platform operator: NULL tenant_id (Decision D4)
     DB::table('admins')->insert([
-        'name'      => 'Platform Operator',
-        'email'     => 'platform-'.uniqid().'@test.com',
-        'password'  => bcrypt('password'),
-        'role_id'   => $role,
-        'status'    => 1,
-        'tenant_id' => null,
+        'name'       => 'Platform Operator',
+        'email'      => 'platform-'.uniqid().'@test.com',
+        'password'   => bcrypt('password'),
+        'role_id'    => $role,
+        'status'     => 1,
+        'tenant_id'  => null,
         'created_at' => now(),
         'updated_at' => now(),
     ]);
@@ -238,12 +238,12 @@ it('treats NULL tenant_id admin as Platform Operator visible to all tenants', fu
     // Tenant-scoped admin
     core()->setCurrentTenantId($this->tenantA->id);
     DB::table('admins')->insert([
-        'name'      => 'Tenant Admin',
-        'email'     => 'tenant-'.uniqid().'@test.com',
-        'password'  => bcrypt('password'),
-        'role_id'   => $role,
-        'status'    => 1,
-        'tenant_id' => $this->tenantA->id,
+        'name'       => 'Tenant Admin',
+        'email'      => 'tenant-'.uniqid().'@test.com',
+        'password'   => bcrypt('password'),
+        'role_id'    => $role,
+        'status'     => 1,
+        'tenant_id'  => $this->tenantA->id,
         'created_at' => now(),
         'updated_at' => now(),
     ]);
@@ -266,8 +266,8 @@ it('auto-sets tenant_id on Product creation from context', function () {
 
     core()->setCurrentTenantId($this->tenantA->id);
     $product = Product::create([
-        'sku'                => 'auto-'.uniqid(),
-        'type'               => 'simple',
+        'sku'                 => 'auto-'.uniqid(),
+        'type'                => 'simple',
         'attribute_family_id' => $family,
     ]);
 

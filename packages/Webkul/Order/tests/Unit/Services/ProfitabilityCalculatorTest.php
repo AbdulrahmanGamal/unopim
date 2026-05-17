@@ -60,16 +60,16 @@ it('calculates item profitability breakdown', function () {
 
     UnifiedOrderItem::factory()->create([
         'unified_order_id' => $order->id,
-        'price' => 500.00,
-        'quantity' => 2,
-        'cost_basis' => 300.00,
+        'price'            => 500.00,
+        'quantity'         => 2,
+        'cost_basis'       => 300.00,
     ]);
 
     UnifiedOrderItem::factory()->create([
         'unified_order_id' => $order->id,
-        'price' => 250.00,
-        'quantity' => 2,
-        'cost_basis' => 150.00,
+        'price'            => 250.00,
+        'quantity'         => 2,
+        'cost_basis'       => 150.00,
     ]);
 
     $result = $this->calculator->calculateItemProfitabilityBreakdown($order->id);
@@ -106,9 +106,9 @@ it('handles orders without cost basis', function () {
 
     UnifiedOrderItem::factory()->create([
         'unified_order_id' => $order->id,
-        'price' => 1000.00,
-        'quantity' => 1,
-        'cost_basis' => null,
+        'price'            => 1000.00,
+        'quantity'         => 1,
+        'cost_basis'       => null,
     ]);
 
     $result = $this->calculator->calculateOrderProfitability($order->id);

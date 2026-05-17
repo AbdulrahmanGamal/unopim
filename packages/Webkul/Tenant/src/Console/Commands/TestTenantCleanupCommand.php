@@ -3,9 +3,9 @@
 namespace Webkul\Tenant\Console\Commands;
 
 use Illuminate\Console\Command;
-use Webkul\Tenant\Models\Tenant;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
+use Webkul\Tenant\Models\Tenant;
 
 class TestTenantCleanupCommand extends Command
 {
@@ -28,14 +28,13 @@ class TestTenantCleanupCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
     public function handle(): int
     {
-        if (!$this->option('force')) {
-            if (!$this->confirm('Are you sure you want to clean up test tenant data? This action cannot be undone.')) {
+        if (! $this->option('force')) {
+            if (! $this->confirm('Are you sure you want to clean up test tenant data? This action cannot be undone.')) {
                 $this->info('Cleanup cancelled.');
+
                 return 0;
             }
         }
@@ -50,17 +49,18 @@ class TestTenantCleanupCommand extends Command
 
         if ($tenants->isEmpty()) {
             $this->info('No test tenants found matching the criteria.');
+
             return 0;
         }
 
         $this->info("Found {$tenants->count()} tenant(s) to clean up:");
-        $tenants->each(fn($tenant) =>
-            $this->line("- {$tenant->name} (ID: {$tenant->id}, Status: {$tenant->status})")
+        $tenants->each(fn ($tenant) => $this->line("- {$tenant->name} (ID: {$tenant->id}, Status: {$tenant->status})")
         );
 
-        if (!$this->option('force')) {
-            if (!$this->confirm('Proceed with cleanup?')) {
+        if (! $this->option('force')) {
+            if (! $this->confirm('Proceed with cleanup?')) {
                 $this->info('Cleanup cancelled.');
+
                 return 0;
             }
         }
@@ -85,7 +85,7 @@ class TestTenantCleanupCommand extends Command
         $this->line('');
         $this->info("Cleanup complete: {$cleanedCount} tenant(s) cleaned.");
 
-        if (!empty($errors)) {
+        if (! empty($errors)) {
             $this->warn('Some errors occurred during cleanup:');
             foreach ($errors as $error) {
                 $this->line($error);
@@ -97,9 +97,6 @@ class TestTenantCleanupCommand extends Command
 
     /**
      * Clean up tenant data.
-     *
-     * @param Tenant $tenant
-     * @return void
      */
     protected function cleanTenantData(Tenant $tenant): void
     {
@@ -115,16 +112,13 @@ class TestTenantCleanupCommand extends Command
 
     /**
      * Clean up tenant database.
-     *
-     * @param Tenant $tenant
-     * @return void
      */
     protected function cleanTenantDatabase(Tenant $tenant): void
     {
         $connectionName = "tenant_{$tenant->id}";
         $databaseName = config("database.connections.{$connectionName}.database");
 
-        if (!config("database.connections.{$connectionName}")) {
+        if (! config("database.connections.{$connectionName}")) {
             return;
         }
 
@@ -144,9 +138,6 @@ class TestTenantCleanupCommand extends Command
 
     /**
      * Clean up tenant storage.
-     *
-     * @param Tenant $tenant
-     * @return void
      */
     protected function cleanTenantStorage(Tenant $tenant): void
     {

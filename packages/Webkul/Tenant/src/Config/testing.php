@@ -74,10 +74,10 @@ return [
     |
     */
     'helpers' => [
-        'auto_setup' => env('TENANT_TESTING_AUTO_SETUP', true),
-        'auto_cleanup' => env('TENANT_TESTING_AUTO_CLEANUP', true),
+        'auto_setup'          => env('TENANT_TESTING_AUTO_SETUP', true),
+        'auto_cleanup'        => env('TENANT_TESTING_AUTO_CLEANUP', true),
         'database_assertions' => env('TENANT_TESTING_DB_ASSERTIONS', true),
-        'storage_assertions' => env('TENANT_TESTING_STORAGE_ASSERTIONS', true),
+        'storage_assertions'  => env('TENANT_TESTING_STORAGE_ASSERTIONS', true),
     ],
 
     /*
@@ -126,8 +126,8 @@ return [
     |
     */
     'settings' => [
-        'environment' => 'testing',
-        'debug' => true,
+        'environment'  => 'testing',
+        'debug'        => true,
         'cache_driver' => 'array',
         'queue_driver' => 'sync',
     ],

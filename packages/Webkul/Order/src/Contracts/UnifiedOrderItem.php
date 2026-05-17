@@ -2,6 +2,4 @@
 
 namespace Webkul\Order\Contracts;
 
-interface UnifiedOrderItem
-{
-}
+interface UnifiedOrderItem {}

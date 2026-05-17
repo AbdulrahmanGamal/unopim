@@ -28,16 +28,16 @@ beforeEach(function () {
 it('audits all BelongsToTenant models for cross-tenant leakage', function () {
     $modelsToAudit = [
         \Webkul\Product\Models\Product::class => [
-            'sku' => 'AUDIT-'.uniqid(), 'type' => 'simple',
+            'sku'                 => 'AUDIT-'.uniqid(), 'type' => 'simple',
             'attribute_family_id' => $this->fixture($this->tenantA, 'family_id'),
-            'created_at' => now(), 'updated_at' => now(),
+            'created_at'          => now(), 'updated_at' => now(),
         ],
         \Webkul\Category\Models\Category::class => [
-            'code' => 'audit-cat-'.uniqid(), '_lft' => 100, '_rgt' => 101,
+            'code'       => 'audit-cat-'.uniqid(), '_lft' => 100, '_rgt' => 101,
             'created_at' => now(), 'updated_at' => now(),
         ],
         \Webkul\Attribute\Models\Attribute::class => [
-            'code' => 'audit-attr-'.uniqid(), 'type' => 'text',
+            'code'       => 'audit-attr-'.uniqid(), 'type' => 'text',
             'created_at' => now(), 'updated_at' => now(),
         ],
         // attribute_families has NO timestamps columns
@@ -45,11 +45,11 @@ it('audits all BelongsToTenant models for cross-tenant leakage', function () {
             'code' => 'audit-fam-'.uniqid(),
         ],
         \Webkul\Core\Models\Currency::class => [
-            'code' => strtoupper(substr(uniqid(), 0, 3)), 'symbol' => '?',
+            'code'       => strtoupper(substr(uniqid(), 0, 3)), 'symbol' => '?',
             'created_at' => now(), 'updated_at' => now(),
         ],
         \Webkul\User\Models\Role::class => [
-            'name' => 'Audit Role', 'description' => 'test', 'permission_type' => 'all',
+            'name'       => 'Audit Role', 'description' => 'test', 'permission_type' => 'all',
             'created_at' => now(), 'updated_at' => now(),
         ],
     ];
@@ -252,14 +252,14 @@ it('allows platform operator (null context) to see all tenant data', function ()
     $familyB = $this->fixture($this->tenantB, 'family_id');
 
     DB::table('products')->insert([
-        'sku' => 'PLAT-A-1', 'type' => 'simple',
+        'sku'                 => 'PLAT-A-1', 'type' => 'simple',
         'attribute_family_id' => $familyA,
-        'tenant_id' => $this->tenantA->id, 'created_at' => now(), 'updated_at' => now(),
+        'tenant_id'           => $this->tenantA->id, 'created_at' => now(), 'updated_at' => now(),
     ]);
     DB::table('products')->insert([
-        'sku' => 'PLAT-B-1', 'type' => 'simple',
+        'sku'                 => 'PLAT-B-1', 'type' => 'simple',
         'attribute_family_id' => $familyB,
-        'tenant_id' => $this->tenantB->id, 'created_at' => now(), 'updated_at' => now(),
+        'tenant_id'           => $this->tenantB->id, 'created_at' => now(), 'updated_at' => now(),
     ]);
 
     core()->setCurrentTenantId(null);
@@ -279,21 +279,21 @@ it('allows platform operator (null context) to see all tenant data', function ()
 it('isolates category nested set trees per tenant', function () {
     core()->setCurrentTenantId($this->tenantA->id);
     $rootAId = DB::table('categories')->insertGetId([
-        'code' => 'tree-root-a', 'parent_id' => null, '_lft' => 200, '_rgt' => 203,
+        'code'      => 'tree-root-a', 'parent_id' => null, '_lft' => 200, '_rgt' => 203,
         'tenant_id' => $this->tenantA->id, 'created_at' => now(), 'updated_at' => now(),
     ]);
     DB::table('categories')->insert([
-        'code' => 'tree-child-a', 'parent_id' => $rootAId, '_lft' => 201, '_rgt' => 202,
+        'code'      => 'tree-child-a', 'parent_id' => $rootAId, '_lft' => 201, '_rgt' => 202,
         'tenant_id' => $this->tenantA->id, 'created_at' => now(), 'updated_at' => now(),
     ]);
 
     core()->setCurrentTenantId($this->tenantB->id);
     $rootBId = DB::table('categories')->insertGetId([
-        'code' => 'tree-root-b', 'parent_id' => null, '_lft' => 200, '_rgt' => 203,
+        'code'      => 'tree-root-b', 'parent_id' => null, '_lft' => 200, '_rgt' => 203,
         'tenant_id' => $this->tenantB->id, 'created_at' => now(), 'updated_at' => now(),
     ]);
     DB::table('categories')->insert([
-        'code' => 'tree-child-b', 'parent_id' => $rootBId, '_lft' => 201, '_rgt' => 202,
+        'code'      => 'tree-child-b', 'parent_id' => $rootBId, '_lft' => 201, '_rgt' => 202,
         'tenant_id' => $this->tenantB->id, 'created_at' => now(), 'updated_at' => now(),
     ]);
 
@@ -339,9 +339,9 @@ it('blocks tenant admin from accessing other tenants products via scope', functi
 
     core()->setCurrentTenantId($this->tenantA->id);
     $productId = DB::table('products')->insertGetId([
-        'sku' => 'BLOCK-TEST-001', 'type' => 'simple',
+        'sku'                 => 'BLOCK-TEST-001', 'type' => 'simple',
         'attribute_family_id' => $familyA,
-        'tenant_id' => $this->tenantA->id, 'created_at' => now(), 'updated_at' => now(),
+        'tenant_id'           => $this->tenantA->id, 'created_at' => now(), 'updated_at' => now(),
     ]);
 
     core()->setCurrentTenantId($this->tenantB->id);
@@ -389,9 +389,9 @@ it('verifies TenantPurger removes all data after deletion', function () {
 
     core()->setCurrentTenantId($tenant->id);
     DB::table('products')->insert([
-        'sku' => 'PURGE-PROD-1', 'type' => 'simple',
+        'sku'                 => 'PURGE-PROD-1', 'type' => 'simple',
         'attribute_family_id' => $result['family_id'],
-        'tenant_id' => $tenant->id, 'created_at' => now(), 'updated_at' => now(),
+        'tenant_id'           => $tenant->id, 'created_at' => now(), 'updated_at' => now(),
     ]);
 
     $purger = app(TenantPurger::class);

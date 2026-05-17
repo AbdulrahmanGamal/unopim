@@ -18,19 +18,19 @@ class UnifiedOrderItemFactory extends Factory
         $costBasis = $this->faker->randomFloat(2, $price * 0.4, $price * 0.8);
 
         return [
-            'tenant_id' => 1,
+            'tenant_id'        => 1,
             'unified_order_id' => UnifiedOrder::factory(),
-            'product_id' => Product::factory(),
-            'sku' => 'SKU-' . $this->faker->unique()->numberBetween(1000, 9999),
-            'name' => $this->faker->words(3, true),
-            'price' => $price,
-            'quantity' => $quantity,
-            'cost_basis' => $costBasis,
-            'tax_amount' => $price * $quantity * 0.1,
-            'discount_amount' => $this->faker->optional()->randomFloat(2, 0, $price * $quantity * 0.2),
-            'additional_data' => [],
-            'created_at' => now(),
-            'updated_at' => now(),
+            'product_id'       => Product::factory(),
+            'sku'              => 'SKU-'.$this->faker->unique()->numberBetween(1000, 9999),
+            'name'             => $this->faker->words(3, true),
+            'price'            => $price,
+            'quantity'         => $quantity,
+            'cost_basis'       => $costBasis,
+            'tax_amount'       => $price * $quantity * 0.1,
+            'discount_amount'  => $this->faker->optional()->randomFloat(2, 0, $price * $quantity * 0.2),
+            'additional_data'  => [],
+            'created_at'       => now(),
+            'updated_at'       => now(),
         ];
     }
 
@@ -51,6 +51,7 @@ class UnifiedOrderItemFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             $price = $attributes['price'];
+
             return [
                 'cost_basis' => $price * 0.3, // 70% margin
             ];
@@ -64,6 +65,7 @@ class UnifiedOrderItemFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             $price = $attributes['price'];
+
             return [
                 'cost_basis' => $price * 0.9, // 10% margin
             ];
@@ -103,7 +105,7 @@ class UnifiedOrderItemFactory extends Factory
     /**
      * Indicate that the item has a discount.
      */
-    public function withDiscount(float $percentage = null): static
+    public function withDiscount(?float $percentage = null): static
     {
         return $this->state(function (array $attributes) use ($percentage) {
             $price = $attributes['price'];

@@ -39,9 +39,6 @@ class WebhookReceived
     /**
      * Create a new event instance.
      *
-     * @param  string  $channelCode
-     * @param  array  $payload
-     * @param  string|null  $eventType
      * @return void
      */
     public function __construct(string $channelCode, array $payload, ?string $eventType = null)

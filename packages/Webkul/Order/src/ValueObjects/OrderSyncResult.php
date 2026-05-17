@@ -9,8 +9,6 @@ use Carbon\Carbon;
  *
  * Value object representing the result of an order synchronization operation.
  * Contains statistics about synced/failed orders and error details.
- *
- * @package Webkul\Order\ValueObjects
  */
 readonly class OrderSyncResult
 {
@@ -39,8 +37,6 @@ readonly class OrderSyncResult
 
     /**
      * Get duration of sync operation in seconds.
-     *
-     * @return int
      */
     public function getDuration(): int
     {
@@ -49,8 +45,6 @@ readonly class OrderSyncResult
 
     /**
      * Get success rate as percentage.
-     *
-     * @return float
      */
     public function getSuccessRate(): float
     {
@@ -63,8 +57,6 @@ readonly class OrderSyncResult
 
     /**
      * Check if there were any errors.
-     *
-     * @return bool
      */
     public function hasErrors(): bool
     {
@@ -73,29 +65,25 @@ readonly class OrderSyncResult
 
     /**
      * Convert to array representation.
-     *
-     * @return array
      */
     public function toArray(): array
     {
         return [
-            'success' => $this->success,
-            'synced_count' => $this->syncedCount,
-            'failed_count' => $this->failedCount,
-            'total_processed' => $this->totalProcessed,
-            'success_rate' => $this->getSuccessRate(),
+            'success'          => $this->success,
+            'synced_count'     => $this->syncedCount,
+            'failed_count'     => $this->failedCount,
+            'total_processed'  => $this->totalProcessed,
+            'success_rate'     => $this->getSuccessRate(),
             'duration_seconds' => $this->getDuration(),
-            'errors' => $this->errors,
-            'sync_log_id' => $this->syncLogId,
-            'started_at' => $this->startedAt->toIso8601String(),
-            'completed_at' => $this->completedAt->toIso8601String(),
+            'errors'           => $this->errors,
+            'sync_log_id'      => $this->syncLogId,
+            'started_at'       => $this->startedAt->toIso8601String(),
+            'completed_at'     => $this->completedAt->toIso8601String(),
         ];
     }
 
     /**
      * Convert to JSON representation.
-     *
-     * @return string
      */
     public function toJson(): string
     {

@@ -13,8 +13,6 @@ class OrderUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     *
-     * @return bool
      */
     public function authorize(): bool
     {
@@ -23,8 +21,6 @@ class OrderUpdateRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array
      */
     public function rules(): array
     {
@@ -45,26 +41,22 @@ class OrderUpdateRequest extends FormRequest
 
     /**
      * Get custom attributes for validator errors.
-     *
-     * @return array
      */
     public function attributes(): array
     {
         return [
-            'status' => trans('order::app.admin.orders.fields.status'),
+            'status'      => trans('order::app.admin.orders.fields.status'),
             'admin_notes' => trans('order::app.admin.orders.fields.admin-notes'),
         ];
     }
 
     /**
      * Get custom messages for validator errors.
-     *
-     * @return array
      */
     public function messages(): array
     {
         return [
-            'status.in' => trans('order::app.admin.orders.validation.invalid-status'),
+            'status.in'       => trans('order::app.admin.orders.validation.invalid-status'),
             'admin_notes.max' => trans('order::app.admin.orders.validation.notes-too-long'),
         ];
     }

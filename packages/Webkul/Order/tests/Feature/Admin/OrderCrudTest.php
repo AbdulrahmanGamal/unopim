@@ -1,7 +1,6 @@
 <?php
 
 use Webkul\Order\Models\UnifiedOrder;
-use Webkul\Order\Models\UnifiedOrderItem;
 
 beforeEach(function () {
     $this->admin = $this->createAdminWithOrderPermissions();
@@ -42,7 +41,7 @@ it('can update order status', function () {
     $order = UnifiedOrder::factory()->create(['status' => 'pending']);
 
     $response = $this->put(route('admin.order.orders.update', $order->id), [
-        'status' => 'processing',
+        'status'         => 'processing',
         'internal_notes' => 'Updated to processing',
     ]);
 
@@ -90,7 +89,7 @@ it('can mass update order statuses', function () {
 
     $response = $this->post(route('admin.order.orders.mass-update'), [
         'indices' => $orders->pluck('id')->toArray(),
-        'status' => 'processing',
+        'status'  => 'processing',
     ]);
 
     $response->assertRedirect()
@@ -143,7 +142,7 @@ it('can filter orders by channel', function () {
 it('can filter orders by date range', function () {
     $response = $this->get(route('admin.order.orders.index', [
         'date_from' => now()->subDays(7)->format('Y-m-d'),
-        'date_to' => now()->format('Y-m-d'),
+        'date_to'   => now()->format('Y-m-d'),
     ]));
 
     $response->assertStatus(200);

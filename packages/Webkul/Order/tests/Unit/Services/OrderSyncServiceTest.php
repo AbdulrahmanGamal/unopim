@@ -3,8 +3,8 @@
 use Webkul\Channel\Models\Channel;
 use Webkul\Order\Models\OrderSyncLog;
 use Webkul\Order\Models\UnifiedOrder;
-use Webkul\Order\Services\OrderSyncService;
 use Webkul\Order\Services\Adapters\SallaOrderAdapter;
+use Webkul\Order\Services\OrderSyncService;
 
 beforeEach(function () {
     $this->service = app(OrderSyncService::class);
@@ -26,15 +26,15 @@ it('creates sync log before syncing', function () {
 it('syncs orders from channel adapter successfully', function () {
     $mockOrders = [
         [
-            'order_number' => 'ORD-001',
-            'status' => 'completed',
-            'total_amount' => 100.00,
+            'order_number'   => 'ORD-001',
+            'status'         => 'completed',
+            'total_amount'   => 100.00,
             'customer_email' => 'test@example.com',
         ],
         [
-            'order_number' => 'ORD-002',
-            'status' => 'pending',
-            'total_amount' => 200.00,
+            'order_number'   => 'ORD-002',
+            'status'         => 'pending',
+            'total_amount'   => 200.00,
             'customer_email' => 'test2@example.com',
         ],
     ];
@@ -69,15 +69,15 @@ it('handles sync failures gracefully', function () {
 it('updates existing orders instead of creating duplicates', function () {
     // Create existing order
     $existingOrder = UnifiedOrder::factory()->create([
-        'channel_id' => $this->channel->id,
+        'channel_id'  => $this->channel->id,
         'external_id' => 'EXT-123',
-        'status' => 'pending',
+        'status'      => 'pending',
     ]);
 
     $mockOrders = [
         [
-            'external_id' => 'EXT-123',
-            'status' => 'completed',
+            'external_id'  => 'EXT-123',
+            'status'       => 'completed',
             'total_amount' => 150.00,
         ],
     ];
@@ -124,8 +124,8 @@ it('marks sync log as completed after successful sync', function () {
 
 it('tracks sync statistics', function () {
     $mockOrders = array_fill(0, 15, [
-        'order_number' => 'ORD-' . rand(1000, 9999),
-        'status' => 'completed',
+        'order_number' => 'ORD-'.rand(1000, 9999),
+        'status'       => 'completed',
         'total_amount' => 100.00,
     ]);
 
@@ -147,7 +147,7 @@ it('validates channel exists before syncing', function () {
 
 it('supports retry mechanism for failed syncs', function () {
     $log = OrderSyncLog::factory()->create([
-        'status' => 'failed',
+        'status'     => 'failed',
         'channel_id' => $this->channel->id,
     ]);
 

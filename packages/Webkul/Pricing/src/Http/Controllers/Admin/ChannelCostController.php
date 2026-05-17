@@ -3,7 +3,6 @@
 namespace Webkul\Pricing\Http\Controllers\Admin;
 
 use Illuminate\Routing\Controller;
-use Webkul\Pricing\Events\CostUpdated;
 use Webkul\Pricing\Http\Requests\ChannelCostRequest;
 use Webkul\Pricing\Repositories\ChannelCostRepository;
 

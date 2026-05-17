@@ -62,46 +62,46 @@ class OrderDataGrid extends DataGrid
     public function prepareColumns()
     {
         $this->addColumn([
-            'index' => 'order_number',
-            'label' => trans('order::app.admin.datagrid.order-number'),
-            'type' => 'string',
+            'index'      => 'order_number',
+            'label'      => trans('order::app.admin.datagrid.order-number'),
+            'type'       => 'string',
             'searchable' => true,
             'filterable' => true,
-            'sortable' => true,
+            'sortable'   => true,
         ]);
 
         $this->addColumn([
-            'index' => 'channel_name',
-            'label' => trans('order::app.admin.datagrid.channel'),
-            'type' => 'string',
+            'index'      => 'channel_name',
+            'label'      => trans('order::app.admin.datagrid.channel'),
+            'type'       => 'string',
             'searchable' => true,
             'filterable' => true,
-            'sortable' => true,
+            'sortable'   => true,
         ]);
 
         $this->addColumn([
-            'index' => 'customer_email',
-            'label' => trans('order::app.admin.datagrid.customer-email'),
-            'type' => 'string',
+            'index'      => 'customer_email',
+            'label'      => trans('order::app.admin.datagrid.customer-email'),
+            'type'       => 'string',
             'searchable' => true,
             'filterable' => true,
-            'sortable' => true,
+            'sortable'   => true,
         ]);
 
         $this->addColumn([
-            'index' => 'status',
-            'label' => trans('order::app.admin.datagrid.status'),
-            'type' => 'string',
+            'index'      => 'status',
+            'label'      => trans('order::app.admin.datagrid.status'),
+            'type'       => 'string',
             'searchable' => false,
             'filterable' => true,
-            'sortable' => true,
-            'closure' => function ($row) {
+            'sortable'   => true,
+            'closure'    => function ($row) {
                 $statusLabels = [
-                    'pending' => '<span class="badge badge-warning">' . trans('order::app.admin.status.pending') . '</span>',
-                    'processing' => '<span class="badge badge-info">' . trans('order::app.admin.status.processing') . '</span>',
-                    'completed' => '<span class="badge badge-success">' . trans('order::app.admin.status.completed') . '</span>',
-                    'cancelled' => '<span class="badge badge-danger">' . trans('order::app.admin.status.cancelled') . '</span>',
-                    'refunded' => '<span class="badge badge-secondary">' . trans('order::app.admin.status.refunded') . '</span>',
+                    'pending'    => '<span class="badge badge-warning">'.trans('order::app.admin.status.pending').'</span>',
+                    'processing' => '<span class="badge badge-info">'.trans('order::app.admin.status.processing').'</span>',
+                    'completed'  => '<span class="badge badge-success">'.trans('order::app.admin.status.completed').'</span>',
+                    'cancelled'  => '<span class="badge badge-danger">'.trans('order::app.admin.status.cancelled').'</span>',
+                    'refunded'   => '<span class="badge badge-secondary">'.trans('order::app.admin.status.refunded').'</span>',
                 ];
 
                 return $statusLabels[$row->status] ?? $row->status;
@@ -109,37 +109,37 @@ class OrderDataGrid extends DataGrid
         ]);
 
         $this->addColumn([
-            'index' => 'total_amount',
-            'label' => trans('order::app.admin.datagrid.total-amount'),
-            'type' => 'number',
+            'index'      => 'total_amount',
+            'label'      => trans('order::app.admin.datagrid.total-amount'),
+            'type'       => 'number',
             'searchable' => false,
             'filterable' => true,
-            'sortable' => true,
-            'closure' => function ($row) {
-                return ($row->currency_code ?? 'USD') . ' ' . number_format($row->total_amount, 2);
+            'sortable'   => true,
+            'closure'    => function ($row) {
+                return ($row->currency_code ?? 'USD').' '.number_format($row->total_amount, 2);
             },
         ]);
 
         $this->addColumn([
-            'index' => 'order_date',
-            'label' => trans('order::app.admin.datagrid.order-date'),
-            'type' => 'datetime',
+            'index'      => 'order_date',
+            'label'      => trans('order::app.admin.datagrid.order-date'),
+            'type'       => 'datetime',
             'searchable' => false,
             'filterable' => true,
-            'sortable' => true,
-            'closure' => function ($row) {
+            'sortable'   => true,
+            'closure'    => function ($row) {
                 return core()->formatDate($row->order_date);
             },
         ]);
 
         $this->addColumn([
-            'index' => 'created_at',
-            'label' => trans('order::app.admin.datagrid.created-at'),
-            'type' => 'datetime',
+            'index'      => 'created_at',
+            'label'      => trans('order::app.admin.datagrid.created-at'),
+            'type'       => 'datetime',
             'searchable' => false,
             'filterable' => true,
-            'sortable' => true,
-            'closure' => function ($row) {
+            'sortable'   => true,
+            'closure'    => function ($row) {
                 return core()->formatDate($row->created_at, 'Y-m-d H:i:s');
             },
         ]);
@@ -154,11 +154,11 @@ class OrderDataGrid extends DataGrid
     {
         if (bouncer()->allows('orders.view')) {
             $this->addAction([
-                'index' => 'view',
-                'icon' => 'icon-eye',
-                'title' => trans('order::app.admin.datagrid.view'),
+                'index'  => 'view',
+                'icon'   => 'icon-eye',
+                'title'  => trans('order::app.admin.datagrid.view'),
                 'method' => 'GET',
-                'url' => function ($row) {
+                'url'    => function ($row) {
                     return route('admin.orders.show', $row->order_id);
                 },
             ]);
@@ -166,11 +166,11 @@ class OrderDataGrid extends DataGrid
 
         if (bouncer()->allows('orders.edit')) {
             $this->addAction([
-                'index' => 'edit',
-                'icon' => 'icon-edit',
-                'title' => trans('order::app.admin.datagrid.edit'),
+                'index'  => 'edit',
+                'icon'   => 'icon-edit',
+                'title'  => trans('order::app.admin.datagrid.edit'),
                 'method' => 'GET',
-                'url' => function ($row) {
+                'url'    => function ($row) {
                     return route('admin.orders.edit', $row->order_id);
                 },
             ]);
@@ -178,11 +178,11 @@ class OrderDataGrid extends DataGrid
 
         if (bouncer()->allows('orders.delete')) {
             $this->addAction([
-                'index' => 'delete',
-                'icon' => 'icon-delete',
-                'title' => trans('order::app.admin.datagrid.delete'),
+                'index'  => 'delete',
+                'icon'   => 'icon-delete',
+                'title'  => trans('order::app.admin.datagrid.delete'),
                 'method' => 'DELETE',
-                'url' => function ($row) {
+                'url'    => function ($row) {
                     return route('admin.orders.destroy', $row->order_id);
                 },
             ]);
@@ -198,10 +198,10 @@ class OrderDataGrid extends DataGrid
     {
         if (bouncer()->allows('orders.edit')) {
             $this->addMassAction([
-                'icon' => 'icon-edit',
-                'title' => trans('order::app.admin.datagrid.update-status'),
-                'method' => 'POST',
-                'url' => route('admin.orders.mass-update'),
+                'icon'    => 'icon-edit',
+                'title'   => trans('order::app.admin.datagrid.update-status'),
+                'method'  => 'POST',
+                'url'     => route('admin.orders.mass-update'),
                 'options' => [
                     [
                         'label' => trans('order::app.admin.status.pending'),
@@ -229,10 +229,10 @@ class OrderDataGrid extends DataGrid
 
         if (bouncer()->allows('orders.view')) {
             $this->addMassAction([
-                'icon' => 'icon-download',
-                'title' => trans('order::app.admin.datagrid.export'),
+                'icon'   => 'icon-download',
+                'title'  => trans('order::app.admin.datagrid.export'),
                 'method' => 'GET',
-                'url' => route('admin.orders.export'),
+                'url'    => route('admin.orders.export'),
             ]);
         }
     }

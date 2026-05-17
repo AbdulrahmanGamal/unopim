@@ -25,7 +25,7 @@ class TestTenantJob implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param mixed $data
+     * @param  mixed  $data
      * @return void
      */
     public function __construct($data)
@@ -36,24 +36,20 @@ class TestTenantJob implements ShouldQueue
 
     /**
      * Execute the job.
-     *
-     * @return array
      */
     public function handle(): array
     {
         // Simulate processing
         return [
-            'status' => 'success',
-            'tenant_id' => $this->tenantId,
-            'data' => $this->data,
+            'status'       => 'success',
+            'tenant_id'    => $this->tenantId,
+            'data'         => $this->data,
             'processed_at' => now()->toIso8601String(),
         ];
     }
 
     /**
      * Get the middleware the job should pass through.
-     *
-     * @return array
      */
     public function middleware(): array
     {
@@ -62,8 +58,6 @@ class TestTenantJob implements ShouldQueue
 
     /**
      * Get the queue that should be used for job dispatching.
-     *
-     * @return string|null
      */
     public function queue(): ?string
     {
@@ -72,9 +66,6 @@ class TestTenantJob implements ShouldQueue
 
     /**
      * The job failed to process.
-     *
-     * @param \Throwable $exception
-     * @return void
      */
     public function failed(\Throwable $exception): void
     {

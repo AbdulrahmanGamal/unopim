@@ -58,45 +58,45 @@ class WebhookDataGrid extends DataGrid
     public function prepareColumns()
     {
         $this->addColumn([
-            'index' => 'name',
-            'label' => trans('order::app.admin.webhooks.datagrid.name'),
-            'type' => 'string',
+            'index'      => 'name',
+            'label'      => trans('order::app.admin.webhooks.datagrid.name'),
+            'type'       => 'string',
             'searchable' => true,
             'filterable' => true,
-            'sortable' => true,
+            'sortable'   => true,
         ]);
 
         $this->addColumn([
-            'index' => 'channel_name',
-            'label' => trans('order::app.admin.webhooks.datagrid.channel'),
-            'type' => 'string',
+            'index'      => 'channel_name',
+            'label'      => trans('order::app.admin.webhooks.datagrid.channel'),
+            'type'       => 'string',
             'searchable' => true,
             'filterable' => true,
-            'sortable' => true,
+            'sortable'   => true,
         ]);
 
         $this->addColumn([
-            'index' => 'endpoint',
-            'label' => trans('order::app.admin.webhooks.datagrid.endpoint'),
-            'type' => 'string',
+            'index'      => 'endpoint',
+            'label'      => trans('order::app.admin.webhooks.datagrid.endpoint'),
+            'type'       => 'string',
             'searchable' => false,
             'filterable' => false,
-            'sortable' => false,
-            'closure' => function ($row) {
-                return '<code>' . e(substr($row->endpoint, 0, 50)) .
-                       (strlen($row->endpoint) > 50 ? '...' : '') .
+            'sortable'   => false,
+            'closure'    => function ($row) {
+                return '<code>'.e(substr($row->endpoint, 0, 50)).
+                       (strlen($row->endpoint) > 50 ? '...' : '').
                        '</code>';
             },
         ]);
 
         $this->addColumn([
-            'index' => 'event_types',
-            'label' => trans('order::app.admin.webhooks.datagrid.events'),
-            'type' => 'string',
+            'index'      => 'event_types',
+            'label'      => trans('order::app.admin.webhooks.datagrid.events'),
+            'type'       => 'string',
             'searchable' => false,
             'filterable' => false,
-            'sortable' => false,
-            'closure' => function ($row) {
+            'sortable'   => false,
+            'closure'    => function ($row) {
                 $events = json_decode($row->event_types, true) ?? [];
                 $count = count($events);
 
@@ -108,7 +108,7 @@ class WebhookDataGrid extends DataGrid
                 $html = implode(', ', array_map('e', $displayed));
 
                 if ($count > 2) {
-                    $html .= ' <span class="text-muted">+' . ($count - 2) . ' more</span>';
+                    $html .= ' <span class="text-muted">+'.($count - 2).' more</span>';
                 }
 
                 return $html;
@@ -116,33 +116,33 @@ class WebhookDataGrid extends DataGrid
         ]);
 
         $this->addColumn([
-            'index' => 'is_active',
-            'label' => trans('order::app.admin.webhooks.datagrid.status'),
-            'type' => 'boolean',
+            'index'      => 'is_active',
+            'label'      => trans('order::app.admin.webhooks.datagrid.status'),
+            'type'       => 'boolean',
             'searchable' => false,
             'filterable' => true,
-            'sortable' => true,
-            'closure' => function ($row) {
+            'sortable'   => true,
+            'closure'    => function ($row) {
                 if ($row->is_active) {
-                    return '<span class="badge badge-success">' .
-                           trans('order::app.admin.webhooks.status.active') .
+                    return '<span class="badge badge-success">'.
+                           trans('order::app.admin.webhooks.status.active').
                            '</span>';
                 }
 
-                return '<span class="badge badge-secondary">' .
-                       trans('order::app.admin.webhooks.status.inactive') .
+                return '<span class="badge badge-secondary">'.
+                       trans('order::app.admin.webhooks.status.inactive').
                        '</span>';
             },
         ]);
 
         $this->addColumn([
-            'index' => 'last_triggered_at',
-            'label' => trans('order::app.admin.webhooks.datagrid.last-triggered'),
-            'type' => 'datetime',
+            'index'      => 'last_triggered_at',
+            'label'      => trans('order::app.admin.webhooks.datagrid.last-triggered'),
+            'type'       => 'datetime',
             'searchable' => false,
             'filterable' => false,
-            'sortable' => true,
-            'closure' => function ($row) {
+            'sortable'   => true,
+            'closure'    => function ($row) {
                 return $row->last_triggered_at
                     ? core()->formatDate($row->last_triggered_at, 'Y-m-d H:i:s')
                     : trans('order::app.admin.webhooks.never');
@@ -150,13 +150,13 @@ class WebhookDataGrid extends DataGrid
         ]);
 
         $this->addColumn([
-            'index' => 'created_at',
-            'label' => trans('order::app.admin.webhooks.datagrid.created-at'),
-            'type' => 'datetime',
+            'index'      => 'created_at',
+            'label'      => trans('order::app.admin.webhooks.datagrid.created-at'),
+            'type'       => 'datetime',
             'searchable' => false,
             'filterable' => true,
-            'sortable' => true,
-            'closure' => function ($row) {
+            'sortable'   => true,
+            'closure'    => function ($row) {
                 return core()->formatDate($row->created_at, 'Y-m-d H:i:s');
             },
         ]);
@@ -171,21 +171,21 @@ class WebhookDataGrid extends DataGrid
     {
         if (bouncer()->allows('orders.webhooks.edit')) {
             $this->addAction([
-                'index' => 'edit',
-                'icon' => 'icon-edit',
-                'title' => trans('order::app.admin.webhooks.datagrid.edit'),
+                'index'  => 'edit',
+                'icon'   => 'icon-edit',
+                'title'  => trans('order::app.admin.webhooks.datagrid.edit'),
                 'method' => 'GET',
-                'url' => function ($row) {
+                'url'    => function ($row) {
                     return route('admin.orders.webhooks.edit', $row->webhook_id);
                 },
             ]);
 
             $this->addAction([
-                'index' => 'toggle',
-                'icon' => 'icon-power',
-                'title' => trans('order::app.admin.webhooks.datagrid.toggle-status'),
+                'index'  => 'toggle',
+                'icon'   => 'icon-power',
+                'title'  => trans('order::app.admin.webhooks.datagrid.toggle-status'),
                 'method' => 'POST',
-                'url' => function ($row) {
+                'url'    => function ($row) {
                     return route('admin.orders.webhooks.toggle-status', $row->webhook_id);
                 },
             ]);
@@ -193,11 +193,11 @@ class WebhookDataGrid extends DataGrid
 
         if (bouncer()->allows('orders.webhooks.delete')) {
             $this->addAction([
-                'index' => 'delete',
-                'icon' => 'icon-delete',
-                'title' => trans('order::app.admin.webhooks.datagrid.delete'),
+                'index'  => 'delete',
+                'icon'   => 'icon-delete',
+                'title'  => trans('order::app.admin.webhooks.datagrid.delete'),
                 'method' => 'DELETE',
-                'url' => function ($row) {
+                'url'    => function ($row) {
                     return route('admin.orders.webhooks.destroy', $row->webhook_id);
                 },
             ]);

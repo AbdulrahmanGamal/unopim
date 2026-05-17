@@ -30,9 +30,6 @@ class UpdateOrderProfitability implements ShouldQueue
 
     /**
      * Handle the event.
-     *
-     * @param  OrderSynced  $event
-     * @return void
      */
     public function handle(OrderSynced $event): void
     {
@@ -57,10 +54,10 @@ class UpdateOrderProfitability implements ShouldQueue
         // Store profitability data in additional_data JSON column
         $additionalData = $order->additional_data ?? [];
         $additionalData['profitability'] = [
-            'cost' => round($totalCost, 2),
-            'profit' => round($profit, 2),
+            'cost'              => round($totalCost, 2),
+            'profit'            => round($profit, 2),
             'margin_percentage' => round($marginPercentage, 2),
-            'calculated_at' => now()->toIso8601String(),
+            'calculated_at'     => now()->toIso8601String(),
         ];
 
         DB::table('orders')
@@ -72,9 +69,6 @@ class UpdateOrderProfitability implements ShouldQueue
 
     /**
      * Determine whether the listener should be queued.
-     *
-     * @param  OrderSynced  $event
-     * @return bool
      */
     public function shouldQueue(OrderSynced $event): bool
     {

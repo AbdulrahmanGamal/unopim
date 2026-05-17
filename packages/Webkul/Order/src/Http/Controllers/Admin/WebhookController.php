@@ -23,20 +23,15 @@ class WebhookController extends Controller
     /**
      * Create a new controller instance.
      *
-     * @param  WebhookRepository  $webhookRepository
-     * @param  ChannelRepository  $channelRepository
      * @return void
      */
     public function __construct(
         protected WebhookRepository $webhookRepository,
         protected ChannelRepository $channelRepository
-    ) {
-    }
+    ) {}
 
     /**
      * Display a listing of webhooks.
-     *
-     * @return View|JsonResponse
      */
     public function index(): View|JsonResponse
     {
@@ -53,8 +48,6 @@ class WebhookController extends Controller
 
     /**
      * Show the form for creating a new webhook.
-     *
-     * @return View
      */
     public function create(): View
     {
@@ -73,16 +66,13 @@ class WebhookController extends Controller
         ]);
 
         return view('order::admin.webhooks.create', [
-            'channels' => $channels,
+            'channels'   => $channels,
             'eventTypes' => $eventTypes,
         ]);
     }
 
     /**
      * Store a newly created webhook in storage.
-     *
-     * @param  WebhookStoreRequest  $request
-     * @return RedirectResponse
      */
     public function store(WebhookStoreRequest $request): RedirectResponse
     {
@@ -102,9 +92,6 @@ class WebhookController extends Controller
 
     /**
      * Show the form for editing the specified webhook.
-     *
-     * @param  int  $id
-     * @return View
      */
     public function edit(int $id): View
     {
@@ -124,18 +111,14 @@ class WebhookController extends Controller
         ]);
 
         return view('order::admin.webhooks.edit', [
-            'webhook' => $webhook,
-            'channels' => $channels,
+            'webhook'    => $webhook,
+            'channels'   => $channels,
             'eventTypes' => $eventTypes,
         ]);
     }
 
     /**
      * Update the specified webhook in storage.
-     *
-     * @param  WebhookUpdateRequest  $request
-     * @param  int  $id
-     * @return RedirectResponse
      */
     public function update(WebhookUpdateRequest $request, int $id): RedirectResponse
     {
@@ -154,9 +137,6 @@ class WebhookController extends Controller
 
     /**
      * Remove the specified webhook from storage.
-     *
-     * @param  int  $id
-     * @return JsonResponse
      */
     public function destroy(int $id): JsonResponse
     {
@@ -181,9 +161,6 @@ class WebhookController extends Controller
 
     /**
      * Toggle webhook active status.
-     *
-     * @param  int  $id
-     * @return JsonResponse
      */
     public function toggleStatus(int $id): JsonResponse
     {
@@ -201,7 +178,7 @@ class WebhookController extends Controller
             ], $id);
 
             return response()->json([
-                'message' => trans('order::app.admin.webhooks.status-updated'),
+                'message'   => trans('order::app.admin.webhooks.status-updated'),
                 'is_active' => ! $webhook->is_active,
             ]);
         } catch (\Exception $e) {

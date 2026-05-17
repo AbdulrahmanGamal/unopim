@@ -7,8 +7,6 @@ namespace Webkul\Order\ValueObjects;
  *
  * Value object representing aggregated profitability analysis for a channel.
  * Contains totals, averages, and order-level breakdown for a date range.
- *
- * @package Webkul\Order\ValueObjects
  */
 readonly class ChannelProfitability
 {
@@ -39,8 +37,6 @@ readonly class ChannelProfitability
 
     /**
      * Check if the channel is profitable.
-     *
-     * @return bool
      */
     public function isProfitable(): bool
     {
@@ -49,8 +45,6 @@ readonly class ChannelProfitability
 
     /**
      * Get average profit per order.
-     *
-     * @return float
      */
     public function getAverageProfitPerOrder(): float
     {
@@ -59,8 +53,6 @@ readonly class ChannelProfitability
 
     /**
      * Get average cost per order.
-     *
-     * @return float
      */
     public function getAverageCostPerOrder(): float
     {
@@ -69,8 +61,6 @@ readonly class ChannelProfitability
 
     /**
      * Get return on investment (ROI) percentage.
-     *
-     * @return float
      */
     public function getROI(): float
     {
@@ -79,8 +69,6 @@ readonly class ChannelProfitability
 
     /**
      * Get number of profitable orders.
-     *
-     * @return int
      */
     public function getProfitableOrderCount(): int
     {
@@ -89,8 +77,6 @@ readonly class ChannelProfitability
 
     /**
      * Get profitability rate (percentage of profitable orders).
-     *
-     * @return float
      */
     public function getProfitabilityRate(): float
     {
@@ -101,34 +87,30 @@ readonly class ChannelProfitability
 
     /**
      * Convert to array representation.
-     *
-     * @return array
      */
     public function toArray(): array
     {
         return [
-            'channel_id' => $this->channelId,
-            'order_count' => $this->orderCount,
-            'total_revenue' => $this->totalRevenue,
-            'total_cost' => $this->totalCost,
-            'total_profit' => $this->totalProfit,
-            'average_order_value' => $this->averageOrderValue,
+            'channel_id'               => $this->channelId,
+            'order_count'              => $this->orderCount,
+            'total_revenue'            => $this->totalRevenue,
+            'total_cost'               => $this->totalCost,
+            'total_profit'             => $this->totalProfit,
+            'average_order_value'      => $this->averageOrderValue,
             'average_profit_per_order' => $this->getAverageProfitPerOrder(),
-            'average_cost_per_order' => $this->getAverageCostPerOrder(),
-            'profit_margin' => $this->profitMargin,
-            'roi_percentage' => $this->getROI(),
-            'is_profitable' => $this->isProfitable(),
-            'profitable_order_count' => $this->getProfitableOrderCount(),
-            'profitability_rate' => $this->getProfitabilityRate(),
-            'date_range' => $this->dateRange,
-            'order_breakdown_count' => count($this->orderBreakdown),
+            'average_cost_per_order'   => $this->getAverageCostPerOrder(),
+            'profit_margin'            => $this->profitMargin,
+            'roi_percentage'           => $this->getROI(),
+            'is_profitable'            => $this->isProfitable(),
+            'profitable_order_count'   => $this->getProfitableOrderCount(),
+            'profitability_rate'       => $this->getProfitabilityRate(),
+            'date_range'               => $this->dateRange,
+            'order_breakdown_count'    => count($this->orderBreakdown),
         ];
     }
 
     /**
      * Convert to JSON representation.
-     *
-     * @return string
      */
     public function toJson(): string
     {
@@ -137,29 +119,27 @@ readonly class ChannelProfitability
 
     /**
      * Get summary statistics.
-     *
-     * @return array
      */
     public function getSummary(): array
     {
         return [
-            'channel_id' => $this->channelId,
-            'period' => $this->dateRange,
+            'channel_id'  => $this->channelId,
+            'period'      => $this->dateRange,
             'performance' => [
-                'orders' => $this->orderCount,
+                'orders'  => $this->orderCount,
                 'revenue' => $this->totalRevenue,
-                'profit' => $this->totalProfit,
-                'margin' => $this->profitMargin.'%',
+                'profit'  => $this->totalProfit,
+                'margin'  => $this->profitMargin.'%',
             ],
             'averages' => [
-                'order_value' => $this->averageOrderValue,
+                'order_value'      => $this->averageOrderValue,
                 'profit_per_order' => $this->getAverageProfitPerOrder(),
-                'cost_per_order' => $this->getAverageCostPerOrder(),
+                'cost_per_order'   => $this->getAverageCostPerOrder(),
             ],
             'profitability' => [
-                'profitable_orders' => $this->getProfitableOrderCount(),
+                'profitable_orders'  => $this->getProfitableOrderCount(),
                 'profitability_rate' => $this->getProfitabilityRate().'%',
-                'roi' => $this->getROI().'%',
+                'roi'                => $this->getROI().'%',
             ],
         ];
     }

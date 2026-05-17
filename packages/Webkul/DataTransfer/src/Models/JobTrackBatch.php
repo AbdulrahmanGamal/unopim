@@ -9,6 +9,7 @@ use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 class JobTrackBatch extends Model implements JobTrackBatchContract
 {
     use BelongsToTenant;
+
     /**
      * Indicates if the model should be timestamped.
      *

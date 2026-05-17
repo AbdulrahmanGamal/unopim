@@ -7,11 +7,11 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Webkul\Attribute\Repositories\AttributeRepository;
-use Webkul\Tenant\Filesystem\TenantStorage;
 use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\Core\Filesystem\FileStorer;
 use Webkul\Product\Contracts\Product;
 use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Tenant\Filesystem\TenantStorage;
 
 abstract class AbstractType
 {

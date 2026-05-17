@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
 use Webkul\HistoryControl\Traits\HistoryTrait;
-use Webkul\User\Contracts\Role as RoleContract;
 use Webkul\Tenant\Models\Concerns\BelongsToTenant;
+use Webkul\User\Contracts\Role as RoleContract;
 use Webkul\User\Database\Factories\RoleFactory;
 
 class Role extends Model implements HistoryContract, RoleContract

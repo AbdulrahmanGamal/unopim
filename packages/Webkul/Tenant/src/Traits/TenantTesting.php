@@ -2,15 +2,13 @@
 
 namespace Webkul\Tenant\Traits;
 
+use Illuminate\Foundation\Testing\TestCase;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
+use PHPUnit\Framework\Assert;
+use Webkul\Tenant\Jobs\TenantAwareJob;
 use Webkul\Tenant\Models\Tenant;
 use Webkul\Tenant\Models\TenantProxy;
-use Webkul\Tenant\Jobs\TenantAwareJob;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Foundation\Testing\TestCase;
-use PHPUnit\Framework\Assert;
 
 /**
  * TenantTesting trait provides comprehensive testing utilities for multi-tenant applications.
@@ -41,8 +39,6 @@ trait TenantTesting
 {
     /**
      * The current test tenant.
-     *
-     * @var Tenant|null
      */
     protected ?Tenant $testTenant = null;
 
@@ -58,8 +54,6 @@ trait TenantTesting
      *
      * This method automatically sets up a test tenant context for each test method.
      * It creates a new tenant and sets it as the current tenant context.
-     *
-     * @return void
      */
     protected function setUpTenantContext(): void
     {
@@ -81,8 +75,6 @@ trait TenantTesting
      *
      * This method cleans up the tenant context and removes the test tenant from the database.
      * It ensures test isolation by removing any tenant-specific data.
-     *
-     * @return void
      */
     protected function tearDownTenantContext(): void
     {
@@ -113,8 +105,8 @@ trait TenantTesting
     /**
      * Create a test tenant with optional custom attributes.
      *
-     * @param array $attributes Custom tenant attributes
-     * @param array $states Tenant states to apply (e.g., 'provisioning', 'suspended')
+     * @param  array  $attributes  Custom tenant attributes
+     * @param  array  $states  Tenant states to apply (e.g., 'provisioning', 'suspended')
      * @return Tenant The created tenant instance
      */
     protected function createTestTenant(
@@ -137,9 +129,9 @@ trait TenantTesting
     /**
      * Create a test tenant with user and related entities.
      *
-     * @param array $attributes Tenant attributes
-     * @param array $userAttributes User attributes
-     * @param bool $withDemoData Whether to include demo data
+     * @param  array  $attributes  Tenant attributes
+     * @param  array  $userAttributes  User attributes
+     * @param  bool  $withDemoData  Whether to include demo data
      * @return Tenant The created tenant with user
      */
     protected function createTestTenantWithUser(
@@ -180,8 +172,7 @@ trait TenantTesting
     /**
      * Switch to a specific tenant context.
      *
-     * @param Tenant $tenant The tenant to switch to
-     * @return void
+     * @param  Tenant  $tenant  The tenant to switch to
      */
     protected function actingAsTenant(Tenant $tenant): void
     {
@@ -199,28 +190,25 @@ trait TenantTesting
 
     /**
      * Setup tenant-specific database connection.
-     *
-     * @param Tenant $tenant
-     * @return void
      */
     protected function setupTenantDatabase(Tenant $tenant): void
     {
         $connectionName = "tenant_{$tenant->id}";
 
-        if (!isset(self::$tenantConnections[$tenant->id])) {
+        if (! isset(self::$tenantConnections[$tenant->id])) {
             // Configure database connection for this tenant
             Config::set("database.connections.{$connectionName}", [
-                'driver' => env('DB_TENANT_DRIVER', 'mysql'),
-                'host' => env('DB_TENANT_HOST', env('DB_HOST')),
-                'port' => env('DB_TENANT_PORT', env('DB_PORT')),
-                'database' => env('DB_DATABASE') . "_tenant_{$tenant->id}",
-                'username' => env('DB_TENANT_USERNAME', env('DB_USERNAME')),
-                'password' => env('DB_TENANT_PASSWORD', env('DB_PASSWORD')),
-                'charset' => 'utf8mb4',
+                'driver'    => env('DB_TENANT_DRIVER', 'mysql'),
+                'host'      => env('DB_TENANT_HOST', env('DB_HOST')),
+                'port'      => env('DB_TENANT_PORT', env('DB_PORT')),
+                'database'  => env('DB_DATABASE')."_tenant_{$tenant->id}",
+                'username'  => env('DB_TENANT_USERNAME', env('DB_USERNAME')),
+                'password'  => env('DB_TENANT_PASSWORD', env('DB_PASSWORD')),
+                'charset'   => 'utf8mb4',
                 'collation' => 'utf8mb4_unicode_ci',
-                'prefix' => '',
-                'strict' => true,
-                'engine' => null,
+                'prefix'    => '',
+                'strict'    => true,
+                'engine'    => null,
             ]);
 
             // Create database if it doesn't exist
@@ -235,9 +223,6 @@ trait TenantTesting
 
     /**
      * Create tenant-specific database.
-     *
-     * @param string $connectionName
-     * @return void
      */
     protected function createTenantDatabase(string $connectionName): void
     {
@@ -257,15 +242,12 @@ trait TenantTesting
 
         } catch (\Exception $e) {
             // Handle cases where we don't have permission to create databases
-            \Log::warning("Could not create tenant database: " . $e->getMessage());
+            \Log::warning('Could not create tenant database: '.$e->getMessage());
         }
     }
 
     /**
      * Setup tenant-specific storage.
-     *
-     * @param Tenant $tenant
-     * @return void
      */
     protected function setupTenantStorage(Tenant $tenant): void
     {
@@ -274,23 +256,20 @@ trait TenantTesting
 
         // Add tenant disk to filesystem configuration
         Config::set("filesystems.disks.{$diskName}", [
-            'driver' => 'local',
-            'root' => storage_path("app/tenant/{$tenant->id}"),
-            'url' => env('APP_URL') . "/storage/tenant/{$tenant->id}",
+            'driver'     => 'local',
+            'root'       => storage_path("app/tenant/{$tenant->id}"),
+            'url'        => env('APP_URL')."/storage/tenant/{$tenant->id}",
             'visibility' => 'private',
-            'throw' => false,
+            'throw'      => false,
         ]);
     }
 
     /**
      * Clean up tenant-specific database.
-     *
-     * @param Tenant $tenant
-     * @return void
      */
     protected function cleanTenantDatabase(Tenant $tenant): void
     {
-        if (!isset(self::$tenantConnections[$tenant->id])) {
+        if (! isset(self::$tenantConnections[$tenant->id])) {
             return;
         }
 
@@ -307,15 +286,12 @@ trait TenantTesting
             // Clean up cached connections
             unset(self::$tenantConnections[$tenant->id]);
         } catch (\Exception $e) {
-            \Log::warning("Could not drop tenant database: " . $e->getMessage());
+            \Log::warning('Could not drop tenant database: '.$e->getMessage());
         }
     }
 
     /**
      * Clean up tenant-specific storage.
-     *
-     * @param Tenant $tenant
-     * @return void
      */
     protected function cleanTenantStorage(Tenant $tenant): void
     {
@@ -334,15 +310,12 @@ trait TenantTesting
 
     /**
      * Add demo data to tenant.
-     *
-     * @param Tenant $tenant
-     * @return void
      */
     protected function addTenantDemoData(Tenant $tenant): void
     {
         // Run tenant seeder if available
         if (class_exists('Webkul\Tenant\Services\TenantDemoSeeder')) {
-            $seeder = new \Webkul\Tenant\Services\TenantDemoSeeder();
+            $seeder = new \Webkul\Tenant\Services\TenantDemoSeeder;
             $seeder->run($tenant->id);
         }
     }
@@ -350,9 +323,9 @@ trait TenantTesting
     /**
      * Create a tenant-aware job for testing.
      *
-     * @param string $jobClass The job class to create
-     * @param array $parameters Job parameters
-     * @param Tenant|null $tenant The tenant context (defaults to current test tenant)
+     * @param  string  $jobClass  The job class to create
+     * @param  array  $parameters  Job parameters
+     * @param  Tenant|null  $tenant  The tenant context (defaults to current test tenant)
      * @return TenantAwareJob The created job instance
      */
     protected function createTenantAwareJob(
@@ -374,9 +347,9 @@ trait TenantTesting
     /**
      * Test a tenant-aware job execution.
      *
-     * @param string $jobClass The job class to test
-     * @param array $parameters Job parameters
-     * @param Tenant|null $tenant The tenant context
+     * @param  string  $jobClass  The job class to test
+     * @param  array  $parameters  Job parameters
+     * @param  Tenant|null  $tenant  The tenant context
      * @return array Job execution results
      */
     protected function testTenantAwareJob(
@@ -390,17 +363,14 @@ trait TenantTesting
         $result = $job->handle();
 
         return [
-            'job' => $job,
-            'result' => $result,
+            'job'       => $job,
+            'result'    => $result,
             'tenant_id' => $job->tenantId,
         ];
     }
 
     /**
      * Assert tenant exists.
-     *
-     * @param Tenant $tenant
-     * @return void
      */
     protected function assertTenantExists(Tenant $tenant): void
     {
@@ -410,9 +380,6 @@ trait TenantTesting
 
     /**
      * Assert tenant does not exist.
-     *
-     * @param Tenant $tenant
-     * @return void
      */
     protected function assertTenantNotExists(Tenant $tenant): void
     {
@@ -422,10 +389,6 @@ trait TenantTesting
 
     /**
      * Assert tenant has status.
-     *
-     * @param Tenant $tenant
-     * @param string $status
-     * @return void
      */
     protected function assertTenantStatus(Tenant $tenant, string $status): void
     {
@@ -434,9 +397,6 @@ trait TenantTesting
 
     /**
      * Assert tenant is active.
-     *
-     * @param Tenant $tenant
-     * @return void
      */
     protected function assertTenantActive(Tenant $tenant): void
     {
@@ -446,10 +406,7 @@ trait TenantTesting
     /**
      * Assert tenant has setting.
      *
-     * @param Tenant $tenant
-     * @param string $key
-     * @param mixed $value
-     * @return void
+     * @param  mixed  $value
      */
     protected function assertTenantSetting(Tenant $tenant, string $key, $value): void
     {
@@ -458,10 +415,6 @@ trait TenantTesting
 
     /**
      * Assert tenant database has table.
-     *
-     * @param Tenant $tenant
-     * @param string $tableName
-     * @return void
      */
     protected function assertTenantHasTable(Tenant $tenant, string $tableName): void
     {
@@ -474,15 +427,12 @@ trait TenantTesting
     /**
      * Assert tenant database is empty.
      *
-     * @param Tenant $tenant
-     * @param array $excludeTables Tables to exclude from check
-     * @return void
+     * @param  array  $excludeTables  Tables to exclude from check
      */
     protected function assertTenantDatabaseEmpty(
         Tenant $tenant,
         array $excludeTables = ['migrations', 'tenant_settings']
-    ): void
-    {
+    ): void {
         $connectionName = self::$tenantConnections[$tenant->id] ?? "tenant_{$tenant->id}";
         $tables = DB::connection($connectionName)->table('information_schema.tables')
             ->where('table_schema', config("database.connections.{$connectionName}.database"))
@@ -490,18 +440,18 @@ trait TenantTesting
             ->values()
             ->all();
 
-        $filteredTables = array_filter($tables, fn($table) => !in_array($table, $excludeTables));
+        $filteredTables = array_filter($tables, fn ($table) => ! in_array($table, $excludeTables));
 
-        Assert::assertEmpty($filteredTables, "Tenant database should be empty but found: " . implode(', ', $filteredTables));
+        Assert::assertEmpty($filteredTables, 'Tenant database should be empty but found: '.implode(', ', $filteredTables));
     }
 
     /**
      * Simulate tenant API request.
      *
-     * @param string $method HTTP method
-     * @param string $url URL to test
-     * @param array $data Request data
-     * @param Tenant|null $tenant Tenant context
+     * @param  string  $method  HTTP method
+     * @param  string  $url  URL to test
+     * @param  array  $data  Request data
+     * @param  Tenant|null  $tenant  Tenant context
      * @return \Illuminate\Testing\TestResponse The test response
      */
     protected function simulateTenantRequest(
@@ -517,15 +467,13 @@ trait TenantTesting
 
     /**
      * Log tenant setup.
-     *
-     * @return void
      */
     protected function logTenantSetup(): void
     {
         if (app()->environment('testing') && config('app.debug')) {
-            \Log::info("Tenant test setup: " . ($this->testTenant->name ?? 'Unknown'), [
-                'tenant_id' => $this->testTenant->id,
-                'tenant_uuid' => $this->testTenant->uuid,
+            \Log::info('Tenant test setup: '.($this->testTenant->name ?? 'Unknown'), [
+                'tenant_id'     => $this->testTenant->id,
+                'tenant_uuid'   => $this->testTenant->uuid,
                 'tenant_domain' => $this->testTenant->domain,
                 'tenant_status' => $this->testTenant->status,
             ]);
@@ -534,14 +482,12 @@ trait TenantTesting
 
     /**
      * Log tenant cleanup.
-     *
-     * @return void
      */
     protected function logTenantCleanup(): void
     {
         if (app()->environment('testing') && config('app.debug')) {
-            \Log::info("Tenant test cleanup: " . ($this->testTenant->name ?? 'Unknown'), [
-                'tenant_id' => $this->testTenant->id,
+            \Log::info('Tenant test cleanup: '.($this->testTenant->name ?? 'Unknown'), [
+                'tenant_id'   => $this->testTenant->id,
                 'tenant_uuid' => $this->testTenant->uuid,
             ]);
         }
@@ -549,9 +495,6 @@ trait TenantTesting
 
     /**
      * Get tenant connection name.
-     *
-     * @param Tenant $tenant
-     * @return string
      */
     protected function getTenantConnectionName(Tenant $tenant): string
     {
@@ -560,21 +503,16 @@ trait TenantTesting
 
     /**
      * Get tenant database name.
-     *
-     * @param Tenant $tenant
-     * @return string
      */
     protected function getTenantDatabaseName(Tenant $tenant): string
     {
         $connectionName = $this->getTenantConnectionName($tenant);
+
         return config("database.connections.{$connectionName}.database");
     }
 
     /**
      * Get tenant storage disk.
-     *
-     * @param Tenant $tenant
-     * @return string
      */
     protected function getTenantStorageDisk(Tenant $tenant): string
     {
@@ -594,22 +532,23 @@ trait TenantTesting
     /**
      * Set a custom tenant for testing.
      *
-     * @param array $attributes Tenant attributes
+     * @param  array  $attributes  Tenant attributes
      * @return Tenant The created tenant
      */
     protected function setTestTenant(array $attributes = []): Tenant
     {
         $this->testTenant = $this->createTestTenant($attributes);
         $this->actingAsTenant($this->testTenant);
+
         return $this->testTenant;
     }
 
     /**
      * Bulk create test tenants.
      *
-     * @param int $count Number of tenants to create
-     * @param array $attributes Base attributes for all tenants
-     * @param array $customStates Custom states per tenant index
+     * @param  int  $count  Number of tenants to create
+     * @param  array  $attributes  Base attributes for all tenants
+     * @param  array  $customStates  Custom states per tenant index
      * @return array<Tenant> The created tenants
      */
     protected function createTestTenants(
@@ -623,7 +562,7 @@ trait TenantTesting
             $tenantAttributes = $attributes;
 
             // Add unique identifier if not provided
-            if (!isset($tenantAttributes['name']) && !isset($tenantAttributes['domain'])) {
+            if (! isset($tenantAttributes['name']) && ! isset($tenantAttributes['domain'])) {
                 $tenantAttributes['name'] = "Test Tenant {$i}";
                 $tenantAttributes['domain'] = "test-tenant-{$i}";
             }

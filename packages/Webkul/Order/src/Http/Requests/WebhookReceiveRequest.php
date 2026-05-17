@@ -14,8 +14,6 @@ class WebhookReceiveRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     *
-     * @return bool
      */
     public function authorize(): bool
     {
@@ -25,22 +23,19 @@ class WebhookReceiveRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array
      */
     public function rules(): array
     {
         return [
             // Minimal validation - structure varies by platform
             'event' => 'sometimes|string|max:255',
-            'data' => 'sometimes|array',
+            'data'  => 'sometimes|array',
         ];
     }
 
     /**
      * Handle a failed validation attempt.
      *
-     * @param  \Illuminate\Contracts\Validation\Validator  $validator
      * @return void
      *
      * @throws \Illuminate\Validation\ValidationException
@@ -50,7 +45,7 @@ class WebhookReceiveRequest extends FormRequest
         // Log validation failures for debugging
         \Illuminate\Support\Facades\Log::warning('Webhook validation failed', [
             'channel' => $this->route('channelCode'),
-            'errors' => $validator->errors()->toArray(),
+            'errors'  => $validator->errors()->toArray(),
             'payload' => $this->all(),
         ]);
 

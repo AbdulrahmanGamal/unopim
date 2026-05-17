@@ -56,13 +56,13 @@ class BreakEvenCalculator
     /**
      * Calculate break-even price for a product on a specific channel.
      *
-     * @param  int          $productId  The product to calculate break-even for.
-     * @param  int|null     $channelId  Optional channel for channel-specific variable costs.
-     * @param  string|null  $currency   ISO 4217 currency code override (defaults to product cost currency).
-     * @return BreakEvenResult          Immutable value object with all calculation details.
+     * @param  int  $productId  The product to calculate break-even for.
+     * @param  int|null  $channelId  Optional channel for channel-specific variable costs.
+     * @param  string|null  $currency  ISO 4217 currency code override (defaults to product cost currency).
+     * @return BreakEvenResult Immutable value object with all calculation details.
      *
      * @throws \Webkul\Pricing\Exceptions\ImpossibleBreakEvenException If variable rate >= 100%.
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException    If product not found.
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException If product not found.
      */
     public function calculate(int $productId, ?int $channelId = null, ?string $currency = null): BreakEvenResult
     {
@@ -96,9 +96,9 @@ class BreakEvenCalculator
      * Uses bulk-loaded costs to minimize database queries (2 queries total
      * regardless of product count).
      *
-     * @param  array<int>   $productIds  Array of product IDs.
-     * @param  int|null     $channelId   Optional channel context.
-     * @param  string|null  $currency    Currency override.
+     * @param  array<int>  $productIds  Array of product IDs.
+     * @param  int|null  $channelId  Optional channel context.
+     * @param  string|null  $currency  Currency override.
      * @return array<int, BreakEvenResult> Results keyed by product_id.
      */
     public function calculateBatch(array $productIds, ?int $channelId = null, ?string $currency = null): array
@@ -197,7 +197,7 @@ class BreakEvenCalculator
     /**
      * Invalidate cached break-even result for a product (and optionally a channel).
      *
-     * @param  int       $productId  The product whose cache to clear.
+     * @param  int  $productId  The product whose cache to clear.
      * @param  int|null  $channelId  If null, invalidates the product-level cache key only.
      */
     public function invalidateCache(int $productId, ?int $channelId = null): void
@@ -269,7 +269,7 @@ class BreakEvenCalculator
      *
      * @param  \Webkul\Pricing\Models\ChannelCost|null  $channelCost  Active channel cost structure.
      * @param  string  $marketingRate  Marketing percentage from product costs (BCMath string).
-     * @return string  The combined variable rate as a decimal string (0.0 to < 1.0).
+     * @return string The combined variable rate as a decimal string (0.0 to < 1.0).
      */
     protected function computeVariableRate($channelCost, string $marketingRate): string
     {
@@ -292,9 +292,9 @@ class BreakEvenCalculator
      *
      * Formula: breakEven = fixedCosts / (1 - variableRate)
      *
-     * @param  string  $fixedCosts    Total per-unit fixed costs (BCMath string).
+     * @param  string  $fixedCosts  Total per-unit fixed costs (BCMath string).
      * @param  string  $variableRate  Combined variable rate as decimal string (< 1.0).
-     * @return string  The break-even price (BCMath string).
+     * @return string The break-even price (BCMath string).
      *
      * @throws \Webkul\Pricing\Exceptions\ImpossibleBreakEvenException
      */

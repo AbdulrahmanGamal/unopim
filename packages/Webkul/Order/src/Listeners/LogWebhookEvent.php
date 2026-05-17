@@ -30,9 +30,6 @@ class LogWebhookEvent implements ShouldQueue
 
     /**
      * Handle the event.
-     *
-     * @param  WebhookReceived  $event
-     * @return void
      */
     public function handle(WebhookReceived $event): void
     {
@@ -47,12 +44,12 @@ class LogWebhookEvent implements ShouldQueue
 
         // Create webhook log entry
         DB::table('webhook_logs')->insert([
-            'channel_id' => $channel->id,
-            'event_type' => $event->eventType ?? 'unknown',
-            'payload' => json_encode($event->payload),
+            'channel_id'   => $channel->id,
+            'event_type'   => $event->eventType ?? 'unknown',
+            'payload'      => json_encode($event->payload),
             'processed_at' => now(),
-            'created_at' => now(),
-            'updated_at' => now(),
+            'created_at'   => now(),
+            'updated_at'   => now(),
         ]);
 
         // Update webhook last_triggered_at if webhook config exists
@@ -72,9 +69,6 @@ class LogWebhookEvent implements ShouldQueue
 
     /**
      * Determine whether the listener should be queued.
-     *
-     * @param  WebhookReceived  $event
-     * @return bool
      */
     public function shouldQueue(WebhookReceived $event): bool
     {

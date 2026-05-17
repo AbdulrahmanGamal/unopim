@@ -499,10 +499,10 @@ class Importer extends AbstractImporter
 
         $mappedImageAttr = null;
 
-        if (!empty($mediaMapping)) {
-            $title  = $rowData['node']['title']  ?? '';
+        if (! empty($mediaMapping)) {
+            $title = $rowData['node']['title'] ?? '';
             $handle = $rowData['node']['handle'] ?? '';
-            $id     = $rowData['node']['id']     ?? null;
+            $id = $rowData['node']['id'] ?? null;
 
             if ($mediaMapping['mediaType'] === 'image') {
                 $mappedImageAttr = $this->processMappedImages($mediaMapping, $image, $configId, $storeForVariant, $title, $imageMediaids, $handle, $id, $allMediaIdVariants);
@@ -511,7 +511,7 @@ class Importer extends AbstractImporter
             }
         }
 
-        if (!is_array($mappedImageAttr)) {
+        if (! is_array($mappedImageAttr)) {
             return null;
         }
 
@@ -525,7 +525,7 @@ class Importer extends AbstractImporter
             'values'  => [
                 'common'           => array_merge($common, $mcommon ?? []),
                 'channel_specific' => [
-                    $this->channel => array_merge($channelSpecific, $mchannel_specific ?? [] ),
+                    $this->channel => array_merge($channelSpecific, $mchannel_specific ?? []),
                 ],
 
                 'locale_specific'  => [

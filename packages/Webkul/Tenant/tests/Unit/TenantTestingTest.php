@@ -5,9 +5,6 @@ namespace Webkul\Tenant\Tests\Unit;
 use Tests\TestCase;
 use Webkul\Tenant\Models\Tenant;
 use Webkul\Tenant\Traits\TenantTesting;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Config;
 
 class TenantTestingTest extends TestCase
 {
@@ -51,8 +48,8 @@ class TenantTestingTest extends TestCase
     {
         // Given
         $attributes = [
-            'name' => 'Test Company',
-            'domain' => 'test-company',
+            'name'     => 'Test Company',
+            'domain'   => 'test-company',
             'settings' => ['theme' => 'dark'],
         ];
 
@@ -228,7 +225,7 @@ class TenantTestingTest extends TestCase
 
         // Then
         $this->assertCount(3, $tenants);
-        $tenants->each(fn($tenant) => $this->assertTenantExists($tenant));
+        $tenants->each(fn ($tenant) => $this->assertTenantExists($tenant));
     }
 
     /** @test */

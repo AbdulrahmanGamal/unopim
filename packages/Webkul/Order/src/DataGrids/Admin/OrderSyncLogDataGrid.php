@@ -58,36 +58,36 @@ class OrderSyncLogDataGrid extends DataGrid
     public function prepareColumns()
     {
         $this->addColumn([
-            'index' => 'sync_log_id',
-            'label' => trans('order::app.admin.sync.datagrid.id'),
-            'type' => 'integer',
+            'index'      => 'sync_log_id',
+            'label'      => trans('order::app.admin.sync.datagrid.id'),
+            'type'       => 'integer',
             'searchable' => true,
             'filterable' => true,
-            'sortable' => true,
+            'sortable'   => true,
         ]);
 
         $this->addColumn([
-            'index' => 'channel_name',
-            'label' => trans('order::app.admin.sync.datagrid.channel'),
-            'type' => 'string',
+            'index'      => 'channel_name',
+            'label'      => trans('order::app.admin.sync.datagrid.channel'),
+            'type'       => 'string',
             'searchable' => true,
             'filterable' => true,
-            'sortable' => true,
+            'sortable'   => true,
         ]);
 
         $this->addColumn([
-            'index' => 'status',
-            'label' => trans('order::app.admin.sync.datagrid.status'),
-            'type' => 'string',
+            'index'      => 'status',
+            'label'      => trans('order::app.admin.sync.datagrid.status'),
+            'type'       => 'string',
             'searchable' => false,
             'filterable' => true,
-            'sortable' => true,
-            'closure' => function ($row) {
+            'sortable'   => true,
+            'closure'    => function ($row) {
                 $statusLabels = [
-                    'pending' => '<span class="badge badge-warning">' . trans('order::app.admin.sync.status.pending') . '</span>',
-                    'in_progress' => '<span class="badge badge-info">' . trans('order::app.admin.sync.status.in-progress') . '</span>',
-                    'completed' => '<span class="badge badge-success">' . trans('order::app.admin.sync.status.completed') . '</span>',
-                    'failed' => '<span class="badge badge-danger">' . trans('order::app.admin.sync.status.failed') . '</span>',
+                    'pending'     => '<span class="badge badge-warning">'.trans('order::app.admin.sync.status.pending').'</span>',
+                    'in_progress' => '<span class="badge badge-info">'.trans('order::app.admin.sync.status.in-progress').'</span>',
+                    'completed'   => '<span class="badge badge-success">'.trans('order::app.admin.sync.status.completed').'</span>',
+                    'failed'      => '<span class="badge badge-danger">'.trans('order::app.admin.sync.status.failed').'</span>',
                 ];
 
                 return $statusLabels[$row->status] ?? $row->status;
@@ -95,49 +95,49 @@ class OrderSyncLogDataGrid extends DataGrid
         ]);
 
         $this->addColumn([
-            'index' => 'records_synced',
-            'label' => trans('order::app.admin.sync.datagrid.records-synced'),
-            'type' => 'integer',
+            'index'      => 'records_synced',
+            'label'      => trans('order::app.admin.sync.datagrid.records-synced'),
+            'type'       => 'integer',
             'searchable' => false,
             'filterable' => false,
-            'sortable' => true,
-            'closure' => function ($row) {
+            'sortable'   => true,
+            'closure'    => function ($row) {
                 return $row->records_synced ?? 0;
             },
         ]);
 
         $this->addColumn([
-            'index' => 'started_at',
-            'label' => trans('order::app.admin.sync.datagrid.started-at'),
-            'type' => 'datetime',
+            'index'      => 'started_at',
+            'label'      => trans('order::app.admin.sync.datagrid.started-at'),
+            'type'       => 'datetime',
             'searchable' => false,
             'filterable' => true,
-            'sortable' => true,
-            'closure' => function ($row) {
+            'sortable'   => true,
+            'closure'    => function ($row) {
                 return $row->started_at ? core()->formatDate($row->started_at, 'Y-m-d H:i:s') : '-';
             },
         ]);
 
         $this->addColumn([
-            'index' => 'completed_at',
-            'label' => trans('order::app.admin.sync.datagrid.completed-at'),
-            'type' => 'datetime',
+            'index'      => 'completed_at',
+            'label'      => trans('order::app.admin.sync.datagrid.completed-at'),
+            'type'       => 'datetime',
             'searchable' => false,
             'filterable' => true,
-            'sortable' => true,
-            'closure' => function ($row) {
+            'sortable'   => true,
+            'closure'    => function ($row) {
                 return $row->completed_at ? core()->formatDate($row->completed_at, 'Y-m-d H:i:s') : '-';
             },
         ]);
 
         $this->addColumn([
-            'index' => 'duration',
-            'label' => trans('order::app.admin.sync.datagrid.duration'),
-            'type' => 'string',
+            'index'      => 'duration',
+            'label'      => trans('order::app.admin.sync.datagrid.duration'),
+            'type'       => 'string',
             'searchable' => false,
             'filterable' => false,
-            'sortable' => false,
-            'closure' => function ($row) {
+            'sortable'   => false,
+            'closure'    => function ($row) {
                 if (! $row->started_at || ! $row->completed_at) {
                     return '-';
                 }
@@ -151,20 +151,20 @@ class OrderSyncLogDataGrid extends DataGrid
         ]);
 
         $this->addColumn([
-            'index' => 'error_details',
-            'label' => trans('order::app.admin.sync.datagrid.error'),
-            'type' => 'string',
+            'index'      => 'error_details',
+            'label'      => trans('order::app.admin.sync.datagrid.error'),
+            'type'       => 'string',
             'searchable' => false,
             'filterable' => false,
-            'sortable' => false,
-            'closure' => function ($row) {
+            'sortable'   => false,
+            'closure'    => function ($row) {
                 if (! $row->error_details) {
                     return '-';
                 }
 
-                return '<span class="text-danger" title="' . e($row->error_details) . '">' .
-                       e(substr($row->error_details, 0, 50)) .
-                       (strlen($row->error_details) > 50 ? '...' : '') .
+                return '<span class="text-danger" title="'.e($row->error_details).'">'.
+                       e(substr($row->error_details, 0, 50)).
+                       (strlen($row->error_details) > 50 ? '...' : '').
                        '</span>';
             },
         ]);
@@ -179,11 +179,11 @@ class OrderSyncLogDataGrid extends DataGrid
     {
         if (bouncer()->allows('orders.sync.view')) {
             $this->addAction([
-                'index' => 'view',
-                'icon' => 'icon-eye',
-                'title' => trans('order::app.admin.sync.datagrid.view'),
+                'index'  => 'view',
+                'icon'   => 'icon-eye',
+                'title'  => trans('order::app.admin.sync.datagrid.view'),
                 'method' => 'GET',
-                'url' => function ($row) {
+                'url'    => function ($row) {
                     return route('admin.orders.sync.show', $row->sync_log_id);
                 },
             ]);
@@ -191,11 +191,11 @@ class OrderSyncLogDataGrid extends DataGrid
 
         if (bouncer()->allows('orders.sync.execute')) {
             $this->addAction([
-                'index' => 'retry',
-                'icon' => 'icon-refresh',
-                'title' => trans('order::app.admin.sync.datagrid.retry'),
+                'index'  => 'retry',
+                'icon'   => 'icon-refresh',
+                'title'  => trans('order::app.admin.sync.datagrid.retry'),
                 'method' => 'POST',
-                'url' => function ($row) {
+                'url'    => function ($row) {
                     return route('admin.orders.sync.retry', $row->sync_log_id);
                 },
                 'condition' => function ($row) {

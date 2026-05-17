@@ -11,8 +11,6 @@ class OrderServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap services.
-     *
-     * @return void
      */
     public function boot(): void
     {
@@ -33,8 +31,6 @@ class OrderServiceProvider extends ServiceProvider
 
     /**
      * Register services.
-     *
-     * @return void
      */
     public function register(): void
     {
@@ -45,8 +41,6 @@ class OrderServiceProvider extends ServiceProvider
 
     /**
      * Register package config.
-     *
-     * @return void
      */
     protected function registerConfig(): void
     {
@@ -63,21 +57,19 @@ class OrderServiceProvider extends ServiceProvider
 
     /**
      * Register singleton services.
-     *
-     * @return void
      */
     protected function registerServices(): void
     {
         $this->app->singleton(OrderSyncService::class, function ($app) {
-            return new OrderSyncService();
+            return new OrderSyncService;
         });
 
         $this->app->singleton(ProfitabilityCalculator::class, function ($app) {
-            return new ProfitabilityCalculator();
+            return new ProfitabilityCalculator;
         });
 
         $this->app->singleton(WebhookProcessor::class, function ($app) {
-            return new WebhookProcessor();
+            return new WebhookProcessor;
         });
     }
 }

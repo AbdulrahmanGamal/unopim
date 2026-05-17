@@ -17,7 +17,7 @@ use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 
 class Currency extends Model implements AuditableContract, CurrencyContract
 {
-    use BelongsToTenant, Auditable;
+    use Auditable, BelongsToTenant;
     use HasFactory;
 
     /**

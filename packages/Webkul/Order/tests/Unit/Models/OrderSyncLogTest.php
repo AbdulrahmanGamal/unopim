@@ -83,7 +83,7 @@ it('marks log as failed with error', function () {
 });
 
 it('has fillable attributes', function () {
-    $log = new OrderSyncLog();
+    $log = new OrderSyncLog;
 
     expect($log->getFillable())->toBeArray()
         ->and($log->getFillable())->toContain('channel_id', 'status', 'resource_type', 'resource_id');
@@ -91,9 +91,9 @@ it('has fillable attributes', function () {
 
 it('casts attributes correctly', function () {
     $log = OrderSyncLog::factory()->create([
-        'started_at' => '2024-01-15 10:00:00',
+        'started_at'   => '2024-01-15 10:00:00',
         'completed_at' => '2024-01-15 10:05:00',
-        'metadata' => ['synced_count' => 10],
+        'metadata'     => ['synced_count' => 10],
     ]);
 
     expect($log->started_at)->toBeInstanceOf(\Illuminate\Support\Carbon::class)
@@ -103,7 +103,7 @@ it('casts attributes correctly', function () {
 
 it('calculates duration correctly', function () {
     $log = OrderSyncLog::factory()->create([
-        'started_at' => now()->subMinutes(5),
+        'started_at'   => now()->subMinutes(5),
         'completed_at' => now(),
     ]);
 
@@ -115,9 +115,9 @@ it('calculates duration correctly', function () {
 
 it('returns null duration for incomplete sync', function () {
     $log = OrderSyncLog::factory()->create([
-        'started_at' => now()->subMinutes(5),
+        'started_at'   => now()->subMinutes(5),
         'completed_at' => null,
-        'status' => 'running',
+        'status'       => 'running',
     ]);
 
     expect($log->getDuration())->toBeNull();

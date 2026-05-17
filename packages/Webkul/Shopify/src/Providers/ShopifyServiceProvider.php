@@ -4,7 +4,6 @@ namespace Webkul\Shopify\Providers;
 
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Webkul\Shopify\Console\Commands\ShopifyInstaller;
 use Webkul\Shopify\Console\Commands\ShopifyMappingProduct;

@@ -9,8 +9,6 @@ use Carbon\Carbon;
  *
  * Value object representing profitability analysis for a single order.
  * Contains revenue, cost, profit, margin percentage, and item-level breakdown.
- *
- * @package Webkul\Order\ValueObjects
  */
 readonly class ProfitabilityResult
 {
@@ -43,8 +41,6 @@ readonly class ProfitabilityResult
 
     /**
      * Check if the order is profitable.
-     *
-     * @return bool
      */
     public function isProfitable(): bool
     {
@@ -53,8 +49,6 @@ readonly class ProfitabilityResult
 
     /**
      * Get number of items in the order.
-     *
-     * @return int
      */
     public function getItemCount(): int
     {
@@ -63,8 +57,6 @@ readonly class ProfitabilityResult
 
     /**
      * Get average profit per item.
-     *
-     * @return float
      */
     public function getAverageProfitPerItem(): float
     {
@@ -75,8 +67,6 @@ readonly class ProfitabilityResult
 
     /**
      * Get cost to revenue ratio.
-     *
-     * @return float
      */
     public function getCostToRevenueRatio(): float
     {
@@ -85,9 +75,6 @@ readonly class ProfitabilityResult
 
     /**
      * Get formatted currency value.
-     *
-     * @param  float  $amount
-     * @return string
      */
     public function formatCurrency(float $amount): string
     {
@@ -96,33 +83,29 @@ readonly class ProfitabilityResult
 
     /**
      * Convert to array representation.
-     *
-     * @return array
      */
     public function toArray(): array
     {
         return [
-            'order_id' => $this->orderId,
-            'order_number' => $this->orderNumber,
-            'revenue' => $this->revenue,
-            'total_cost' => $this->totalCost,
-            'profit' => $this->profit,
-            'margin_percentage' => $this->marginPercentage,
-            'is_profitable' => $this->isProfitable(),
-            'cost_to_revenue_ratio' => $this->getCostToRevenueRatio(),
-            'currency_code' => $this->currencyCode,
-            'order_date' => $this->orderDate->toIso8601String(),
-            'channel_id' => $this->channelId,
-            'item_count' => $this->getItemCount(),
+            'order_id'                => $this->orderId,
+            'order_number'            => $this->orderNumber,
+            'revenue'                 => $this->revenue,
+            'total_cost'              => $this->totalCost,
+            'profit'                  => $this->profit,
+            'margin_percentage'       => $this->marginPercentage,
+            'is_profitable'           => $this->isProfitable(),
+            'cost_to_revenue_ratio'   => $this->getCostToRevenueRatio(),
+            'currency_code'           => $this->currencyCode,
+            'order_date'              => $this->orderDate->toIso8601String(),
+            'channel_id'              => $this->channelId,
+            'item_count'              => $this->getItemCount(),
             'average_profit_per_item' => $this->getAverageProfitPerItem(),
-            'item_breakdown' => array_map(fn ($item) => $item->toArray(), $this->itemBreakdown),
+            'item_breakdown'          => array_map(fn ($item) => $item->toArray(), $this->itemBreakdown),
         ];
     }
 
     /**
      * Convert to JSON representation.
-     *
-     * @return string
      */
     public function toJson(): string
     {

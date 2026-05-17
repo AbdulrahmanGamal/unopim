@@ -14,8 +14,6 @@ class WebhookUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     *
-     * @return bool
      */
     public function authorize(): bool
     {
@@ -24,8 +22,6 @@ class WebhookUpdateRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array
      */
     public function rules(): array
     {
@@ -88,38 +84,34 @@ class WebhookUpdateRequest extends FormRequest
 
     /**
      * Get custom attributes for validator errors.
-     *
-     * @return array
      */
     public function attributes(): array
     {
         return [
-            'name' => trans('order::app.admin.webhooks.fields.name'),
-            'channel_id' => trans('order::app.admin.webhooks.fields.channel'),
-            'endpoint' => trans('order::app.admin.webhooks.fields.endpoint'),
-            'event_types' => trans('order::app.admin.webhooks.fields.event-types'),
-            'is_active' => trans('order::app.admin.webhooks.fields.is-active'),
-            'retry_attempts' => trans('order::app.admin.webhooks.fields.retry-attempts'),
+            'name'            => trans('order::app.admin.webhooks.fields.name'),
+            'channel_id'      => trans('order::app.admin.webhooks.fields.channel'),
+            'endpoint'        => trans('order::app.admin.webhooks.fields.endpoint'),
+            'event_types'     => trans('order::app.admin.webhooks.fields.event-types'),
+            'is_active'       => trans('order::app.admin.webhooks.fields.is-active'),
+            'retry_attempts'  => trans('order::app.admin.webhooks.fields.retry-attempts'),
             'timeout_seconds' => trans('order::app.admin.webhooks.fields.timeout'),
-            'headers' => trans('order::app.admin.webhooks.fields.headers'),
+            'headers'         => trans('order::app.admin.webhooks.fields.headers'),
         ];
     }
 
     /**
      * Get custom messages for validator errors.
-     *
-     * @return array
      */
     public function messages(): array
     {
         return [
-            'name.required' => trans('order::app.admin.webhooks.validation.name-required'),
-            'name.unique' => trans('order::app.admin.webhooks.validation.name-unique'),
-            'channel_id.exists' => trans('order::app.admin.webhooks.validation.channel-invalid'),
-            'endpoint.url' => trans('order::app.admin.webhooks.validation.endpoint-url'),
+            'name.required'        => trans('order::app.admin.webhooks.validation.name-required'),
+            'name.unique'          => trans('order::app.admin.webhooks.validation.name-unique'),
+            'channel_id.exists'    => trans('order::app.admin.webhooks.validation.channel-invalid'),
+            'endpoint.url'         => trans('order::app.admin.webhooks.validation.endpoint-url'),
             'event_types.required' => trans('order::app.admin.webhooks.validation.events-required'),
-            'event_types.min' => trans('order::app.admin.webhooks.validation.events-min'),
-            'event_types.*.in' => trans('order::app.admin.webhooks.validation.event-invalid'),
+            'event_types.min'      => trans('order::app.admin.webhooks.validation.events-min'),
+            'event_types.*.in'     => trans('order::app.admin.webhooks.validation.event-invalid'),
         ];
     }
 }

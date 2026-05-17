@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use Webkul\Tenant\Filesystem\TenantStorage;
 use Intervention\Image\ImageManager;
 use Webkul\Attribute\Contracts\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
@@ -35,6 +34,7 @@ use Webkul\ElasticSearch\Observers\Product as ElasticProductObserver;
 use Webkul\Product\Models\Product as ProductModel;
 use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Product\Type\AbstractType;
+use Webkul\Tenant\Filesystem\TenantStorage;
 
 class Importer extends AbstractImporter
 {
@@ -1437,7 +1437,7 @@ class Importer extends AbstractImporter
                 $tenantSuffix = "_tenant_{$tenantId}";
             }
         }
-        $productIndex = strtolower($prefix . $tenantSuffix . '_products');
+        $productIndex = strtolower($prefix.$tenantSuffix.'_products');
 
         $query = DB::table('products')->whereIn('sku', Arr::pluck($batch->data, 'sku'));
 

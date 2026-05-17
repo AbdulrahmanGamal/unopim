@@ -32,9 +32,6 @@ class NotifyAdminOnSyncFailure implements ShouldQueue
 
     /**
      * Handle the event.
-     *
-     * @param  SyncFailed  $event
-     * @return void
      */
     public function handle(SyncFailed $event): void
     {
@@ -43,11 +40,11 @@ class NotifyAdminOnSyncFailure implements ShouldQueue
         $exception = $event->exception;
 
         // Log the failure
-        Log::error('Order sync failed for channel: ' . $channel->name, [
-            'channel_id' => $channel->id,
+        Log::error('Order sync failed for channel: '.$channel->name, [
+            'channel_id'  => $channel->id,
             'sync_log_id' => $syncLog->id,
-            'error' => $exception->getMessage(),
-            'trace' => $exception->getTraceAsString(),
+            'error'       => $exception->getMessage(),
+            'trace'       => $exception->getTraceAsString(),
         ]);
 
         // Get admins with order sync notification permission
@@ -68,18 +65,15 @@ class NotifyAdminOnSyncFailure implements ShouldQueue
         foreach ($admins as $admin) {
             // Example: Notification::send($admin, new SyncFailedNotification($event));
             // For now, just log
-            Log::info('Would notify admin: ' . $admin->email, [
+            Log::info('Would notify admin: '.$admin->email, [
                 'channel' => $channel->name,
-                'error' => substr($exception->getMessage(), 0, 100),
+                'error'   => substr($exception->getMessage(), 0, 100),
             ]);
         }
     }
 
     /**
      * Determine whether the listener should be queued.
-     *
-     * @param  SyncFailed  $event
-     * @return bool
      */
     public function shouldQueue(SyncFailed $event): bool
     {

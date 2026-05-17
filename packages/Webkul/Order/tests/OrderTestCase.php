@@ -9,7 +9,6 @@ use Webkul\Order\Models\OrderSyncLog;
 use Webkul\Order\Models\OrderWebhook;
 use Webkul\Order\Models\UnifiedOrder;
 use Webkul\Order\Models\UnifiedOrderItem;
-use Webkul\Product\Models\Product;
 use Webkul\User\Models\Admin;
 
 class OrderTestCase extends TestCase

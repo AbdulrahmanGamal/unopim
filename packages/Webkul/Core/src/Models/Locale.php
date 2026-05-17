@@ -17,7 +17,7 @@ use Webkul\User\Models\AdminProxy;
 
 class Locale extends Model implements AuditableContract, LocaleContract
 {
-    use BelongsToTenant, Auditable;
+    use Auditable, BelongsToTenant;
     use HasFactory;
 
     /**

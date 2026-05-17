@@ -40,8 +40,6 @@ class OrderStatusUpdated
     /**
      * Create a new event instance.
      *
-     * @param  Order  $order
-     * @param  string  $oldStatus
      * @return void
      */
     public function __construct(Order $order, string $oldStatus)

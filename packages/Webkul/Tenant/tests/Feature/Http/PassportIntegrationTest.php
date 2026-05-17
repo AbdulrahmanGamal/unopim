@@ -47,24 +47,24 @@ it('confirms Admin::findForPassport works in tenant context', function () {
     $tB = $this->tenantB->id;
 
     $roleA = DB::table('roles')->insertGetId([
-        'name' => 'Role-A-'.uniqid(), 'description' => 'Test',
+        'name'            => 'Role-A-'.uniqid(), 'description' => 'Test',
         'permission_type' => 'all', 'permissions' => json_encode([]),
-        'tenant_id' => $tA, 'created_at' => now(), 'updated_at' => now(),
+        'tenant_id'       => $tA, 'created_at' => now(), 'updated_at' => now(),
     ]);
     $roleB = DB::table('roles')->insertGetId([
-        'name' => 'Role-B-'.uniqid(), 'description' => 'Test',
+        'name'            => 'Role-B-'.uniqid(), 'description' => 'Test',
         'permission_type' => 'all', 'permissions' => json_encode([]),
-        'tenant_id' => $tB, 'created_at' => now(), 'updated_at' => now(),
+        'tenant_id'       => $tB, 'created_at' => now(), 'updated_at' => now(),
     ]);
 
     DB::table('admins')->insert([
-        'tenant_id' => $tA, 'name' => 'Admin A', 'email' => 'admin-a@test.com',
-        'password' => bcrypt('password'), 'role_id' => $roleA, 'status' => 1,
+        'tenant_id'  => $tA, 'name' => 'Admin A', 'email' => 'admin-a@test.com',
+        'password'   => bcrypt('password'), 'role_id' => $roleA, 'status' => 1,
         'created_at' => now(), 'updated_at' => now(),
     ]);
     DB::table('admins')->insert([
-        'tenant_id' => $tB, 'name' => 'Admin B', 'email' => 'admin-b@test.com',
-        'password' => bcrypt('password'), 'role_id' => $roleB, 'status' => 1,
+        'tenant_id'  => $tB, 'name' => 'Admin B', 'email' => 'admin-b@test.com',
+        'password'   => bcrypt('password'), 'role_id' => $roleB, 'status' => 1,
         'created_at' => now(), 'updated_at' => now(),
     ]);
 
@@ -83,14 +83,14 @@ it('resolves tenant from admin via the token chain', function () {
     $tA = $this->tenantA->id;
 
     $roleId = DB::table('roles')->insertGetId([
-        'name' => 'Role-'.uniqid(), 'description' => 'Test',
+        'name'            => 'Role-'.uniqid(), 'description' => 'Test',
         'permission_type' => 'all', 'permissions' => json_encode([]),
-        'tenant_id' => $tA, 'created_at' => now(), 'updated_at' => now(),
+        'tenant_id'       => $tA, 'created_at' => now(), 'updated_at' => now(),
     ]);
 
     $adminId = DB::table('admins')->insertGetId([
-        'tenant_id' => $tA, 'name' => 'Token Admin', 'email' => 'token@test.com',
-        'password' => bcrypt('password'), 'role_id' => $roleId, 'status' => 1,
+        'tenant_id'  => $tA, 'name' => 'Token Admin', 'email' => 'token@test.com',
+        'password'   => bcrypt('password'), 'role_id' => $roleId, 'status' => 1,
         'created_at' => now(), 'updated_at' => now(),
     ]);
 
@@ -106,14 +106,14 @@ it('resolves tenant from admin via the token chain', function () {
 
 it('treats platform admin (null tenant_id) as valid without tenant context', function () {
     $roleId = DB::table('roles')->insertGetId([
-        'name' => 'Platform Role-'.uniqid(), 'description' => 'Platform',
+        'name'            => 'Platform Role-'.uniqid(), 'description' => 'Platform',
         'permission_type' => 'all', 'permissions' => json_encode([]),
-        'created_at' => now(), 'updated_at' => now(),
+        'created_at'      => now(), 'updated_at' => now(),
     ]);
 
     $adminId = DB::table('admins')->insertGetId([
-        'tenant_id' => null, 'name' => 'Platform Op', 'email' => 'platform@test.com',
-        'password' => bcrypt('password'), 'role_id' => $roleId, 'status' => 1,
+        'tenant_id'  => null, 'name' => 'Platform Op', 'email' => 'platform@test.com',
+        'password'   => bcrypt('password'), 'role_id' => $roleId, 'status' => 1,
         'created_at' => now(), 'updated_at' => now(),
     ]);
 

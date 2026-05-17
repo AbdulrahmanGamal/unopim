@@ -3,7 +3,6 @@
 namespace Webkul\Order\Http\Controllers\Admin;
 
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 use Webkul\Admin\Http\Controllers\Controller;
@@ -23,20 +22,15 @@ class OrderSyncController extends Controller
     /**
      * Create a new controller instance.
      *
-     * @param  OrderSyncLogRepository  $syncLogRepository
-     * @param  ChannelRepository  $channelRepository
      * @return void
      */
     public function __construct(
         protected OrderSyncLogRepository $syncLogRepository,
         protected ChannelRepository $channelRepository
-    ) {
-    }
+    ) {}
 
     /**
      * Display sync logs listing.
-     *
-     * @return View|JsonResponse
      */
     public function index(): View|JsonResponse
     {
@@ -57,9 +51,6 @@ class OrderSyncController extends Controller
 
     /**
      * Trigger manual sync for a specific channel.
-     *
-     * @param  int  $channelId
-     * @return JsonResponse
      */
     public function syncChannel(int $channelId): JsonResponse
     {
@@ -81,7 +72,7 @@ class OrderSyncController extends Controller
             // Create sync log entry
             $syncLog = $this->syncLogRepository->create([
                 'channel_id' => $channelId,
-                'status' => 'pending',
+                'status'     => 'pending',
                 'started_at' => now(),
             ]);
 
@@ -95,22 +86,20 @@ class OrderSyncController extends Controller
                 'sync_log_id' => $syncLog->id,
             ]);
         } catch (\Exception $e) {
-            Log::error('Order sync failed for channel: ' . $channelId, [
+            Log::error('Order sync failed for channel: '.$channelId, [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
 
             return response()->json([
                 'message' => trans('order::app.admin.sync.sync-failed'),
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }
 
     /**
      * Trigger sync for all active channels.
-     *
-     * @return JsonResponse
      */
     public function syncAll(): JsonResponse
     {
@@ -134,7 +123,7 @@ class OrderSyncController extends Controller
             foreach ($channels as $channel) {
                 $syncLog = $this->syncLogRepository->create([
                     'channel_id' => $channel->id,
-                    'status' => 'pending',
+                    'status'     => 'pending',
                     'started_at' => now(),
                 ]);
 
@@ -154,16 +143,13 @@ class OrderSyncController extends Controller
 
             return response()->json([
                 'message' => trans('order::app.admin.sync.sync-failed'),
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }
 
     /**
      * Display sync log details.
-     *
-     * @param  int  $id
-     * @return View
      */
     public function show(int $id): View
     {
@@ -180,9 +166,6 @@ class OrderSyncController extends Controller
 
     /**
      * Retry a failed sync.
-     *
-     * @param  int  $id
-     * @return JsonResponse
      */
     public function retry(int $id): JsonResponse
     {
@@ -203,8 +186,8 @@ class OrderSyncController extends Controller
 
             // Update sync log
             $this->syncLogRepository->update([
-                'status' => 'pending',
-                'started_at' => now(),
+                'status'        => 'pending',
+                'started_at'    => now(),
                 'error_details' => null,
             ], $id);
 
@@ -215,13 +198,13 @@ class OrderSyncController extends Controller
                 'message' => trans('order::app.admin.sync.retry-initiated'),
             ]);
         } catch (\Exception $e) {
-            Log::error('Retry sync failed for log: ' . $id, [
+            Log::error('Retry sync failed for log: '.$id, [
                 'error' => $e->getMessage(),
             ]);
 
             return response()->json([
                 'message' => trans('order::app.admin.sync.retry-failed'),
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }
