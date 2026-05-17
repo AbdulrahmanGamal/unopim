@@ -26,6 +26,8 @@ class EasyOrdersCredentialsConfig extends Model implements EasyOrdersCredentials
     ];
 
     protected $casts = [
+        'access_token'         => 'encrypted',
+        'refresh_token'        => 'encrypted',
         'store_locale_mapping' => 'array',
         'store_locales'        => 'array',
         'extras'               => 'array',

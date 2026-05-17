@@ -8,18 +8,26 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
-use Webkul\Attribute\Models\Attribute;
+use Webkul\Attribute\Models\AttributeProxy as Attribute;
 use Webkul\ChannelConnector\Models\ChannelConnector;
 use Webkul\ChannelConnector\Models\ChannelSyncConflict;
 use Webkul\ChannelConnector\Models\ChannelWebhookEvent;
 use Webkul\ChannelConnector\Models\ProductChannelMapping;
 use Webkul\ChannelConnector\Repositories\ChannelFieldMappingRepository;
-use Webkul\Product\Models\Product;
+use Webkul\Product\Models\ProductProxy as Product;
 use Webkul\Tenant\Jobs\TenantAwareJob;
 
 class ProcessWebhookJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, TenantAwareJob;
+
+    /**
+     * Replay-protection window. Webhooks whose receivedAt is older than this are
+     * rejected as potential replays. Channels typically deliver within seconds;
+     * 5 minutes is generous enough to absorb queue backlog while blocking
+     * captured-and-replayed payloads.
+     */
+    protected const REPLAY_WINDOW_SECONDS = 300;
 
     public int $tries = 3;
 
@@ -29,8 +37,10 @@ class ProcessWebhookJob implements ShouldQueue
         protected int $connectorId,
         protected array $payload,
         protected ?string $webhookEventId = null,
+        protected ?int $receivedAt = null,
     ) {
         $this->captureTenantContext();
+        $this->receivedAt = $this->receivedAt ?? time();
     }
 
     public function handle(ChannelFieldMappingRepository $mappingRepository): void
@@ -49,6 +59,20 @@ class ProcessWebhookJob implements ShouldQueue
         $inboundStrategy = $settings['inbound_strategy'] ?? 'flag_for_review';
         $eventType = $this->payload['event'] ?? $this->payload['type'] ?? null;
 
+        // Replay-protection window: drop payloads older than the threshold.
+        $age = time() - $this->receivedAt;
+        if ($age > self::REPLAY_WINDOW_SECONDS) {
+            Log::warning('[ChannelConnector] Webhook rejected (outside replay window)', [
+                'connector_id'      => $connector->id,
+                'event_type'        => $eventType,
+                'webhook_event_id'  => $this->webhookEventId,
+                'age_seconds'       => $age,
+                'window_seconds'    => self::REPLAY_WINDOW_SECONDS,
+            ]);
+
+            return;
+        }
+
         Log::info('[ChannelConnector] Processing webhook', [
             'connector_id'     => $connector->id,
             'event_type'       => $eventType,
@@ -57,20 +81,23 @@ class ProcessWebhookJob implements ShouldQueue
             'webhook_event_id' => $this->webhookEventId,
         ]);
 
-        // Idempotency check: skip if this webhook event was already processed
-        if ($this->webhookEventId) {
-            if (ChannelWebhookEvent::isProcessed($connector->id, $this->webhookEventId)) {
-                Log::info('[ChannelConnector] Webhook already processed, skipping', [
-                    'connector_id'     => $connector->id,
-                    'webhook_event_id' => $this->webhookEventId,
-                ]);
+        // Idempotency check: prefer channel-supplied event id; fall back to a
+        // deterministic hash of (connector_id, event_type, payload) so payloads
+        // without a stable id are still deduped.
+        $dedupeKey = $this->webhookEventId ?: 'sha256:'.hash('sha256', $connector->id.'|'.($eventType ?? '').'|'.json_encode($this->payload));
 
-                return;
-            }
+        if (ChannelWebhookEvent::isProcessed($connector->id, $dedupeKey)) {
+            Log::info('[ChannelConnector] Webhook already processed, skipping', [
+                'connector_id'     => $connector->id,
+                'webhook_event_id' => $dedupeKey,
+            ]);
 
-            // Mark webhook event as processed
-            ChannelWebhookEvent::markAsProcessed($connector->id, $this->webhookEventId, $eventType);
+            return;
         }
+
+        // Mark webhook event as processed (atomic upsert in the repository layer
+        // should make double-firing harmless).
+        ChannelWebhookEvent::markAsProcessed($connector->id, $dedupeKey, $eventType);
 
         if ($inboundStrategy === 'ignore') {
             Log::info('[ChannelConnector] Webhook ignored per inbound strategy', [
@@ -139,9 +166,14 @@ class ProcessWebhookJob implements ShouldQueue
         if ($inboundStrategy === 'auto_update') {
             $this->applyInboundUpdate($product, $connector, $mappingRepository);
 
+            // Mark the mapping with last_inbound_at so the outbound sync engine
+            // can debounce: any sync job that runs within
+            // ProductChannelMapping::DEFAULT_INBOUND_DEBOUNCE_SECONDS will skip
+            // this product and avoid the webhook → sync → webhook loop.
             $pcMapping->update([
-                'sync_status'    => 'synced',
-                'last_synced_at' => now(),
+                'sync_status'     => 'synced',
+                'last_synced_at'  => now(),
+                'last_inbound_at' => now(),
             ]);
 
             Log::info('[ChannelConnector] Product auto-updated from webhook', [

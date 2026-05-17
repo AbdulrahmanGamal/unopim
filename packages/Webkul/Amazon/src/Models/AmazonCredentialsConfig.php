@@ -26,6 +26,8 @@ class AmazonCredentialsConfig extends Model implements AmazonCredentialsConfigCo
     ];
 
     protected $casts = [
+        'access_token'         => 'encrypted',
+        'refresh_token'        => 'encrypted',
         'store_locale_mapping' => 'array',
         'store_locales'        => 'array',
         'extras'               => 'array',

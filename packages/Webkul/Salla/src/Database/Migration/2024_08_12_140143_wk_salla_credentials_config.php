@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('wk_salla_credentials_config', function (Blueprint $table) {
             $table->id()->autoIncrement();
             $table->string('merchant_id')->nullable();
-            $table->string('access_token');
-            $table->string('refresh_token')->nullable();
+            // Stored encrypted via the model's Eloquent cast ('encrypted'); TEXT to fit ciphertext.
+            $table->text('access_token');
+            $table->text('refresh_token')->nullable();
             $table->timestamp('expires_at')->nullable();
             $table->boolean('active')->default(false);
             $table->string('store_name')->nullable();
