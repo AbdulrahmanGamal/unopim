@@ -13,7 +13,7 @@ return new class extends Migration
             $table->unsignedBigInteger('tenant_id');
             $table->unsignedBigInteger('channel_connector_id');
             $table->unsignedBigInteger('channel_sync_job_id')->nullable();
-            // products.id is INT UNSIGNED (legacy $table->increments('id')); FK column must match.
+            // products.id and admins.id are INT UNSIGNED (legacy increments()); FK columns must match.
             $table->unsignedInteger('product_id')->nullable();
             $table->string('conflict_type', 30);
             $table->json('conflicting_fields');
@@ -21,7 +21,7 @@ return new class extends Migration
             $table->timestamp('channel_modified_at')->nullable();
             $table->string('resolution_status', 20)->default('pending');
             $table->json('resolution_details')->nullable();
-            $table->unsignedBigInteger('resolved_by')->nullable();
+            $table->unsignedInteger('resolved_by')->nullable();
             $table->timestamp('resolved_at')->nullable();
             $table->timestamps();
 

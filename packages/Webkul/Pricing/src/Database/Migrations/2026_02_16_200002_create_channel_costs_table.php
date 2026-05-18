@@ -12,7 +12,8 @@ return new class extends Migration
         Schema::create('channel_costs', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('tenant_id');
-            $table->unsignedBigInteger('channel_id');
+            // channels.id is INT UNSIGNED (legacy increments()); FK column must match.
+            $table->unsignedInteger('channel_id');
             $table->decimal('commission_percentage', 5, 2)->default(0);
             $table->decimal('fixed_fee_per_order', 10, 2)->default(0);
             $table->decimal('payment_processing_percentage', 5, 2)->default(0);

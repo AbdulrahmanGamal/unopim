@@ -20,7 +20,8 @@ return new class extends Migration
             $table->date('effective_from');
             $table->date('effective_to')->nullable();
             $table->text('notes')->nullable();
-            $table->unsignedBigInteger('created_by')->nullable();
+            // admins.id is INT UNSIGNED (legacy increments()); FK column must match.
+            $table->unsignedInteger('created_by')->nullable();
             $table->timestamps();
 
             $table->index(['tenant_id', 'product_id'], 'idx_product_costs_tenant_product');

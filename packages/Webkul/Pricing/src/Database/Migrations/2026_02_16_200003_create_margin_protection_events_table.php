@@ -13,7 +13,8 @@ return new class extends Migration
             $table->unsignedBigInteger('tenant_id');
             // products.id is INT UNSIGNED (legacy $table->increments('id')); FK column must match.
             $table->unsignedInteger('product_id');
-            $table->unsignedBigInteger('channel_id')->nullable();
+            // channels.id is INT UNSIGNED (legacy increments()); FK column must match.
+            $table->unsignedInteger('channel_id')->nullable();
             $table->enum('event_type', ['blocked', 'warning', 'approved', 'expired']);
             $table->decimal('proposed_price', 12, 4);
             $table->decimal('break_even_price', 12, 4);
@@ -23,7 +24,8 @@ return new class extends Migration
             $table->decimal('margin_percentage', 5, 2);
             $table->decimal('minimum_margin_percentage', 5, 2);
             $table->text('reason')->nullable();
-            $table->unsignedBigInteger('approved_by')->nullable();
+            // admins.id is INT UNSIGNED (legacy increments()); FK column must match.
+            $table->unsignedInteger('approved_by')->nullable();
             $table->timestamp('approved_at')->nullable();
             $table->timestamp('expires_at')->nullable();
             $table->timestamps();
